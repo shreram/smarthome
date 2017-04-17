@@ -140,22 +140,22 @@ automation:
 ###############################################################################  
 
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
 #===============================================================================================#
-#   MOTION001       YES		    ON		    ON		ON		Dim Lights                          #
-#   MOTION002       YES		    ON		    ON		OFF		Dim Lights                          #
-#   MOTION003       YES		    ON		    OFF		ON		Increase the brightness to 100%     #
-#   MOTION004       YES		    ON		    OFF		OFF		Turn Lights ON at 100% brightness   #
+#   MOTION001       YES		    ON		    ON		ON		Dim Lights                                  #
+#   MOTION002       YES		    ON		    ON		OFF		Dim Lights                                  #
+#   MOTION003       YES		    ON		    OFF		ON		Increase the brightness to 100%             #
+#   MOTION004       YES		    ON		    OFF		OFF		Turn Lights ON at 100% brightness           #
 #===============================================================================================#
-#   MOTION005       YES		    OFF		    ON		ON		Lights OFF                          #
-#   MOTION006       YES		    OFF		    ON		OFF		Don't to anything                   #
-#   MOTION007       YES		    OFF		    OFF		ON		Turn Lights OFF                     #
-#   MOTION008       YES		    OFF		    OFF		OFF		Don't to anything                   #
+#   MOTION005       YES		    OFF		    ON		ON		Lights OFF                                  #
+#   MOTION006       YES		    OFF		    ON		OFF		Don't to anything                           #
+#   MOTION007       YES		    OFF		    OFF		ON		Turn Lights OFF                             #
+#   MOTION008       YES		    OFF		    OFF		OFF		Don't to anything                           #
 #===============================================================================================#
 
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
-#   MOTION001       YES		    ON		    ON		ON		Dim Lights                          #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
+#   MOTION001       YES		      ON		    ON		ON		Dim Lights                                #
 #===============================================================================================#
   - alias: MOTION001
     trigger:
@@ -197,8 +197,8 @@ automation:
           transition: 5
   
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
-#   MOTION002       YES		    ON		    ON		OFF		Dim Lights                          #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
+#   MOTION002       YES		      ON		    ON		OFF		Dim Lights                                #
 #===============================================================================================#
   - alias: MOTION002
     trigger:
@@ -240,8 +240,8 @@ automation:
           transition: 5
   
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
-#   MOTION003       YES		    ON		    OFF		ON		Increase the brightness to 100%     #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
+#   MOTION003       YES		      ON		    OFF		ON		 Increase the brightness to 100%          #
 #===============================================================================================#
   - alias: MOTION003
     trigger:
@@ -283,8 +283,8 @@ automation:
           transition: 5
   
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
-#   MOTION004       YES		    ON		    OFF		OFF		Turn Lights ON at 100% brightness   #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
+#   MOTION004       YES		      ON		    OFF		OFF		  Turn Lights ON at 100% brightness       #
 #===============================================================================================#
   - alias: MOTION004
     trigger:
@@ -326,8 +326,8 @@ automation:
           transition: 5
   
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
-#   MOTION005       YES		    OFF		    ON		ON		Lights OFF                          #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
+#   MOTION005       YES		      OFF		    ON		ON		  Lights OFF                              #
 #===============================================================================================#        
   - alias: MOTION005
     trigger:
@@ -360,13 +360,13 @@ automation:
           transition: 5
   
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #        
-#   MOTION006       YES		    OFF		    ON		OFF		Don't to anything                   #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #        
+#   MOTION006       YES		      OFF		    ON		OFF		  Don't to anything                       #
 #===============================================================================================#       
 
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #        
-#   MOTION007       YES		    OFF		    OFF		ON		Turn Lights OFF                     #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #        
+#   MOTION007       YES		      OFF		    OFF		ON		  Turn Lights OFF                         #
 #===============================================================================================#
   - alias: MOTION007
     trigger:
@@ -399,8 +399,8 @@ automation:
           transition: 5
   
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
-#   MOTION008       YES		    OFF		    OFF		OFF		Don't to anything                   #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
+#   MOTION008       YES		      OFF		    OFF		OFF		  Don't to anything                       #
 #===============================================================================================#
   
 ###############################################################################
