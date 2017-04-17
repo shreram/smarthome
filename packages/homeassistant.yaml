@@ -113,7 +113,7 @@ sensor:
         arg: wlan0
       - type: last_boot
       - type: since_last_boot
-    
+
   - platform: rest
     name: dns_queries_today
     resource: http://192.168.200.50/admin/api.php  
@@ -134,10 +134,11 @@ sensor:
     resource: http://192.168.200.50/admin/api.php  
     value_template: '{{ value_json.ads_percentage_today }}'
   
-  - platform: command_line
-    command: python3 -c "import requests; print(requests.get('https://pypi.python.org/pypi/homeassistant/json').json()['info']['version'])"
+  - platform: rest
+    resource: https://pypi.python.org/pypi/homeassistant/json
     name: HA Current Version
-    
+    value_template: '{{ value_json.info.version }}'
+
   - platform: command_line
     name: HA Installed Version
     command: /srv/homeassistant/homeassistant_venv/bin/hass --version
