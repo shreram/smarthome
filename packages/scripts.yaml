@@ -1,0 +1,98 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/15/2017
+#   @package        :   Scripts
+#   @description    :   All common scripts
+###############################################################################
+homeassistant:
+  customize:
+  
+# Script Stuff
+    script.ifttt_notify:
+      friendly_name: Notify Via IFTTT
+      icon: mdi:share
+
+    script.pushbullet_notify:
+      friendly_name: Notify Via PushBullet
+      icon: mdi:share
+
+    script.notify_me:
+      friendly_name: Notify Me (Default IFTTT)
+      icon: mdi:share
+      
+    script.voice_notify:
+      friendly_name: Notify via TTS
+      icon: mdi:speaker-wireless
+      
+script:
+  ifttt_notify:
+    sequence:
+      - service: ifttt.trigger
+        data_template: { "event": "Smart_Home", "value1": "{{ value1 }}", "value2": " {{ value2 }}"}   
+  
+  pushbullet_notify:
+    sequence:
+      - service: notify.notify
+        data_template:
+          message: "{{ value1 }} {{ value2 }}"
+          title: "{{ value1 }} {{ value2 }}"
+  
+  notify_me:
+    sequence:
+      - service: script.ifttt_notify
+        data_template:
+          event: "Smart_Home"
+          value1: '{{ value1 }}'
+          value2: '{{ value2 }}'
+          
+      # - service: notify.notify
+        # data_template:
+          # message: "{{ value1 }} {{ value2 }}"
+          # title: "{{ value1 }} {{ value2 }}"
+          
+###############################################################################
+# Voice Notify
+# Conditions:
+#   => Only Announce when people are home. Otherwise don't bother!
+#   => Only Announce when Music is NOT being played
+###############################################################################
+  voice_notify:
+    sequence:
+      - condition: template
+        value_template: >
+          {% if states.media_player.gstreamer.state == 'idle' %}
+            true
+          {% else %}
+            false
+          {% endif %}
+      - condition: template
+        value_template: >
+          {% if states.media_player.mpd.state != 'playing' %}
+            true
+          {% else %}
+            false
+          {% endif %}
+      - condition: template
+        value_template: >
+          {% if value1 | trim == "" %}
+            false
+          {% else %}
+            true
+          {% endif %}
+      - condition: state
+        entity_id: group.all_devices
+        state: 'home'
+      - service: tts.amazon_polly_say
+        data_template:
+          entity_id: media_player.gstreamer
+          message: >
+            <speak>
+            {% if now().strftime("%H")|int < 12 %}
+              Good morning.
+            {% elif now().strftime("%H")|int < 18 %}
+              Good afternoon.
+            {% else %}
+              Good evening.<break time='1s'/>
+            {% endif %}
+            <break time='0.5s'/>{{ value1 }}<break time='0.5s'/>Thank you.<break time='0.5s'/></speak>
+          cache: true

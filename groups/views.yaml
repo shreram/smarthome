@@ -1,0 +1,86 @@
+######################################################
+#                       VIEWS                        #
+######################################################
+
+# default_view:
+  # view: yes
+
+family_view:
+  view: yes
+  name: Family
+  icon: mdi:account-multiple
+  entities:
+    - group.date_time
+    - group.family
+    - group.home_security_system
+    - group.batteries
+    - group.trash__recycle_schedule
+    - group.weather
+    - group.dark_sky
+    - group.travel_time
+
+lights_switches:
+  view: yes
+  name: Lights and Swithches
+  icon: mdi:lightbulb-on
+  entities:
+    - group.custom_switches
+    - group.lights
+    - group.lights_switches
+    - group.etekcity_rf_switches
+
+mediacenter_view:
+  view: yes
+  name: Media Center
+  icon: mdi:television
+  entities:
+    - group.basement_media_players
+    - group.downstairs_media_players
+    - group.upstairs_media_players
+
+system_view:
+  view: yes
+  name: System Info
+  icon: mdi:settings
+  entities:
+    - group.ads_blocked
+    - group.system_monitor
+    - group.internet_speed
+    - group.manuals
+    - group.common_urls
+
+zwave_view:
+  view: yes
+  name: Z-Wave Stuff
+  icon: mdi:radio-tower
+  entities:
+    - group.zwave_automations
+    - group.zwave_devices
+    - group.upstairs_multisensor
+    - group.downstairs_multisensor
+    - group.garage_door_sensors
+
+automation_view:
+  view: yes
+  name: Automation
+  icon: mdi:arrow-right-drop-circle
+  entities:
+    - group.battery_automations
+    - group.bedtime_automations
+    - group.downstairs_motion_automations
+    - group.evening_automations
+    - group.home_assistant_automations
+    - group.light_automations
+    - group.rf_outlet_automations
+    - group.trash_and_recycle_automations
+    - group.tv_automations
+    - group.upstairs_motion_automations
+    - group.watchdog_automations
+    - group.weather_automations
+
+scripts_view:
+  view: yes
+  name: Scripts
+  icon: mdi:script
+  entities:
+    - group.tts_announcements

@@ -1,0 +1,215 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/15/2017
+#   @package        :   Lights
+#   @description    :   Lights, Lights, Lights! All the Lights are here!
+###############################################################################
+homeassistant:
+  customize:
+    switch.wemofrontporchlightswitch:
+      friendly_name: Front Porch Lights
+      icon: mdi:lightbulb
+    switch.wemoswitch1:
+      friendly_name: Front Room Light
+      icon: mdi:lamp
+    switch.wemobackyardlightswitch:
+      friendly_name: Backyard Lights
+      icon: mdi:lightbulb
+
+    light.dinette:
+      friendly_name: Kitchen Light
+    light.hue_color_lamp_1:
+      friendly_name: Family Room Light 1
+    light.hue_color_lamp_2:
+      friendly_name: Family Room Light 2
+    light.hue_color_lamp_3:
+      friendly_name: Family Room Light 3
+      
+    input_boolean.short_flash:
+      friendly_name: Short Flash
+      icon: mdi:flash
+    input_boolean.long_flash:
+      friendly_name: Long Flash
+      icon: mdi:flash      
+    input_boolean.animate_downstairs_lights:
+      friendly_name: Animate Family Room Lights    
+      icon: mdi:flash-outline
+    input_boolean.animate_upstairs_lights:
+      friendly_name: Animate Master Bedroom Lights
+      icon: mdi:flash-outline
+
+light:
+  - platform: lifx
+    broadcast: !secret lifx_broadcast_ip
+  - platform: hue
+    host: !secret philips_hue_ipaddress
+
+switch:
+  - platform: tplink
+    host: !secret tplink_garage
+    name: Garage Lights
+  - platform: tplink
+    host: !secret tplink_kids_bedroom
+    name: Kids Bedroom
+  - platform: tplink
+    host: !secret tplink_guest_bedroom_1
+    name: Guest Bedroom 1
+  - platform: tplink
+    host: !secret tplink_guest_bedroom_2
+    name: Guest Bedroom 2
+
+wemo:
+  static:
+    - !secret wemo_switch_1
+    - !secret wemo_switch_2
+    - !secret wemo_switch_3
+    
+input_boolean:
+  animate_upstairs_lights:
+    name: Animate Master Bedroom Lights
+    initial: off
+  animate_downstairs_lights:
+    name: Animate Family Room Lights
+    initial: off
+  animate_kitchen_lights:
+    name: Animate Kitchen Lights
+    initial: off
+  long_flash:
+    name: Long Flash Lights
+    initial: off
+  short_flash:
+    name: Long Flash Lights
+    initial: off
+
+automation:
+  - alias: Animate Master Bedroom Lights
+    hide_entity: True
+    trigger:
+      platform: time
+      seconds: '/5'
+    condition:
+      - condition: state
+        entity_id: input_boolean.animate_upstairs_lights
+        state: 'on'
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: group.master_bedroom_lights
+          transition: 5
+          brightness: 255
+          color_temp: 366
+        data_template:
+          rgb_color: ['{{ "{0:d}".format(range(0, 255)|random) }}' , '{{ "{0:d}".format(range(0, 255)|random) }}', '{{ "{0:d}".format(range(0, 255)|random) }}']
+  
+  - alias: Restore Masterbedroom Lights
+    hide_entity: True
+    trigger:
+      platform: state
+      entity_id: input_boolean.animate_upstairs_lights
+      to: 'off'
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: group.master_bedroom_lights
+          transition: 5
+          rgb_color: [224,175,102]
+          brightness: 10
+          color_temp: 366
+  
+  - alias: Animate Familyroom Lights
+    hide_entity: True
+    trigger:
+      platform: time
+      seconds: '/5'
+    condition:
+      - condition: state
+        entity_id: input_boolean.animate_downstairs_lights
+        state: 'on'
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: group.family_room_lights
+          transition: 5
+          brightness: 255
+          color_temp: 366
+        data_template:
+          rgb_color: ['{{ "{0:d}".format(range(0, 255)|random) }}' , '{{ "{0:d}".format(range(0, 255)|random) }}', '{{ "{0:d}".format(range(0, 255)|random) }}']
+          
+  - alias: Restore Familyroom Lights
+    hide_entity: True
+    trigger:
+      platform: state
+      entity_id: input_boolean.animate_downstairs_lights
+      to: 'off'
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: group.family_room_lights
+          transition: 5
+          rgb_color: [255, 251, 245]
+          brightness: 255
+          color_temp: 162
+        
+  - alias: Animate Kitchen Lights ON
+    hide_entity: True
+    trigger:
+      - platform: time
+        seconds: '/3'
+    condition:
+      - condition: state
+        entity_id: input_boolean.animate_kitchen_lights
+        state: 'on'
+    action:
+      - service: light.turn_on
+        entity_id: light.dinette
+        data_template:
+          rgb_color: ['{{ (range(0, 255)|random) }}', '{{ (range(0, 255)|random) }}', '{{ (range(0, 255)|random) }}']
+          brightness: 255
+          transition: '{{ (range(1, 2)|random) }}'
+  
+  - alias: Animate Kitchen Lights OFF
+    hide_entity: True
+    trigger:
+      - platform: state
+        entity_id: input_boolean.animate_kitchen_lights
+        state: 'off'
+    action:
+      - service: light.turn_on
+        entity_id: light.dinette
+        data:
+          rgb_color: [255, 255, 255]
+          brightness: 255
+          color_temp: 155
+  
+  - alias: Long Flash all lights
+    hide_entity: True
+    trigger:
+      - platform: state
+        entity_id: input_boolean.long_flash
+        state: 'on'
+        from: 'off'
+    action:
+      - service: light.turn_on
+        entity_id:
+          - group.all_lights
+        data:
+          flash: long
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.long_flash
+  
+  - alias: Short Flash all_lights
+    hide_entity: True
+    trigger:
+      - platform: state
+        entity_id: input_boolean.short_flash
+        state: 'on'
+        from: 'off'
+    action:
+      - service: light.turn_on
+        entity_id:
+          - group.all_lights
+        data:
+          flash: short
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.short_flash
+        

@@ -1,0 +1,204 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/15/2017
+#   @package        :   Garage Door
+#   @description    :   Garage Door Stuff
+###############################################################################
+homeassistant:
+  customize:
+
+# Tilt Sensors  
+    zwave.ecolink_garage_door_tilt_sensor_4:
+      hidden: False
+      friendly_name: 2-Car Garage Door Sensor
+    zwave.ecolink_garage_door_tilt_sensor_5:
+      hidden: False
+      friendly_name: 1-Car Garage Door Sensor
+
+# Single Car Garage Door Sensor
+    sensor.ecolink_garage_door_tilt_sensor_sourcenodeid_5_2:
+      hidden: True
+      friendly_name: Garage Sensor
+    sensor.ecolink_garage_door_tilt_sensor_power_management_5_11:
+      hidden: True
+      friendly_name: Garage Sensor
+    sensor.ecolink_garage_door_tilt_sensor_burglar_5_10:
+       hidden: True
+       friendly_name: Garage Sensor
+    sensor.ecolink_garage_door_tilt_sensor_alarm_type_5_0:
+      hidden: True
+      friendly_name: Garage Sensor
+    sensor.ecolink_garage_door_tilt_sensor_alarm_level_5_1:
+      hidden: True
+      friendly_name: Garage Sensor
+    sensor.ecolink_garage_door_tilt_sensor_access_control_5_9:
+      hidden: True
+      friendly_name: Garage Sensor
+    binary_sensor.ecolink_garage_door_tilt_sensor_sensor_5_0:
+      hidden: True
+      device_class: opening
+      friendly_name: Single Car Garage Door
+    sensor.single_car_garage_door_sensor_status:
+      hidden: False
+      friendly_name: Single Car Garage Door
+      device_class: opening
+      
+# Two Car Garage Door Sensor
+    sensor.ecolink_garage_door_tilt_sensor_access_control_4_9:
+      hidden: True
+      friendly_name: Garage Sensor
+    sensor.ecolink_garage_door_tilt_sensor_burglar_4_10:
+      hidden: True
+      friendly_name: Garage Sensor
+    sensor.ecolink_garage_door_tilt_sensor_power_management_4_11:
+      hidden: True
+      friendly_name: Garage Sensor
+    sensor.ecolink_garage_door_tilt_sensor_sourcenodeid_4_2:
+      hidden: True
+      friendly_name: Garage Sensor
+    sensor.ecolink_garage_door_tilt_sensor_alarm_level_4_1:
+      hidden: True
+      friendly_name: Garage Sensor
+    sensor.ecolink_garage_door_tilt_sensor_alarm_type_4_0:
+      hidden: True
+      friendly_name: Garage Door Sensor Type
+    binary_sensor.ecolink_garage_door_tilt_sensor_sensor_4_0:
+      hidden: True
+      device_class: opening
+      friendly_name: Two Car Garage Door
+    sensor.two_car_garage_door_sensor_status:
+      hidden: False
+      friendly_name: Two Car Garage Door
+      device_class: opening
+
+sensor:
+
+  - platform: template
+    sensors:
+      single_car_garage_door_sensor_battery:
+        value_template: >-
+          {{ states.zwave.ecolink_garage_door_tilt_sensor_5.attributes["battery_level"] }}
+        friendly_name: Single Car Garage Door Sensor Battery
+        unit_of_measurement: "%"
+        icon_template: >-
+          {% if states.zwave.ecolink_garage_door_tilt_sensor_5.attributes["battery_level"] %}
+          {% set battery_level = states.zwave.ecolink_garage_door_tilt_sensor_5.attributes["battery_level"]|int('unknown') %}
+          {% if battery_level == 'unknown' %}
+            mdi:battery-unknown
+          {% else %}
+            {% set battery_round = (battery_level|int / 10)|int * 10 %}
+            {% if battery_round >= 100 %}
+              mdi:battery
+            {% elif battery_round > 0 %}
+              mdi:battery-{{ battery_round }}
+            {% else %}
+              mdi:battery-alert
+            {% endif %}
+          {% endif %}
+          {% else %}
+            mdi:battery-unknown
+          {% endif %}
+  
+  - platform: template
+    sensors:
+      two_car_garage_door_sensor_battery:
+        value_template: >-
+          {{ states.zwave.ecolink_garage_door_tilt_sensor_4.attributes["battery_level"] }}
+        friendly_name: Two Car Garage Door Sensor Battery
+        unit_of_measurement: "%"
+        icon_template: >-
+          {% if states.zwave.ecolink_garage_door_tilt_sensor_4.attributes["battery_level"] %}
+          {% set battery_level = states.zwave.ecolink_garage_door_tilt_sensor_4.attributes["battery_level"]|int('unknown') %}
+          {% if battery_level == 'unknown' %}
+            mdi:battery-unknown
+          {% else %}
+            {% set battery_round = (battery_level|int / 10)|int * 10 %}
+            {% if battery_round >= 100 %}
+              mdi:battery
+            {% elif battery_round > 0 %}
+              mdi:battery-{{ battery_round }}
+            {% else %}
+              mdi:battery-alert
+            {% endif %}
+          {% endif %}
+          {% else %}
+            mdi:battery-unknown
+          {% endif %}
+  
+  - platform: template
+    sensors:
+      single_car_garage_door_sensor_status:
+        friendly_name: Single Car Garage Door Sensor Status
+        value_template: >-
+          {% if states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_5_0.state == 'on' %}
+            Open
+          {% elif states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_5_0.state == 'off' %}
+            Closed
+          {% else %}
+            Unknown
+          {% endif %}
+        icon_template: >-
+          {% set door_status = states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_5_0.state |d('unknown') %}
+          {% if door_status == 'unknown' %}
+            mdi:alert-circle
+          {% else %}
+            {% if door_status == 'on' %}
+              mdi:garage-open
+            {% else %}
+              mdi:garage
+            {% endif %}
+          {% endif %}
+  
+  - platform: template
+    sensors:
+      two_car_garage_door_sensor_status:
+        value_template: >-
+          {% if states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_4_0.state == 'on' %}
+            Open
+          {% elif states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_4_0.state == 'off' %}
+            Closed
+          {% else %}
+            Unknown
+          {% endif %}
+        friendly_name: Two Car Garage Door Sensor Status
+        icon_template: >-
+          {% set door_status = states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_4_0.state |d('unknown') %}
+          {% if door_status == 'unknown' %}
+            mdi:alert-circle
+          {% else %}
+            {% if door_status == 'on' %}
+              mdi:garage-open
+            {% else %}
+              mdi:garage
+            {% endif %}
+          {% endif %}
+
+automation:
+
+  - alias: Notify Garage Door Status
+    trigger:
+      platform: state
+      entity_id: 
+      - binary_sensor.ecolink_garage_door_tilt_sensor_sensor_4_0
+      - binary_sensor.ecolink_garage_door_tilt_sensor_sensor_5_0
+    condition:
+      - condition: template
+        value_template: "{% if trigger.from_state %} True {% else %} False {% endif %}"
+    action:
+      - service: script.notify_me
+        data_template:
+          value1: >
+              {% if trigger.to_state.state | lower == "on" %}
+                  {{ trigger.to_state.attributes.friendly_name }} is now OPENED!
+              {% elif trigger.to_state.state | lower == "off" %}
+                  {{ trigger.to_state.attributes.friendly_name }} is now CLOSED!
+              {% endif %}
+          value2: ""
+      - service: script.voice_notify
+        data_template:
+          value1: >
+            {% if trigger.to_state.state | lower == "on" %}
+              Attention! Your {{ trigger.to_state.attributes.friendly_name }} is now OPENED!
+            {% elif trigger.to_state.state | lower == "off" %}
+              Attention! Your {{ trigger.to_state.attributes.friendly_name }} is now CLOSED!
+            {% endif %}

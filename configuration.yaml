@@ -1,0 +1,68 @@
+#---------------------------------------------------------------------------------------
+# THE HOME ASSISTANT CONFIGURATION FILE - MOTHER OF ALL CONFIG FILES
+#---------------------------------------------------------------------------------------
+homeassistant:
+  name: Home 
+  latitude: !secret home_latitude
+  longitude: !secret home_longitude
+  elevation: !secret home_elevation
+  unit_system: imperial
+  time_zone: !secret time_zone
+  customize_glob: !include customize_glob.yaml  
+  packages: !include_dir_named packages
+
+updater:
+discovery:
+frontend:
+sun:
+config:
+
+logger: !include logging.yaml
+group: !include_dir_merge_named groups
+
+http:
+  api_password: !secret api_password
+
+device_tracker:
+  - platform: owntracks
+    max_gps_accuracy: 200
+    waypoints: True
+
+alarm_control_panel:
+  platform: simplisafe
+  name: Simplisafe
+  username: !secret simplisafe_username
+  password: !secret simplisafe_password
+
+mqtt:
+  broker: !secret pi_hole_mqtt_server
+  port: !secret pi_hole_mqtt_port
+  username: !secret pi_hole_mqtt_username
+  password: !secret pi_hole_mqtt_password
+  keepalive: 60
+  client_id: PI_SMART
+
+
+ifttt:
+  key: !secret ifttt_key
+  
+notify:
+  - name: notify
+    platform: pushbullet
+    api_key: !secret pushbulley_apikey
+  
+tts:
+  - platform: amazon_polly
+    aws_access_key_id: !secret aws_access_key_id
+    aws_secret_access_key: !secret aws_secret_access_key
+    region_name: 'us-east-1'
+    text_type: ssml
+
+binary_sensor:
+  - platform: workday
+    country: US
+    
+zwave:
+  usb_path: /dev/ttyACM0
+  config_path: /srv/homeassistant/homeassistant_venv/lib/python3.4/site-packages/libopenzwave-0.3.2-py3.4-linux-armv7l.egg/config
+    

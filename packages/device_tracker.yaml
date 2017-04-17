@@ -1,0 +1,62 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/15/2017
+#   @package        :   Device Tracker
+#   @description    :   Device Tracker stuff
+###############################################################################
+homeassistant:
+  customize:
+    device_tracker.suresh:
+      friendly_name: Suresh's iPhone App
+      hidden: false
+      
+    device_tracker.mallika:
+      friendly_name: Mallika's iPhone App
+      hidden: false
+      
+    device_tracker.srinika:
+      friendly_name: Srinika's iPhone App
+      hidden: false
+      
+    device_tracker.hasika:
+      friendly_name: Hasika's iPhone App
+      hidden: false
+      
+automation:
+###############################################################################
+# Welcome Family Members
+###############################################################################
+  - alias: Welcome Family
+    trigger:
+      - platform: state
+        entity_id:
+          - device_tracker.mallika_mallika
+          - device_tracker.suresh_suresh
+          - device_tracker.srinika_srinika
+          - device_tracker.hasika_hasika
+        from: 'not_home'
+        to: 'home'
+        for: '00:02:00'
+    action:
+      - service: script.notify_me
+        data_template:
+          value1: >
+            Welcome home, {{ trigger.entity_id.split('.')[1].split('_')[1] }}!
+          value2: ""
+      - service: script.voice_notify
+        data_template:
+          value1: "Welcome home, {{ trigger.entity_id.split('.')[1].split('_')[1] }}!"
+          
+###############################################################################
+# Alert when every one is away
+###############################################################################
+  - alias: Alert when everyone is AWAY
+    trigger:
+      platform: state
+      entity_id: group.all_devices
+      from: 'home'
+      to: 'not_home'
+    action:
+      - service: script.notify_home_status
+      - service: script.notify_me
+        data: {"value1":"Warning - No one's at home at the moment!!!", "value2":""}

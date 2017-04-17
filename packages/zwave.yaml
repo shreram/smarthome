@@ -1,0 +1,21 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/15/2017
+#   @package        :   ZWave
+#   @description    :   ZWave stick stuff
+###############################################################################
+homeassistant:
+  customize:
+
+# Z-Wave Device(s)
+    zwave.aeotec_zw090_zstick_gen5_1:
+      hidden: False
+      friendly_name: The Aeotec Z-Wave Stick
+
+automation:
+  - alias: Heal Z-Wave Network
+    trigger:
+      platform: time
+      after: '4:30:00'
+    action:
+      service: zwave.heal_network

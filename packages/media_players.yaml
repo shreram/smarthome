@@ -1,0 +1,78 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/15/2017
+#   @package        :   Media Player
+#   @description    :   Media Player Sensors, Automations
+###############################################################################
+homeassistant:
+  customize:
+
+# Media Players
+    media_player.pi_ha_snapcast_client:
+      friendly_name: Front Room Music
+    media_player.pi_audio_one_snapcast_client:
+      friendly_name: Kitchen Music
+    media_player.pi_audio_two_snapcast_client:
+      friendly_name: TV Room Music
+    media_player.pi_audio_three_snapcast_client:
+      friendly_name: Master Bedroom Music
+    media_player.pi_audio_four_snapcast_client:
+      friendly_name: Guest Room 1 Music
+    media_player.pi_audio_five_snapcast_client:
+      friendly_name: Basement Music
+
+    media_player.mpd:
+      friendly_name: Mopidy Media Player
+    media_player.gstreamer:
+      friendly_name: Gstreamer Media Player
+    media_player.sharp_tv:
+      friendly_name: Sharp TV
+    media_player.onkyo_receiver:
+      friendly_name: ONKYO Receiver
+
+media_player:
+  - platform: onkyo
+    host: !secret onkyo_host_ip
+    name: Onkyo Receiver 
+    sources: 
+      bd: 'Bluray' 
+      dvr: 'VCR/DVR'
+      sat: 'CBL/SAT'
+      game: 'Game'
+      aux1: 'Aux'
+      tape: 'TV/Tape'
+      tuner: 'Tuner'
+      cd: 'CD'
+      phono: 'Phono'
+
+  - platform: snapcast
+    host: !secret snapcast_server_ip
+
+  - platform: mpd
+    name: mpd
+    host: !secret mopidy_server_ip
+    port: !secret mopidy_server_port
+
+# run the following command to link gsp/gi path to HA for Gstreamer to function properly    
+# sudo ln -s /usr/lib/python3/dist-packages/gi /srv/homeassistant/homeassistant_venv/lib/python3.4/site-packages
+    
+  - platform: gstreamer
+    pipeline: "audioresample ! audioconvert ! audio/x-raw,rate=48000,channels=2,format=S16LE ! wavenc ! filesink location=/tmp/snapfifo"
+
+  - platform: sharptv
+    host: !secret sharptv_ipaddress
+    name: Sharp TV
+    port: !secret sharptv_port
+    user: !secret sharptv_username
+    password: !secret sharptv_password
+    power_on_enabled: True
+    commands:
+      volume_set:
+        service: media_player.volume_set
+        data_template:
+          entity_id: media_player.sharp_tv
+          volume_level: ''
+    attributes: 
+      volume_level: media_player.sharp_tv|volume_level
+      source: media_player.sharp_tv|source
+      source_list: media_player.sharp_tv|source_list

@@ -1,0 +1,315 @@
+Family:
+  entities:
+    - device_tracker.suresh_suresh
+    - device_tracker.mallika_mallika
+    - device_tracker.srinika_srinika
+    - device_tracker.hasika_hasika
+    - device_tracker.suresh
+    - device_tracker.mallika
+    - device_tracker.srinika
+    - device_tracker.hasika
+
+Travel Time:
+  entities:
+    - sensor.home2work
+    - sensor.work2home
+    - sensor.suresh2home
+    - sensor.suresh2work
+
+Batteries:
+  entities:
+    - sensor.suresh_iphone_battery
+    - sensor.mallika_iphone_battery
+    - sensor.srinika_iphone_battery
+    - sensor.hasika_iphone_battery
+    - sensor.upstairs_multisensor_battery
+    - sensor.downstairs_multisensor_battery
+    - sensor.single_car_garage_door_sensor_battery
+    - sensor.two_car_garage_door_sensor_battery
+
+Battery Automations:
+  - automation.alert_low_battery_level_of_sensors
+  - automation.notify_low_battery
+  
+Date Time:
+  - sensor.time
+  - sensor.date
+  - binary_sensor.workday_sensor
+  - sensor.ha_installed_version
+  - sensor.ha_current_version
+  - sensor.ha_last_restart
+    
+System Monitor:
+  - sensor.cpu_use
+  - sensor.ram_free
+  - sensor.disk_free_
+  - sensor.ipv4_address_wlan0
+  - sensor.last_boot
+  - sensor.since_last_boot
+  - sensor.cpu_temperature
+  
+Internet Speed:
+  - sensor.speedtest_ping 
+  - sensor.speedtest_upload
+  - sensor.speedtest_download
+  - sensor.external_ip
+
+Ads Blocked:
+  - sensor.dns_queries_today
+  - sensor.domains_being_blocked
+  - sensor.ads_blocked_today
+  - sensor.ads_percentage_today
+    
+Home Assistant Automations:
+  - automation.notify_of_new_external_ip
+  - automation.startup_notification
+  - automation.update_available_notification
+
+Evening Automations:
+  entities:
+    - automation.home_security_system_on_at_sunset
+    - automation.outdoor_lights_on_at_sunset
+    - automation.indoor_lights_on_before_sunset    
+    
+Garage Door Sensors:
+  entities:
+    - sensor.single_car_garage_door_sensor_status
+    - sensor.two_car_garage_door_sensor_status
+
+Home Security System:
+  entities:
+    - alarm_control_panel.simplisafe
+    - automation.notify_home_security_status_change
+
+Lights:
+  entities:
+    - light.dinette
+    - switch.kids_bedroom
+    - switch.garage_lights
+    - switch.guest_bedroom_1
+    - switch.guest_bedroom_2
+    - light.hue_color_lamp_1
+    - light.hue_color_lamp_2
+    - light.hue_color_lamp_3
+    - light.family_room
+    - light.master_bedroom_1
+    - light.master_bedroom_2
+    - light.master_bedroom
+    - switch.wemofrontporchlightswitch
+    - switch.wemobackyardlightswitch
+    - switch.wemoswitch1
+
+Light Automations:
+  entities:
+    - automation.animate_master_bedroom_lights
+    - input_boolean.animate_kitchen_lights
+    - input_boolean.animate_downstairs_lights
+    - input_boolean.animate_upstairs_lights
+    - input_boolean.short_flash
+    - input_boolean.long_flash
+
+TTS Announcements:
+  entities:
+    - automation.bedtime_report
+    - automation.morning_commute
+      
+Basement Media Players:
+    - media_player.pi_audio_five_snapcast_client
+    - media_player.onkyo_receiver
+
+Downstairs Media Players:
+    - media_player.pi_ha_snapcast_client
+    - media_player.pi_audio_one_snapcast_client
+    - media_player.pi_audio_two_snapcast_client
+    - media_player.mpd
+    - media_player.gstreamer
+    - media_player.sharp_tv
+
+Upstairs Media Players:
+    - media_player.pi_audio_three_snapcast_client
+    - media_player.pi_audio_four_snapcast_client
+
+Downstairs Motion Automations:
+  entities:
+    - automation.motion001
+    - automation.motion002
+    - automation.motion003
+    - automation.motion004
+    - automation.motion005
+    - automation.motion007
+
+Upstairs Motion Automations:
+  entities:
+    - automation.upstairs_motion_off
+    - automation.upstairs_motion_on
+
+Bedtime Automations:
+  entities:
+    - automation.kitchen_light_off_at_eight_am
+    - automation.indoor_lights_on_early_morning
+    - automation.indoor_lights_on_before_sunset    
+    - automation.outdoor_lights_off_at_sunrise
+    - automation.outdoor_lights_on_at_sunset
+    - automation.goodnight_turn_lights_off
+    - automation.master_bedroom_lights_on_in_the_morning_suresh
+    - automation.master_bedroom_lights_on_in_the_morning_mallika
+    - automation.master_bedroom_lights_off_in_the_morning_suresh
+    - automation.master_bedroom_lights_off_in_the_morning_mallika
+    - automation.goodnight_dim_kitchen_lights
+    - automation.goodnight_dim_tv_light_1
+    - automation.goodnight_dim_tv_light_2
+    - automation.goodnight_dim_tv_light_3
+
+Trash & Recycle Schedule:
+  - sensor.trash_day
+  - sensor.trash_pickup_day
+  - sensor.recycle_day    
+  - sensor.recycle_pickup_day
+  - sensor.recycle_pickup_week
+  - input_select.trash_pickup_day
+  - input_select.recycle_pickup_day
+  - sensor.current_week
+  - input_select.recycle_pickup_week
+
+Trash and Recycle Automations:
+  - automation.trash_and_recycle_pickup_reminder
+
+Etekcity RF Switches:
+  entities:
+    - switch.switch_one
+    - switch.switch_two
+    - switch.switch_three
+    - switch.switch_four
+    - switch.switch_five
+
+RF Outlet Automations:
+  entities:
+    - automation.turn_growlight_off_in_the_morning
+    - automation.turn_growlight_on_in_the_evening          
+    
+TV Automations:
+  entities:
+    - automation.turn_lights_on_when_tv_is_turned_off
+    - automation.restore_family_room_lights_to_tv_mode
+    - automation.dim_indoor_lights_when_tv_is_on
+    - automation.backlight_is_on_when_tv_is_on
+    - automation.backlight_off_when_tv_is_off
+
+Custom Switches:
+  entities:
+    - input_boolean.working_in_garage
+
+Watchdog Automations:
+  entities:
+    - automation.backyard_light_watchdog
+    - automation.frontroom_light_watchdog
+    - automation.frontyard_light_watchdog
+    - automation.garage_lights_watchdog
+    - automation.guest_bedroom_1_light_watchdog
+    - automation.kids_bedroom_light_watchdog
+    - automation.guest_bedroom_2_light_watchdog
+    - automation.single_car_garage_door_watchdog
+    - automation.home_security_system_watchdog_10_minutes
+    - automation.home_security_system_watchdog_30_minutes
+    - automation.working_in_garage_watchdog
+    - automation.two_car_garage_door_watchdog
+    
+Weather:
+  entities:
+    - sun.sun
+    - sensor.pws_weather
+    - sensor.pws_temp_f
+    - sensor.pws_feelslike_f
+    - sensor.pws_wind_mph
+    - sensor.pws_heat_index_f
+    - sensor.pws_relative_humidity
+    - sensor.pws_visibility_mi
+
+Dark Sky:
+  entities:
+    - sensor.dark_sky_wind_speed
+    - sensor.dark_sky_wind_bearing
+    - sensor.dark_sky_visibility
+    - sensor.dark_sky_temperature
+    - sensor.dark_sky_summary
+    - sensor.dark_sky_pressure
+    - sensor.dark_sky_precip_probability
+    - sensor.dark_sky_precip_intensity
+    - sensor.dark_sky_precip
+    - sensor.dark_sky_ozone
+    - sensor.dark_sky_nearest_storm_distance
+    - sensor.dark_sky_nearest_storm_bearing
+    - sensor.dark_sky_minutely_summary
+    - sensor.dark_sky_icon
+    - sensor.dark_sky_humidity
+    - sensor.dark_sky_hourly_summary
+    - sensor.dark_sky_dew_point
+    - sensor.dark_sky_daily_summary
+    - sensor.dark_sky_daily_max_precip_intensity
+    - sensor.dark_sky_daily_low_temperature
+    - sensor.dark_sky_daily_low_apparent_temperature
+    - sensor.dark_sky_daily_high_temperature
+    - sensor.dark_sky_daily_high_apparent_temperature
+    - sensor.dark_sky_cloud_coverage
+    - sensor.dark_sky_apparent_temperature
+
+Weather Automations:
+  entities:
+    - automation.alert_daily_weather
+    - automation.remind_me_to_enjoy_warm_and_windy_weather
+    - automation.alert_super_heavy_winds
+    - automation.rain_snow_wind_alerts
+
+Manuals:
+  entities:
+    - weblink.bose_lifestyle_12_series
+    - weblink.manual_lutron_motion_sensors
+    - weblink.manual_onkyo_receiver
+    - weblink.onkyo_eiscp_commands
+    - weblink.onkyo_receiver
+    - weblink.onkyo_receiver_capabilities_lc60sq15u
+    - weblink.sharp_aquos_manual_lc60sq15u
+    - weblink.sharp_aquos_setup_guide_lc60sq15u
+
+Common URLS:
+  entities:
+    - weblink.linksys_router_wrt1900acs
+    - weblink.multiroom_music_player
+    - weblink.palo_alto_firewall
+    - weblink.pi_hole
+    - weblink.qnap_nas
+    - weblink.this_home_assistant
+
+ZWave Devices:
+  entities:
+    - zwave.aeotec_zw090_zstick_gen5_1
+    - zwave.aeotec_zw074_multisensor_gen5_3
+    - zwave.aeotec_zw074_multisensor_gen5_2
+    - zwave.ecolink_garage_door_tilt_sensor_5
+    - zwave.ecolink_garage_door_tilt_sensor_4
+
+Downstairs MultiSensor:
+  entities:
+    - binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
+    - sensor.aeotec_zw074_multisensor_gen5_temperature_2_1
+    - sensor.aeotec_zw074_multisensor_gen5_relative_humidity_2_5
+    - sensor.aeotec_zw074_multisensor_gen5_luminance_2_3
+    - sensor.aeotec_zw074_multisensor_gen5_alarm_level_2_1
+    - sensor.aeotec_zw074_multisensor_gen5_alarm_type_2_0
+    - sensor.aeotec_zw074_multisensor_gen5_burglar_2_10
+    - sensor.aeotec_zw074_multisensor_gen5_sourcenodeid_2_2
+
+Upstairs MultiSensor:
+  entities:
+    - binary_sensor.aeotec_zw074_multisensor_gen5_sensor_3_0
+    - sensor.aeotec_zw074_multisensor_gen5_temperature_3_1
+    - sensor.aeotec_zw074_multisensor_gen5_relative_humidity_3_5
+    - sensor.aeotec_zw074_multisensor_gen5_luminance_3_3
+    - sensor.aeotec_zw074_multisensor_gen5_burglar_3_10
+    - sensor.aeotec_zw074_multisensor_gen5_sourcenodeid_3_2
+    - sensor.aeotec_zw074_multisensor_gen5_alarm_type_3_0
+    - sensor.aeotec_zw074_multisensor_gen5_alarm_level_3_1
+
+ZWave Automations:
+  entities:
+    - automation.heal_zwave_network

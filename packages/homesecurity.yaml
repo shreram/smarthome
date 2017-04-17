@@ -1,0 +1,53 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/15/2017
+#   @package        :   Home Security 
+#   @description    :   Home Security System Sensors and Automations
+###############################################################################
+homeassistant:
+  customize:
+    alarm_control_panel.simplisafe:
+      friendly_name: Home Security System
+      icon: mdi:security
+    sensor.my_alarm_control_panel:
+      friendly_name: Home Security System
+      icon: mdi:security
+
+automation:
+  - alias: Notify Home Security Status Change
+    trigger:
+      platform: state
+      entity_id: alarm_control_panel.simplisafe
+    condition:
+      - condition: template
+        value_template: "{% if trigger.from_state %} True {% else %} False {% endif %}"
+      - condition: template
+        value_template: '{% if states.alarm_control_panel.simplisafe.state == "unknown" %} False {% else %} True {% endif %}'
+      - condition: template
+        value_template: '{% if states.alarm_control_panel.simplisafe.state | trim == "" %} False {% else %} True {% endif %}'
+    action:
+      - service: script.notify_me
+        data_template:
+          value1: >
+            {% if states.alarm_control_panel.simplisafe.state == "armed_home" %}
+              Your Home Security System is now set to Home mode. Your home is now secured.
+            {% elif states.alarm_control_panel.simplisafe.state == "armed_away" %}
+              Your Home Security System is now set to Away mode. All the motion sensors are fully activated.
+            {% elif states.alarm_control_panel.simplisafe.state == "triggered" %}
+              Attention!: Your Home Security System is triggered! It has been notified to the authorities. Police and help is on the way!
+            {% elif states.alarm_control_panel.simplisafe.state == "disarmed" %}
+              Attention!: Your Home Security System is turned OFF. All sensors are completely disabled.
+            {% endif %}
+          value2: ""
+      - service: script.voice_notify
+        data_template:
+          value1: >
+            {% if states.alarm_control_panel.simplisafe.state == "armed_home" %}
+              Your Home Security System is now set to Home mode. Your home is now secured.
+            {% elif states.alarm_control_panel.simplisafe.state == "armed_away" %}
+              Your Home Security System is now set to Away mode. All the motion sensors are fully activated.
+            {% elif states.alarm_control_panel.simplisafe.state == "triggered" %}
+              Attention!: Your Home Security System is triggered! It has been notified to the authorities. Police and help is on the way!
+            {% elif states.alarm_control_panel.simplisafe.state == "disarmed" %}
+              Attention!: Your Home Security System is turned OFF. All sensors are completely disabled.
+            {% endif %}

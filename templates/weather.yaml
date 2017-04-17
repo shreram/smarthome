@@ -1,0 +1,7 @@
+ >
+ {# Provides weather briefing #}
+ {% macro weather_briefing() -%}
+    Today's weather is going to be {{states('sensor.dark_sky_daily_high_temperature') | int}} degrees fahrenheit, and {{states('sensor.dark_sky_daily_low_temperature') | int}} degrees fahrenheit during the night.
+ {%- endmacro %}
+ 
+ {{weather_briefing()}}

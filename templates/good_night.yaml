@@ -1,0 +1,101 @@
+>
+ {#- Provides status of iPhone Batteries -#}
+  {%- macro battery_status() -%}
+   {%- set level = 30 -%}
+   {%- if states.device_tracker.suresh_suresh.attributes.battery < level -%}
+     {{ states.device_tracker.suresh_suresh.attributes.friendly_name }}'s iPhone battery is at {{ states.device_tracker.suresh_suresh.attributes.battery }} Percent. <break time='05.s'/>
+   {%- endif -%}
+   {%- if states.device_tracker.mallika_mallika.attributes.battery < level -%}
+     {{ states.device_tracker.mallika_mallika.attributes.friendly_name }}'s iPhone battery is at {{ states.device_tracker.mallika_mallika.attributes.battery }} Percent. <break time='05.s'/>
+   {%- endif -%}
+   {%- if states.device_tracker.srinika_srinika.attributes.battery < level -%}
+     {{ states.device_tracker.srinika_srinika.attributes.friendly_name }}'s iPhone battery is at {{ states.device_tracker.srinika_srinika.attributes.battery }} Percent. <break time='05.s'/>
+   {%- endif -%}
+   {%- if states.device_tracker.hasika_hasika.attributes.battery < level -%}
+     {{ states.device_tracker.hasika_hasika.attributes.friendly_name }}'s iPhone battery is at {{ states.device_tracker.hasika_hasika.attributes.battery }} Percent. <break time='05.s'/>
+   {%- endif -%}
+ {%- endmacro %}
+ 
+ {#- Provides Light and Garage Status -#}
+ {%- macro light_status() -%}
+   {%- if states.light.dinette.state | lower == "on" -%}
+     {{ states.light.dinette.attributes.friendly_name }} is  {{ states.light.dinette.state | upper}}.<break time='0.5s'/>
+   {%- endif -%}
+
+   {%- if states.group.family_room_lights.state | lower == "on" -%}
+     {{ states.group.family_room_lights.attributes.friendly_name }} is  {{ states.group.family_room_lights.state | upper}}.<break time='0.5s'/>
+   {%- endif -%}
+
+   {%- if states.switch.guest_bedroom_1.state | lower == "on" -%}
+     {{ states.switch.guest_bedroom_1.attributes.friendly_name }} is  {{ states.switch.guest_bedroom_1.state | upper}}.<break time='0.5s'/>
+   {%- endif -%}
+
+   {%- if states.switch.guest_bedroom_2.state | lower == "on" -%}
+     {{ states.switch.guest_bedroom_2.attributes.friendly_name }} is  {{ states.switch.guest_bedroom_2.state | upper}}.<break time='0.5s'/>
+   {%- endif -%}
+ {%- endmacro -%}
+
+ {#- Provides Garage Doors Status -#}
+ {%- macro garagedoor_status() -%} 
+   {%- if states.sensor.single_car_garage_door_sensor_status.state | lower == "on" -%}
+     {{ states.sensor.single_car_garage_door_sensor_status.attributes.friendly_name }} is  {{ states.sensor.single_car_garage_door_sensor_status.state | upper}}.<break time='0.5s'/>
+   {%- endif -%}
+   {%- if states.sensor.two_car_garage_door_sensor_status.state | lower == "on" -%}
+     {{ states.sensor.two_car_garage_door_sensor_status.attributes.friendly_name }} is  {{ states.sensor.two_car_garage_door_sensor_status.state | upper}}.<break time='0.5s'/>
+   {%- endif -%}
+  {%- endmacro -%}
+ 
+ {#- Provides Home Security System Status -#}
+ {%- macro alarm_status() -%}
+    {%- if states.alarm_control_panel.simplisafe.state | lower == "disarmed" -%}
+      Your home security system is switched OFF. You may want to turn it ON.<break time='0.5s'/>
+    {%- elif states.alarm_control_panel.simplisafe.state | lower == "armed_away" -%}
+      Your home security system is set to away mode.<break time='0.5s'/>
+    {%- elif states.alarm_control_panel.simplisafe.state | lower == "armed_home" -%}
+      Your home security system is ON, and your home is secured.<break time='0.5s'/>
+    {%- endif %}
+  {%- endmacro -%}
+  
+ {#- Provides Trash and Recycle Reminder -#}
+ {%- macro trash_recycle_status() -%}
+    {%- set flag = false -%}
+    {%- if states.sensor.trash_day.state | lower == "yes" -%}
+      Your trash will be picked up tomorrow. Did you leave the trash bin outside?<break time='1.0s'/>
+      {%- set flag = true -%}
+    {%- endif %}
+    {%- if states.sensor.recycle_day.state | lower == "yes" -%}
+      {%- if flag -%}
+        Also, your recycle stuff will be picked up tomorrow as well! Please leave both recycle bin and trash cans outside if you haven't!<break time='1.0s'/>
+      {%- else -%}
+        Your recycle stuff will be picked up tomorrow. Please leave the recycle bin outside if you haven't done so!<break time='1.0s'/>
+      {%- endif -%}
+    {%- endif %}
+  {%- endmacro -%}  
+ 
+ {#- Main macro that runs all other macros and combines the information -#}
+  {%- macro run() -%}
+   It is past 10 o clock, and time to go to bed. Here is the status of your home.<break time='0.5s'/>{{- alarm_status() -}}
+   {%- set battery_output = battery_status() -%}
+   {%- if battery_output | trim != "" -%}
+   {{- battery_output -}} Please make sure you put the phones to charge.
+   {%- endif -%}
+
+   {%- set light_output = light_status() -%}
+   {%- if light_output | trim == "" -%}
+   All the lights in the house are OFF.<break time='0.5s'/>
+   {% else %}
+   {{- light_output -}}
+   {%- endif -%}
+
+   {%- set garagedoor_output = garagedoor_status() -%}
+   {%- if garagedoor_output | trim == "" -%}
+     Both the single car garage and the two car garage doors are closed. <break time='0.5s'/>Good job keeping your garage doors closed.<break time='0.5s'/>
+   {%- else -%}
+     Warning!!! {{- garagedoor_output -}}<break time='0.5s'/>
+   {%- endif -%}
+   
+   {%- set trash_output = trash_recycle_status() -%}{{- trash_recycle_status() -}}
+   Everything else looks good. Hope you have a good night sleep!
+ {%- endmacro -%}
+ 
+ {{ run() }}

@@ -1,0 +1,261 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/15/2017
+#   @package        :   Weather
+#   @description    :   All weather related stuff!
+###############################################################################
+homeassistant:
+  customize:
+    sun.sun:
+      friendly_name: Sun 
+    sensor.pws_relative_humidity:
+      friendly_name: Humidity
+    sensor.pws_temp_f:
+      friendly_name: Temperature
+    sensor.pws_feelslike_f:
+      friendly_name: Feels Like
+    sensor.pws_wind_mph:
+      friendly_name: Wind Speed
+      icon: mdi:weather-windy
+    sensor.pws_heat_index_f:
+      friendly_name: Heat Index
+    sensor.pws_visibility_mi:
+      friendly_name: Visibility
+    sensor.pws_weather:
+      friendly_name: Weather
+      
+    input_boolean.rain_alert:
+      hidden: false
+    input_boolean.snow_alert:
+      hidden: false
+    input_boolean.sleet_alert:
+      hidden: false
+    input_boolean.nice_breeze_alert:
+      hidden: false
+    input_boolean.moderate_wind_alert:
+      hidden: false
+    input_boolean.heavy_wind_alert:
+      hidden: false
+    input_boolean.super_heavy_wind_alert:
+      hidden: false
+    input_boolean.hurricane_wind_alert:
+      hidden: false
+      
+input_boolean:
+  nice_breeze_alert:
+    name: Nice Breeze Alert
+    initial: off
+  moderate_wind_alert:
+    name: Moderate Wind Alert
+    initial: off
+  heavy_wind_alert:
+    name: heavy Wind Alert
+    initial: off
+  super_heavy_wind_alert:
+    name: Super Heavy Wind Alert
+    initial: off
+  hurricane_wind_alert:
+    name: Hurricane Winds Alert
+    initial: off
+  rain_alert:
+    name: Rain Alert
+    initial: off
+  snow_alert:
+    name: Snow Alert
+    initial: off
+  sleet_alert:
+    name: Sleet Alert
+    initial: off
+sensor:
+  - platform: wunderground
+    api_key: !secret wunderground_key
+    monitored_conditions:
+      - weather
+      - temp_f
+      - feelslike_f
+      - heat_index_f
+      - wind_mph
+      - relative_humidity
+      - visibility_mi
+  
+  - platform: darksky
+    api_key: !secret darksky_api_key
+    monitored_conditions:
+      - summary
+      - icon
+      - nearest_storm_distance
+      - nearest_storm_bearing
+      - precip_type
+      - precip_intensity
+      - precip_probability
+      - temperature
+      - apparent_temperature
+      - dew_point
+      - wind_speed
+      - wind_bearing
+      - cloud_cover
+      - humidity
+      - pressure
+      - visibility
+      - ozone
+      - minutely_summary
+      - hourly_summary
+      - daily_summary
+      - temperature_max
+      - temperature_min
+      - apparent_temperature_max
+      - apparent_temperature_min
+      - precip_intensity_max
+
+automation:
+  - alias: Alert Daily Weather
+    trigger:
+      platform: time
+      minutes: '/59'
+      seconds: 00
+    condition:
+      - condition: time
+        after: '07:00:00'
+        before: '09:00:00'  
+    action:
+      - service: script.voice_notify
+        data_template:
+          value1: !include ../templates/weather.yaml
+      - service: script.notify_me
+        data_template:
+          value1: "Today's Weather High: {{states('sensor.dark_sky_daily_high_temperature')}} F, Feels like: {{states('sensor.dark_sky_daily_high_apparent_temperature')}} F. Today's Weather Low: {{states('sensor.dark_sky_daily_low_temperature')}} F, Feels like: {{states('sensor.dark_sky_daily_low_apparent_temperature')}} F."
+          value2: ""
+      - service: script.notify_me
+        data_template:
+          value1: "Today's Summary: {{states('sensor.dark_sky_daily_summary')}}"
+          value2: ""
+  
+  # Script to alert when enjoyable weather is outside
+  # For me, enjoyable is: 
+  #      1. Must be above 70 Degrees F
+  #      2. Alert me only during day time
+  #
+  # Only want to be notified every 15 minutes or so. Do not want to be bombarded with updates every minute wind speed changes
+  - alias: Remind me to enjoy warm and windy weather
+    trigger:
+      platform: state
+      entity_id: sensor.dark_sky_wind_speed
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: 'above_horizon'
+      - condition: template
+        value_template: '{% if states.sensor.dark_sky_apparent_temperature.state | round > 70 %} true {% else %} false {% endif %}'
+      - condition: template
+        value_template: '{% if states.sensor.dark_sky_wind_speed.state | round < 8 %} false {% else %} true {% endif %}'
+    action:
+      - service: script.notify_me
+        data_template:
+          value1: >
+            {% set windspeed = states.sensor.dark_sky_wind_speed.state | round %}
+            {% if ( windspeed > 7 and ( windspeed <= 15 ) and (states.input_boolean.nice_breeze_alert.state == 'off')) %}
+               {{ states.sensor.dark_sky_apparent_temperature.state | round }} degrees, and {{windspeed}} mph winds. You should go out and enjoy weather!
+            {% elif ( windspeed > 15 ) and ( windspeed <= 25 ) and (states.input_boolean.moderate_wind_alert.state == 'off') %}
+               {{ states.sensor.dark_sky_apparent_temperature.state | round }} degrees, and {{windspeed}} mph winds. You should go out and enjoy weather!
+            {% elif ( windspeed > 25 ) and ( windspeed <= 40 ) and (states.input_boolean.heavy_wind_alert.state == 'off') %}
+               HEAVY WINDS!!! Current Wind Speed is : {{windspeed}} mph! Be VERY careful outdoors!
+            {% elif ( windspeed > 40 ) and ( windspeed <= 60 ) and (states.input_boolean.super_heavy_wind_alert.state == 'off') %}
+               Warning! Wind speed is {{windspeed}} MPH. FIND SHELTER IMMEDIATELY!
+            {% elif ( windspeed > 60 ) and (states.input_boolean.hurricane_wind_alert.state == 'off') %}
+               HURRICANE WINDS. FIND SHELTER, AND STAY INDOORS!
+            {% endif %}
+          value2: ""
+      - service: input_boolean.turn_on
+        data_template:
+          entity_id: >
+            {% set windspeed = states.sensor.dark_sky_wind_speed.state | round %}
+            {%- if ( windspeed > 7 and ( windspeed <= 15 ) ) -%}
+               input_boolean.nice_breeze_alert
+            {%- elif ( windspeed > 15 ) and ( windspeed <= 25 ) %}
+               input_boolean.moderate_wind_alert
+            {%- elif ( windspeed > 25 ) and ( windspeed <= 40 ) %}
+               input_boolean.heavy_wind_alert
+            {%- elif ( windspeed > 40 ) and ( windspeed <= 60 ) %}
+               input_boolean.super_heavy_wind_alert
+            {%- elif ( windspeed > 60 ) %}
+               input_boolean.hurricane_wind_alert
+            {%- endif %}
+  
+  # #Turn off those wind speed alert booleans automatically after 15 minutes.
+  - alias: Weather Input Boolean Updates
+    hide_entity: true
+    trigger:
+      - platform: state
+        entity_id:
+        - input_boolean.nice_breeze_alert
+        - input_boolean.moderate_wind_alert
+        - input_boolean.heavy_wind_alert
+        - input_boolean.super_heavy_wind_alert
+        - input_boolean.hurricane_wind_alert
+        - input_boolean.rain_alert
+        - input_boolean.snow_alert
+        - input_boolean.sleet_alert
+        state: 'on'
+        for:
+          minutes: 15
+    action:
+      - service: input_boolean.turn_off
+        data_template:
+          entity_id: "{{ trigger.entity_id }}"
+
+  - alias: Alert Super Heavy Winds
+    trigger:
+      platform: state
+      entity_id: sensor.dark_sky_wind_speed
+    action:
+      - service: script.notify_me
+        data_template:
+          value1: >
+            {% set windspeed = states.sensor.dark_sky_wind_speed.state | round %}
+            {% if ( windspeed > 40 ) and ( windspeed <= 60 ) and (states.input_boolean.super_heavy_wind_alert.state == 'off') %}
+               Warning! Wind speed is {{windspeed}} MPH. FIND SHELTER IMMEDIATELY!             
+            {% elif ( windspeed > 60 ) and ( windspeed <= 100 ) and (states.input_boolean.hurricane_wind_alert.state == 'off') %}
+               HURRICANE WINDS. FIND SHELTER, AND STAY INDOORS! DO NOT GO OUT AND RISK YOUR LIFE!
+            {% endif %}
+          value2: ""
+  
+  - alias: Rain Snow Wind Alerts
+    trigger:
+      platform: state
+      entity_id: sensor.dark_sky_precip
+    condition:
+      - condition: state
+        entity_id: group.all_devices
+        state: 'home'
+      - condition: state
+        entity_id: sun.sun
+        state: 'above_horizon'        
+      - condition: template
+        value_template: '{% if trigger.to_state.state == "unknown" or trigger.to_state.state == "" %} false {% else %} true {% endif %}'
+    action:
+      - service: script.notify_me
+        data_template:
+          value1: >
+            {% set curState = trigger.to_state.state | lower %}
+            {% if curState == "rain" %}
+              It is raining outside!
+            {% elif curState == "snow" %}
+              It is snowing outside!
+            {% elif curState == "sleet" %}
+              It is sleeting outside!
+            {% endif %}
+          value2: ""
+      - service: script.voice_notify
+        data_template:
+          value1: "It is raining outside!!!"
+      - service: input_boolean.turn_on
+        data_template:
+          entity_id: >
+            {% set curState = trigger.to_state.state | lower %}
+            {%- if curState == "rain" -%}
+               input_boolean.rain_alert
+            {%- elif curState == "snow" %}
+               input_boolean.snow_alert
+            {%- elif curState == "sleet" %}
+               input_boolean.sleet_alert
+            {%- endif %}

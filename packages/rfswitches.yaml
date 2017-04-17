@@ -1,0 +1,175 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/15/2017
+#   @package        :   RF Outlets
+#   @description    :   Etekcity RF Outlet Sensors and Automations
+###############################################################################
+homeassistant:
+  customize:
+    switch.switch_one:
+      friendly_name: RF Grow Light (Basement)      
+    switch.switch_two:
+      friendly_name: RF Office Room Accent Lights
+    switch.switch_three:
+      friendly_name: Unassigned
+    switch.switch_four:
+      friendly_name: RF Kids Bedroom
+    switch.switch_five:
+      friendly_name: RF Master Bedroom
+
+    sensor.rf_switch_one:
+      hidden: true
+    sensor.rf_switch_two:
+      hidden: true
+    sensor.rf_switch_three:
+      hidden: true
+    sensor.rf_switch_four:
+      hidden: true
+    sensor.rf_switch_five:
+      hidden: true
+
+###############################################################################
+#  RF Switches
+###############################################################################
+switch:    
+  - platform: rpi_rf
+    gpio: 17
+    switches:
+      switch_one:
+        code_on: !secret rf_switch_1_code_on
+        code_off: !secret rf_switch_1_code_off
+        pulselength: !secret rf_switch_1_pulselength
+      switch_two:
+        code_on: !secret rf_switch_2_code_on
+        code_off: !secret rf_switch_2_code_off
+        pulselength: !secret rf_switch_2_pulselength
+      switch_three:
+        code_on: !secret rf_switch_3_code_on
+        code_off: !secret rf_switch_3_code_off
+        pulselength: !secret rf_switch_3_pulselength
+      switch_four:
+        code_on: !secret rf_switch_4_code_on
+        code_off: !secret rf_switch_4_code_off
+        pulselength: !secret rf_switch_4_pulselength
+      switch_five:
+        code_on: !secret rf_switch_5_code_on
+        code_off: !secret rf_switch_5_code_off
+        pulselength: !secret rf_switch_5_pulselength
+
+###############################################################################
+#  Sensor Definitions
+###############################################################################
+sensor:
+  - platform: mqtt
+    state_topic: "/home/rfswitches/switch_one"
+    name: "RF Switch One"
+    value_template: "{{ value }}"
+    
+  - platform: mqtt
+    state_topic: "/home/rfswitches/switch_two"
+    name: "RF Switch Two"
+    value_template: "{{ value }}"
+    
+  - platform: mqtt
+    state_topic: "/home/rfswitches/switch_three"
+    name: "RF Switch Three"
+    value_template: "{{ value }}"
+    
+  - platform: mqtt
+    state_topic: "/home/rfswitches/switch_four"
+    name: "RF Switch Four"
+    value_template: "{{ value }}"
+    
+  - platform: mqtt
+    state_topic: "/home/rfswitches/switch_five"
+    name: "RF Switch Five"
+    value_template: "{{ value }}"
+
+###############################################################################
+#  Automation - Saves Switch State to MQTT
+###############################################################################
+automation:
+  - alias: Save RF Switch State
+    hide_entity: true
+    trigger:
+      platform: state
+      entity_id: switch.switch_one, switch.switch_two, switch.switch_three, switch.switch_four, switch.switch_five
+    action:
+      service: mqtt.publish
+      data_template:
+        topic: "/home/rfswitches/{{ trigger.entity_id.split('.')[1] }}"
+        retain: true
+        qos: 1
+        payload: '{{ trigger.to_state.state }}'
+
+###############################################################################
+# Startup event - restores states of dropdowns, and RF Switches...etc
+###############################################################################
+  - alias: Restore RF Switch Status on Startup
+    hide_entity: true
+    trigger:
+      platform: homeassistant
+      event: start
+    action:
+      - delay:
+          minutes: 1      
+      - service_template: >
+          {%- if states.sensor.rf_switch_one.state | lower == "on" -%}
+              homeassistant.turn_on
+          {%- else -%}
+              homeassistant.turn_off
+          {%- endif -%}    
+        entity_id: switch.switch_one
+      - service_template: >
+          {%- if states.sensor.rf_switch_two.state | lower == "on" -%}
+              homeassistant.turn_on
+          {%- else  -%}
+              homeassistant.turn_off
+          {%- endif -%}    
+        entity_id: switch.switch_two
+      - service_template: >
+          {%- if states.sensor.rf_switch_three.state | lower == "on" -%}
+              homeassistant.turn_on
+          {%- else  -%}
+              homeassistant.turn_off
+          {%- endif -%}    
+        entity_id: switch.switch_three
+      - service_template: >
+          {%- if states.sensor.rf_switch_four.state | lower == "on" -%}
+              homeassistant.turn_on
+          {%- else  -%}
+              homeassistant.turn_off
+          {%- endif -%}    
+        entity_id: switch.switch_four
+      - service_template: >
+          {%- if states.sensor.rf_switch_five.state | lower == "on" -%}
+              homeassistant.turn_on
+          {%- else  -%}
+              homeassistant.turn_off
+          {%- endif -%}    
+        entity_id: switch.switch_five
+
+###############################################################################
+# RF Switch for Basement/Grow Light Automations
+###############################################################################
+  - alias: Turn Growlight ON in the evening
+    trigger:
+      - platform: time
+        after: '18:00:00'
+    action:
+      - service: homeassistant.turn_on
+        data:
+          entity_id: switch.switch_one
+      - service: script.notify_me
+        data: {"value1":"Turned ON grow light in the basement.", "value2":""}
+  
+  - alias: Turn Growlight OFF in the morning
+    trigger:
+      - platform: time
+        after: '07:00:00'
+    action:
+      - service: homeassistant.turn_off
+        data:
+          entity_id: switch.switch_one
+      - service: script.notify_me
+        data: {"value1":"Turned OFF grow light in the basement.", "value2":""}        
