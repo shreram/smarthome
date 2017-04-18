@@ -23,49 +23,7 @@ homeassistant:
       friendly_name: Visibility
     sensor.pws_weather:
       friendly_name: Weather
-      
-    input_boolean.rain_alert:
-      hidden: false
-    input_boolean.snow_alert:
-      hidden: false
-    input_boolean.sleet_alert:
-      hidden: false
-    input_boolean.nice_breeze_alert:
-      hidden: false
-    input_boolean.moderate_wind_alert:
-      hidden: false
-    input_boolean.heavy_wind_alert:
-      hidden: false
-    input_boolean.super_heavy_wind_alert:
-      hidden: false
-    input_boolean.hurricane_wind_alert:
-      hidden: false
-      
-input_boolean:
-  nice_breeze_alert:
-    name: Nice Breeze Alert
-    initial: off
-  moderate_wind_alert:
-    name: Moderate Wind Alert
-    initial: off
-  heavy_wind_alert:
-    name: heavy Wind Alert
-    initial: off
-  super_heavy_wind_alert:
-    name: Super Heavy Wind Alert
-    initial: off
-  hurricane_wind_alert:
-    name: Hurricane Winds Alert
-    initial: off
-  rain_alert:
-    name: Rain Alert
-    initial: off
-  snow_alert:
-    name: Snow Alert
-    initial: off
-  sleet_alert:
-    name: Sleet Alert
-    initial: off
+
 sensor:
   - platform: wunderground
     api_key: !secret wunderground_key
@@ -148,6 +106,13 @@ automation:
         value_template: '{% if states.sensor.dark_sky_apparent_temperature.state | round > 70 %} true {% else %} false {% endif %}'
       - condition: template
         value_template: '{% if states.sensor.dark_sky_wind_speed.state | round < 8 %} false {% else %} true {% endif %}'
+      - condition: template
+        value_template: >
+          {%- if states.sensor.dark_sky_wind_speed.last_changed -%}
+            {{ (as_timestamp(now()) - as_timestamp(states.sensor.dark_sky_wind_speed.last_changed)) > 900 }}
+          {%- else -%}
+            true
+          {%- endif -%}
     action:
       - service: script.notify_me
         data_template:
@@ -165,48 +130,19 @@ automation:
                HURRICANE WINDS. FIND SHELTER, AND STAY INDOORS!
             {% endif %}
           value2: ""
-      - service: input_boolean.turn_on
-        data_template:
-          entity_id: >
-            {% set windspeed = states.sensor.dark_sky_wind_speed.state | round %}
-            {%- if ( windspeed > 7 and ( windspeed <= 15 ) ) -%}
-               input_boolean.nice_breeze_alert
-            {%- elif ( windspeed > 15 ) and ( windspeed <= 25 ) %}
-               input_boolean.moderate_wind_alert
-            {%- elif ( windspeed > 25 ) and ( windspeed <= 40 ) %}
-               input_boolean.heavy_wind_alert
-            {%- elif ( windspeed > 40 ) and ( windspeed <= 60 ) %}
-               input_boolean.super_heavy_wind_alert
-            {%- elif ( windspeed > 60 ) %}
-               input_boolean.hurricane_wind_alert
-            {%- endif %}
-  
-  # #Turn off those wind speed alert booleans automatically after 15 minutes.
-  - alias: Weather Input Boolean Updates
-    hide_entity: true
-    trigger:
-      - platform: state
-        entity_id:
-        - input_boolean.nice_breeze_alert
-        - input_boolean.moderate_wind_alert
-        - input_boolean.heavy_wind_alert
-        - input_boolean.super_heavy_wind_alert
-        - input_boolean.hurricane_wind_alert
-        - input_boolean.rain_alert
-        - input_boolean.snow_alert
-        - input_boolean.sleet_alert
-        state: 'on'
-        for:
-          minutes: 15
-    action:
-      - service: input_boolean.turn_off
-        data_template:
-          entity_id: "{{ trigger.entity_id }}"
 
   - alias: Alert Super Heavy Winds
     trigger:
       platform: state
       entity_id: sensor.dark_sky_wind_speed
+    condition:
+      - condition: template
+        value_template: >
+          {%- if states.sensor.dark_sky_wind_speed.last_changed -%}
+            {{ (as_timestamp(now()) - as_timestamp(states.sensor.dark_sky_wind_speed.last_changed)) > 120 }}
+          {%- else -%}
+            true
+          {%- endif -%}
     action:
       - service: script.notify_me
         data_template:
@@ -218,7 +154,7 @@ automation:
                HURRICANE WINDS. FIND SHELTER, AND STAY INDOORS! DO NOT GO OUT AND RISK YOUR LIFE!
             {% endif %}
           value2: ""
-  
+
   - alias: Rain Snow Wind Alerts
     trigger:
       platform: state
@@ -232,30 +168,20 @@ automation:
         state: 'above_horizon'        
       - condition: template
         value_template: '{% if trigger.to_state.state == "unknown" or trigger.to_state.state == "" %} false {% else %} true {% endif %}'
+      - condition: template
+        value_template: >
+          {%- if states.sensor.dark_sky_precip.last_changed -%}
+            {{ (as_timestamp(now()) - as_timestamp(states.sensor.dark_sky_precip.last_changed)) > 900 }}
+          {%- else -%}
+            true
+          {%- endif -%}
     action:
       - service: script.notify_me
         data_template:
           value1: >
-            {% set curState = trigger.to_state.state | lower %}
-            {% if curState == "rain" %}
-              It is raining outside!
-            {% elif curState == "snow" %}
-              It is snowing outside!
-            {% elif curState == "sleet" %}
-              It is sleeting outside!
-            {% endif %}
+            It is {{ trigger.to_state.state | lower -}}ing outside!
           value2: ""
       - service: script.voice_notify
         data_template:
-          value1: "It is raining outside!!!"
-      - service: input_boolean.turn_on
-        data_template:
-          entity_id: >
-            {% set curState = trigger.to_state.state | lower %}
-            {%- if curState == "rain" -%}
-               input_boolean.rain_alert
-            {%- elif curState == "snow" %}
-               input_boolean.snow_alert
-            {%- elif curState == "sleet" %}
-               input_boolean.sleet_alert
-            {%- endif %}
+          value1: >
+            It is {{ trigger.to_state.state | lower -}}ing outside!
