@@ -16,6 +16,9 @@ homeassistant:
       friendly_name: Trach Pickup Day
       icon: mdi:calendar-today
       hidden: true
+    sensor.number_of_days_to_trash_pickup:
+      friendly_name: Number of Days to Trash Pickup
+      icon: mdi:delete-variant
     sensor.recycle_pickup_day:
       friendly_name: Recycle Pickup Day
       icon: mdi:calendar-today
@@ -91,10 +94,10 @@ sensor:
     sensors:
       current_week:
         value_template: >-
-          {%- if (as_timestamp(now()) | timestamp_custom('%W', true) | int ) % 2 == 0 -%}
-            Even Week (Week# {{ as_timestamp(now()) | timestamp_custom('%W', true) }})
+          {%- if (as_timestamp(now()) | timestamp_custom('%U', true) | int ) % 2 == 0 -%}
+            Even Week (Week# {{ as_timestamp(now()) | timestamp_custom('%U', true) }})
           {%- else -%}
-            Odd Week (Week# {{ as_timestamp(now()) | timestamp_custom('%W', true) }})
+            Odd Week (Week# {{ as_timestamp(now()) | timestamp_custom('%U', true) }})
           {%- endif -%}
 
 ###############################################################################
@@ -116,6 +119,36 @@ sensor:
             no
           {%- endif -%}
 
+  - platform: template
+    sensors:
+      number_of_days_to_trash_pickup:
+        value_template: >-
+          {%- macro DayOfWeek(day) -%}
+            {%- set day = day | lower -%}
+            {%- if day == "sunday" -%}0
+            {%- elif day == "monday" -%}1
+            {%- elif day == "tuesday" -%}2
+            {%- elif day == "wednesday" -%}3
+            {%- elif day == "thursday" -%}4
+            {%- elif day == "friday" -%}5
+            {%- elif day == "saturday" -%}6
+            {%- endif -%}
+          {%- endmacro -%}
+          {%- macro getDay(daysDiff) -%}
+           {%- if daysDiff  < 0 -%}
+             {{- daysDiff + 7 -}}
+           {%- else -%}
+             {{- daysDiff -}}
+           {%- endif -%}
+          {%- endmacro -%}
+          {%- macro numberOfDaysToGo(pickupDay) -%}
+            {% set daysDiff = (DayOfWeek(pickupDay) | int - as_timestamp(now())| timestamp_custom('%w', true) | int) %}
+            {{ getDay(daysDiff) }}
+          {%- endmacro -%}
+          {%- set today = as_timestamp(now())| timestamp_custom('%A', true) -%}
+          {%- set schedulePickupDay = states.input_select.recycle_pickup_day.state -%}
+          {{- numberOfDaysToGo(states.input_select.trash_pickup_day.state) -}}
+
 ###############################################################################
 # Recycle - Pickup schedule is every other week.
 # Set the day to a day before the actual day leaving time for reminders
@@ -135,10 +168,10 @@ sensor:
             {{ as_timestamp(timestamp)| timestamp_custom('%A', true) | lower }}
           {%- endmacro %}      
           {%- macro week_number_of_year() -%}
-            {{ as_timestamp(now()) | timestamp_custom('%W', true) | int }}
+            {{ as_timestamp(now()) | timestamp_custom('%U', true) | int }}
           {%- endmacro %}
           {%- macro is_it_this_week() -%}
-            {%- if as_timestamp(now()) | timestamp_custom('%W', true) | int % 2 == 0 -%}
+            {%- if as_timestamp(now()) | timestamp_custom('%U', true) | int % 2 == 0 -%}
               {%- if evenWeekPickup == true -%}
                 true
               {%- else -%}
@@ -165,6 +198,36 @@ sensor:
           {%- endmacro -%}
           {{- is_it_today() -}}
 
+  # - platform: template
+    # sensors:
+      # number_of_days_to_recycle_pickup:
+        # value_template: >-
+          # {%- macro DayOfWeek(day) -%}
+            # {%- set day = day | lower -%}
+            # {%- if day == "sunday" -%}0
+            # {%- elif day == "monday" -%}1
+            # {%- elif day == "tuesday" -%}2
+            # {%- elif day == "wednesday" -%}3
+            # {%- elif day == "thursday" -%}4
+            # {%- elif day == "friday" -%}5
+            # {%- elif day == "saturday" -%}6
+            # {%- endif -%}
+          # {%- endmacro -%}
+          # {%- macro getDay(daysDiff) -%}
+           # {%- if daysDiff  < 0 -%}
+             # {{- daysDiff + 7 -}}
+           # {%- else -%}
+             # {{- daysDiff -}}
+           # {%- endif -%}
+          # {%- endmacro -%}
+          # {%- macro numberOfDaysToGo(pickupDay) -%}
+            # {% set daysDiff = (DayOfWeek(pickupDay) | int - as_timestamp(now())| timestamp_custom('%w', true) | int) %}
+            # {{ getDay(daysDiff) }}
+          # {%- endmacro -%}
+          # {%- set today = as_timestamp(now())| timestamp_custom('%A', true) -%}
+          # {%- set schedulePickupDay = states.input_select.recycle_pickup_day.state -%}
+          # {{- numberOfDaysToGo(states.input_select.recycle_pickup_day.state) -}}
+          
 ###############################################################################
 #                               Automations
 ###############################################################################
