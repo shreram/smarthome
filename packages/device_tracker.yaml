@@ -4,24 +4,6 @@
 #   @package        :   Device Tracker
 #   @description    :   Device Tracker stuff
 ###############################################################################
-homeassistant:
-  customize:
-    device_tracker.suresh:
-      friendly_name: Suresh's iPhone App
-      hidden: false
-      
-    device_tracker.mallika:
-      friendly_name: Mallika's iPhone App
-      hidden: false
-      
-    device_tracker.srinika:
-      friendly_name: Srinika's iPhone App
-      hidden: false
-      
-    device_tracker.hasika:
-      friendly_name: Hasika's iPhone App
-      hidden: false
-      
 automation:
 ###############################################################################
 # Welcome Family Members
