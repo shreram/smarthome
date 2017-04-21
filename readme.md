@@ -31,11 +31,21 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 * Home Security System
 
-* Aeotec ZWave Z-Stick
+* Aeotec ZWave Z-Stick Gen 5 (ZW090)
 
-* Aeotec ZWave Multi Sensors
+* Aeotec ZWave Multi Sensors (5 in 1) - Gen 5
+
+* Aeotec ZWave Multi Sensors (6 in 1) - Gen 5
 
 * Ecobee Garage Door Tilt Sensors
+
+* Ecobee Door & Window Sensors
+
+* Leeo Smoke and CO Remote Alarm Monitor
+
+* Lutron Motion Sensors (Single Pole and 3-Way Switches) 
+
+* Amazon Dash Buttons
 
 * Bunch of Raspberry Pi's
 
@@ -43,7 +53,7 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 * Cheap Bluetooth speakers from Amazon
 
-* Radio Frequency Transmitters and Receivers
+* Radio Frequency Transmitters and Receivers ( RioRand 433 MHz Superheterodyne RF
 
 * Sensor kit from Raspberry Pi for experimentation - 
 
