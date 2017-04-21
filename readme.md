@@ -27,7 +27,7 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 * Sharp Aquos Smart TV
 
-* Onkyo Receiver
+* Onkyo Receiver (TX-NR 807)
 
 * Home Security System
 
