@@ -24,7 +24,7 @@ Just add components in the components list below for additional entities.
   {{ "Last Changed".ljust(50) }}: {{ item.last_changed}}
 {%- for attrib in item.attributes|sort() %}
 {%- if attrib is defined %} 
-  {{attrib.ljust(50)|replace("_", " ") |title}}: {{ item.attributes[attrib] }} 
+  {{attrib.ljust(50)}}: {{ item.attributes[attrib] }} 
 {%- endif %}
 {%- endfor %}
 {%- endfor %}
