@@ -1,0 +1,116 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/20/2017
+#   @package        :   Door Sensors
+#   @description    :   Door Sensor Stuff
+###############################################################################
+homeassistant:
+  customize:
+    zwave.ecolink_door_sensor_7:
+      friendly_name: Front Door Sensor
+    binary_sensor.ecolink_door_sensor_sensor_7_0:
+      friendly_name: Front Door
+
+    zwave.ecolink_door_sensor_6:
+      friendly_name: Back Door Sensor
+    binary_sensor.ecolink_door_sensor_sensor_6_0:
+      friendly_name: Back Door
+
+    sensor.ecolink_door_sensor_access_control_6_9:
+      hidden: True
+    sensor.ecolink_door_sensor_access_control_7_9:
+      hidden: True
+    sensor.ecolink_door_sensor_alarm_level_6_1:
+      hidden: True
+    sensor.ecolink_door_sensor_alarm_level_7_1:
+      hidden: True
+    sensor.ecolink_door_sensor_alarm_type_6_0:
+      hidden: True
+    sensor.ecolink_door_sensor_alarm_type_7_0:
+      hidden: True
+    sensor.ecolink_door_sensor_burglar_6_10:
+      hidden: True
+    sensor.ecolink_door_sensor_burglar_7_10:
+      hidden: True
+    sensor.ecolink_door_sensor_power_management_6_11:
+      hidden: True
+    sensor.ecolink_door_sensor_power_management_7_11:
+      hidden: True
+    sensor.ecolink_door_sensor_sourcenodeid_6_2:
+      hidden: True
+    sensor.ecolink_door_sensor_sourcenodeid_7_2:
+      hidden: True
+
+sensor:
+  - platform: template
+    sensors:
+      front_door_sensor_battery:
+        value_template: >-
+          {{ states.zwave.ecolink_door_sensor_7.attributes["battery_level"] }}
+        friendly_name: Front Door Sensor Battery
+        unit_of_measurement: "%"
+        icon_template: >-
+          {% if states.zwave.ecolink_door_sensor_7.attributes["battery_level"] %}
+          {% set battery_level = states.zwave.ecolink_door_sensor_7.attributes["battery_level"]|int('unknown') %}
+          {% if battery_level == 'unknown' %}
+            mdi:battery-unknown
+          {% else %}
+            {% set battery_round = (battery_level|int / 10)|int * 10 %}
+            {% if battery_round >= 100 %}
+              mdi:battery
+            {% elif battery_round > 0 %}
+              mdi:battery-{{ battery_round }}
+            {% else %}
+              mdi:battery-alert
+            {% endif %}
+          {% endif %}
+          {% else %}
+            mdi:battery-unknown
+          {% endif %}
+
+  - platform: template
+    sensors:
+      back_door_sensor_battery:
+        value_template: >-
+          {{ states.zwave.ecolink_door_sensor_6.attributes["battery_level"] }}
+        friendly_name: Back Door Sensor Battery
+        unit_of_measurement: "%"
+        icon_template: >-
+          {% if states.zwave.ecolink_door_sensor_6.attributes["battery_level"] %}
+          {% set battery_level = states.zwave.ecolink_door_sensor_6.attributes["battery_level"]|int('unknown') %}
+          {% if battery_level == 'unknown' %}
+            mdi:battery-unknown
+          {% else %}
+            {% set battery_round = (battery_level|int / 10)|int * 10 %}
+            {% if battery_round >= 100 %}
+              mdi:battery
+            {% elif battery_round > 0 %}
+              mdi:battery-{{ battery_round }}
+            {% else %}
+              mdi:battery-alert
+            {% endif %}
+          {% endif %}
+          {% else %}
+            mdi:battery-unknown
+          {% endif %}
+
+automation:
+  - alias: Notify Entry Door Status
+    trigger:
+      platform: state
+      entity_id: 
+      - binary_sensor.ecolink_door_sensor_sensor_7_0
+      - binary_sensor.ecolink_door_sensor_sensor_6_0
+    condition:
+      - condition: template
+        value_template: "{% if trigger.from_state %} True {% else %} False {% endif %}"
+    action:
+      - service: script.voice_notify
+        data_template:
+          value1: >
+            {% if trigger.to_state.state | lower == "on" %}
+              Your {{ trigger.to_state.attributes.friendly_name }} is OPEN!
+            {% elif trigger.to_state.state | lower == "off" %}
+              Your {{ trigger.to_state.attributes.friendly_name }} is CLOSED!
+            {% endif %}
+          greeting: 'no'
