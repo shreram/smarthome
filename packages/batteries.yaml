@@ -6,14 +6,6 @@
 ###############################################################################
 homeassistant:
   customize:
-    sensor.hasikas_iphone_battery:
-      hidden: True
-    sensor.mallikas_iphone_battery:
-      hidden: True
-    sensor.srinikas_iphone_battery:
-      hidden: True
-    sensor.sureshs_iphone_battery:
-      hidden: True
 
     sensor.suresh_iphone_battery:
       friendly_name: Suresh's iPhone Battery
@@ -22,105 +14,25 @@ homeassistant:
     sensor.srinika_iphone_battery:
       friendly_name: Srinika's iPhone Battery
     sensor.hasika_iphone_battery:
-      friendly_name: Hasika's iPhone Battery
+      friendly_name: Hasika's iPhone Battery  
 
 # Multi Sensor Batteries
     sensor.upstairs_multisensor_battery:
       friendly_name: Upstairs Multisensor Battery
     sensor.downstairs_multisensor_battery:
       friendly_name: Downstairs Multisensor Battery
+    sensor.front_door_sensor_battery:
+      friendly_name: Front Door Sensor Battery
+    sensor.back_door_sensor_battery:
+      friendly_name: Back Door Sensor Battery
     sensor.single_car_garage_door_sensor_battery:
       friendly_name: Single Car Garage Door Sensor Battery
     sensor.two_car_garage_door_sensor_battery:
       friendly_name: Two Car Garage Door Sensor Battery
     automation.alert_low_battery_level_of_multisensors:
       friendly_name: Alert Low Battery of Multisensors
-      icon: mdi:battery
 
 sensor:
-  - platform: template
-    sensors:
-      suresh_iphone_battery:
-        unit_of_measurement: '%'
-        entity_id: device_tracker.suresh_suresh
-        value_template: "{{ (states.device_tracker.suresh_suresh.attributes|default).battery|default|int('unknown') }}"
-        icon_template: >-
-          {% set battery_level = states('sensor.sureshs_iphone_battery')|int('unknown') %}
-          {% set battery_round = (battery_level|int / 10)|int * 10 %}
-          {% if battery_level == 'unknown' %}
-            mdi:battery-unknown
-          {% else %}
-            {% if battery_round >= 100 %}
-              mdi:battery
-            {% elif battery_round > 0 %}
-              mdi:battery-{{ battery_round }}
-            {% else %}
-              mdi:battery-alert
-            {% endif %}
-          {% endif %}
-  
-  - platform: template
-    sensors:
-      mallika_iphone_battery:
-        unit_of_measurement: '%'
-        entity_id: device_tracker.mallika_mallika
-        value_template: "{{ (states.device_tracker.mallika_mallika.attributes|default).battery|default|int('unknown') }}"
-        icon_template: >-
-          {% set battery_level = states('sensor.mallikas_iphone_battery')|int('unknown') %}
-          {% set battery_round = (battery_level|int / 10)|int * 10 %}
-          {% if battery_level == 'unknown' %}
-            mdi:battery-unknown
-          {% else %}
-            {% if battery_round >= 100 %}
-              mdi:battery
-            {% elif battery_round > 0 %}
-              mdi:battery-{{ battery_round }}
-            {% else %}
-              mdi:battery-alert
-            {% endif %}
-          {% endif %}
-  
-  - platform: template
-    sensors:
-      srinika_iphone_battery:
-        unit_of_measurement: '%'
-        entity_id: device_tracker.srinika_srinika
-        value_template: "{{ (states.device_tracker.srinika_srinika.attributes|default).battery|default|int('unknown') }}"
-        icon_template: >-
-          {% set battery_level = states('sensor.srinikas_iphone_battery')|int('unknown') %}
-          {% set battery_round = (battery_level|int / 10)|int * 10 %}
-          {% if battery_level == 'unknown' %}
-            mdi:battery-unknown
-          {% else %}
-            {% if battery_round >= 100 %}
-              mdi:battery
-            {% elif battery_round > 0 %}
-              mdi:battery-{{ battery_round }}
-            {% else %}
-              mdi:battery-alert
-            {% endif %}
-          {% endif %}
-  
-  - platform: template
-    sensors:
-      hasika_iphone_battery:
-        unit_of_measurement: '%'
-        entity_id: device_tracker.hasika_hasika
-        value_template: "{{ (states.device_tracker.hasika_hasika.attributes|default).battery|default|int('unknown') }}"
-        icon_template: >-
-          {% set battery_level = states('sensor.hasikas_iphone_battery')|int('unknown') %}
-          {% set battery_round = (battery_level|int / 10)|int * 10 %}
-          {% if battery_level == 'unknown' %}
-            mdi:battery-unknown
-          {% else %}
-            {% if battery_round >= 100 %}
-              mdi:battery
-            {% elif battery_round > 0 %}
-              mdi:battery-{{ battery_round }}
-            {% else %}
-              mdi:battery-alert
-            {% endif %}
-          {% endif %}
 
   - platform: mqtt
     state_topic: "owntracks/mallika/mallika"
@@ -146,6 +58,90 @@ sensor:
     unit_of_measurement: "%"
     value_template: "{{ value_json.batt }}"
 
+  - platform: template
+    sensors:
+      suresh_iphone_battery:
+        unit_of_measurement: '%'
+        entity_id: device_tracker.suresh_suresh
+        value_template: "{{ states.device_tracker.suresh_suresh.attributes.battery | default | int('unknown') }}"
+        icon_template: >-
+          {% set battery_level = states('sensor.sureshs_iphone_battery')|int('unknown') %}
+          {% if battery_level == 'unknown' %}
+            mdi:battery-unknown
+          {% else %}
+            {% set battery_round = (battery_level|int / 10)|int * 10 %}
+            {% if battery_round >= 100 %}
+              mdi:battery
+            {% elif battery_round > 0 %}
+              mdi:battery-{{ battery_round }}
+            {% else %}
+              mdi:battery-alert
+            {% endif %}
+          {% endif %}
+  
+  - platform: template
+    sensors:
+      mallika_iphone_battery:
+        unit_of_measurement: '%'
+        entity_id: device_tracker.mallika_mallika
+        value_template: "{{ states.device_tracker.mallika_mallika.attributes.battery | default | int('unknown') }}"
+        icon_template: >-
+          {% set battery_level = states('sensor.mallikas_iphone_battery')|int('unknown') %}
+          {% if battery_level == 'unknown' %}
+            mdi:battery-unknown
+          {% else %}
+            {% set battery_round = (battery_level|int / 10)|int * 10 %}
+            {% if battery_round >= 100 %}
+              mdi:battery
+            {% elif battery_round > 0 %}
+              mdi:battery-{{ battery_round }}
+            {% else %}
+              mdi:battery-alert
+            {% endif %}
+          {% endif %}
+  
+  - platform: template
+    sensors:
+      srinika_iphone_battery:
+        unit_of_measurement: '%'
+        entity_id: device_tracker.srinika_srinika
+        value_template: "{{ states.device_tracker.srinika_srinika.attributes.battery | default | int('unknown') }}"
+        icon_template: >-
+          {% set battery_level = states('sensor.srinikas_iphone_battery')|int('unknown') %}
+          {% if battery_level == 'unknown' %}
+            mdi:battery-unknown
+          {% else %}
+            {% set battery_round = (battery_level|int / 10)|int * 10 %}
+            {% if battery_round >= 100 %}
+              mdi:battery
+            {% elif battery_round > 0 %}
+              mdi:battery-{{ battery_round }}
+            {% else %}
+              mdi:battery-alert
+            {% endif %}
+          {% endif %}
+  
+  - platform: template
+    sensors:
+      hasika_iphone_battery:
+        unit_of_measurement: '%'
+        entity_id: device_tracker.hasika_hasika
+        value_template: "{{ states.device_tracker.hasika_hasika.attributes.battery | default | int('unknown') }}"
+        icon_template: >-
+          {% set battery_level = states('sensor.hasikas_iphone_battery')|int('unknown') %}
+          {% if battery_level == 'unknown' %}
+            mdi:battery-unknown
+          {% else %}
+            {% set battery_round = (battery_level|int / 10)|int * 10 %}
+            {% if battery_round >= 100 %}
+              mdi:battery
+            {% elif battery_round > 0 %}
+              mdi:battery-{{ battery_round }}
+            {% else %}
+              mdi:battery-alert
+            {% endif %}
+          {% endif %}
+
 automation:
   - alias: Notify Low battery
     trigger:
@@ -163,6 +159,9 @@ automation:
           value1: >
             {{ trigger.to_state.attributes.friendly_name }}'s phone battery is less than: {{ trigger.to_state.attributes.battery }}%.
           value2: ""
+      - service: script.voice_notify
+        data_template:
+          value1: "{{ trigger.to_state.attributes.friendly_name }}'s phone battery is less than: {{ trigger.to_state.attributes.battery }}%."
 
   - alias: Alert Low Battery Level of Sensors
     trigger:
@@ -179,3 +178,6 @@ automation:
           value1: >
             Action Required: {{ trigger.to_state.attributes.friendly_name }}'s battery is: {{ trigger.to_state.state }}%.
           value2: ""
+      - service: script.voice_notify
+        data_template:
+          value1: "Action Required: {{ trigger.to_state.attributes.friendly_name }}'s battery is: {{ trigger.to_state.state }}%."
