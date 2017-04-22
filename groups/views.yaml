@@ -4,7 +4,7 @@
 
 # default_view:
   # view: yes
-
+ 
 family_view:
   view: yes
   name: Family
@@ -14,10 +14,13 @@ family_view:
     - group.family
     - group.home_security_system
     - group.batteries
-    - group.trash__recycle_schedule
+    - group.trash_schedule
+    - group.recycle_schedule
     - group.weather
     - group.dark_sky
     - group.travel_time
+    - group.doors
+    - group.ios
 
 lights_switches:
   view: yes
@@ -84,3 +87,4 @@ scripts_view:
   icon: mdi:script
   entities:
     - group.tts_announcements
+    - script.test_lifx
