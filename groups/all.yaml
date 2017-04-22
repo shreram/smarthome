@@ -1,3 +1,11 @@
+World Clock:
+  entities:
+    - sensor.india_time
+    - sensor.london_time
+    - sensor.kuwait_time
+    - sensor.new_york_time
+    - sensor.new_zealand
+
 Family:
   entities:
     - device_tracker.suresh_suresh
@@ -8,7 +16,30 @@ Family:
     - device_tracker.mallika
     - device_tracker.srinika
     - device_tracker.hasika
+    - device_tracker.ipad
 
+iOS:
+  entities:
+    - sensor.suresh_battery_state
+    - sensor.suresh_battery_level
+    - sensor.mallika__battery_state
+    - sensor.mallika__battery_level
+    - sensor.srinika_battery_state
+    - sensor.srinika_battery_level
+    - sensor.hasika_battery_state
+    - sensor.hasika_battery_level
+    - sensor.ipad_battery_state
+    - sensor.ipad_battery_level
+    - sensor.iphone_battery_level
+    - sensor.iphone_battery_state
+    - sensor.iphone__battery_state
+    - sensor.iphone__battery_level
+    
+Door Sensors:
+  entities:
+    - zwave.ecolink_unknown_type0004_id0002_7
+    - zwave.ecolink_unknown_type0004_id0002_6
+    
 Travel Time:
   entities:
     - sensor.home2work
@@ -22,6 +53,14 @@ Batteries:
     - sensor.mallika_iphone_battery
     - sensor.srinika_iphone_battery
     - sensor.hasika_iphone_battery
+
+    - sensor.suresh_iphone_battery_ot
+    - sensor.mallika_iphone_battery_ot
+    - sensor.srinika_iphone_battery_ot
+    - sensor.hasika_iphone_battery_ot
+    
+    - sensor.front_door_sensor_battery
+    - sensor.back_door_sensor_battery
     - sensor.upstairs_multisensor_battery
     - sensor.downstairs_multisensor_battery
     - sensor.single_car_garage_door_sensor_battery
@@ -114,20 +153,20 @@ TTS Announcements:
     - automation.morning_commute
       
 Basement Media Players:
-    - media_player.pi_audio_five_snapcast_client
+    - media_player.snapcast_client_b827eb505e2d
     - media_player.onkyo_receiver
 
 Downstairs Media Players:
-    - media_player.pi_ha_snapcast_client
-    - media_player.pi_audio_one_snapcast_client
-    - media_player.pi_audio_two_snapcast_client
+    - media_player.snapcast_client_b827eb8604f5
+    - media_player.snapcast_client_b827ebaa08f7
+    - media_player.snapcast_client_b827eb011e00
     - media_player.mpd
     - media_player.gstreamer
     - media_player.sharp_tv
 
 Upstairs Media Players:
-    - media_player.pi_audio_three_snapcast_client
-    - media_player.pi_audio_four_snapcast_client
+    - media_player.snapcast_client_b827eb4445b1
+    - media_player.snapcast_client_b827eba8e7ef
 
 Downstairs Motion Automations:
   entities:
@@ -160,13 +199,16 @@ Bedtime Automations:
     - automation.goodnight_dim_tv_light_2
     - automation.goodnight_dim_tv_light_3
 
-Trash & Recycle Schedule:
+Trash Schedule:
   - sensor.trash_day
   - sensor.trash_pickup_day
+  - sensor.number_of_days_to_trash_pickup
+  - input_select.trash_pickup_day
+
+Recycle Schedule:
   - sensor.recycle_day    
   - sensor.recycle_pickup_day
   - sensor.recycle_pickup_week
-  - input_select.trash_pickup_day
   - input_select.recycle_pickup_day
   - sensor.current_week
   - input_select.recycle_pickup_week
@@ -287,6 +329,13 @@ ZWave Devices:
     - zwave.aeotec_zw074_multisensor_gen5_2
     - zwave.ecolink_garage_door_tilt_sensor_5
     - zwave.ecolink_garage_door_tilt_sensor_4
+    - zwave.ecolink_door_sensor_6
+    - zwave.ecolink_door_sensor_7
+
+Doors:
+  entities:
+    - binary_sensor.ecolink_door_sensor_sensor_6_0
+    - binary_sensor.ecolink_door_sensor_sensor_7_0
 
 Downstairs MultiSensor:
   entities:
