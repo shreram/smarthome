@@ -26,3 +26,43 @@ hasika_hasika:
   picture: /local/hasika.jpg
   track: yes
   hide_if_away: no
+
+mallika:
+  hide_if_away: false
+  mac:
+  name: Mallika iOS
+  picture: /local/mallika.jpg
+  track: true
+  vendor:
+
+hasika:
+  hide_if_away: false
+  mac:
+  name: Hasika iOS
+  picture: /local/hasika.jpg
+  track: true
+  vendor:
+
+srinika:
+  hide_if_away: false
+  mac:
+  name: Srinika iOS
+  picture: /local/srinika.jpg
+  track: true
+  vendor:
+
+suresh:
+  hide_if_away: false
+  mac:
+  name: Suresh iOS
+  picture: /local/suresh.jpg
+  track: true
+  vendor:
+
+ipad:
+  hide_if_away: false
+  mac:
+  name: Family iPad
+  picture:
+  track: true
+  vendor:
