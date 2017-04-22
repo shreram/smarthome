@@ -1,2 +1,5 @@
 'media_player.snapcast_group_*':
   hidden: true
+
+'automation.*':
+  icon: mdi:star-circle
