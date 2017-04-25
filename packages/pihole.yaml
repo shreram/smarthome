@@ -1,0 +1,65 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/15/2017
+#   @package        :   Pi-Hole Package
+#   @description    :   Pi-Hole Ad Blocking Stuff.  
+#                       Remember to add PiHole URL in your secrets.yaml file.
+###############################################################################
+homeassistant:
+  customize:
+  
+    sensor.ads_percentage_today:
+      friendly_name: Percentage of Ad Traffic Blocked
+      unit_of_measurement: '%'
+      icon: mdi:ticket-percent
+     
+    sensor.domains_being_blocked:
+      friendly_name: Total Domains Blocking
+      icon: mdi:do-not-disturb
+
+    sensor.ads_blocked_today:
+      friendly_name: Ads Blocked Today
+      icon: mdi:do-not-disturb
+      
+    sensor.dns_queries_today:
+      friendly_name: DNS Queries Today
+      icon: mdi:note-text
+
+###############################################################################
+#  Sensors
+###############################################################################
+sensor:
+  - platform: rest
+    name: dns_queries_today
+    resource: !secret pi_hole_url
+    value_template: '{{ value_json.dns_queries_today }}'
+  
+  - platform: rest
+    name: domains_being_blocked
+    resource: !secret pi_hole_url
+    value_template: '{{ value_json.domains_being_blocked }}'
+  
+  - platform: rest
+    name: ads_blocked_today
+    resource: !secret pi_hole_url
+    value_template: '{{ value_json.ads_blocked_today }}'
+  
+  - platform: rest
+    name: ads_percentage_today
+    resource: !secret pi_hole_url
+    value_template: '{{ value_json.ads_percentage_today }}'
+
+###############################################################################
+#  Automations
+###############################################################################
+automation:
+  - alias: Thousand Ads Blocked
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.ads_blocked_today
+      above: 999
+    action:
+      - service: script.notify_me
+        data_template:
+          value1: "Pi-Hole blocked 1000 Ads today! Hurray!!!"
+          value2: ""
