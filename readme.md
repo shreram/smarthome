@@ -31,6 +31,10 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 * Home Security System
 
+* Ring Door Bell Pro
+
+* Nest Protect (Smoke and CO Monitor)
+
 * Aeotec ZWave Z-Stick Gen 5 (ZW090)
 
 * Aeotec ZWave Multi Sensors (5 in 1) - Gen 5
