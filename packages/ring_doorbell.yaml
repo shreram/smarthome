@@ -14,7 +14,6 @@ homeassistant:
       friendly_name: Last Ring Motion    
     sensor.ring_front_door_volume:
       friendly_name: Ring Front Door Volume
-
 group:
   Ring Door Bell:
     entities:
@@ -26,7 +25,7 @@ group:
       - sensor.ring_front_door_last_motion
       - sensor.ring_front_door_volume
       - automation.someone_rang_the_doorbell
-      - automation.someone_at_the_front_door
+      - automation.motion_detected_at_the_front_door
 
 sensor:
   - platform: ring
