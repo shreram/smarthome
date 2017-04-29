@@ -1,0 +1,80 @@
+homeassistant:
+  customize:
+    binary_sensor.ring_front_door_ding:
+      friendly_name: Door Sensor Ding
+    binary_sensor.ring_front_door_motion:
+      friendly_name: Front Door Motion
+    sensor.ring_front_door_battery:
+      friendly_name: Ring Battery
+    sensor.ring_front_door_last_activity:
+      friendly_name: Ring Last Activity
+    sensor.ring_front_door_last_ding:
+      friendly_name: Ring Last Ding
+    sensor.ring_front_door_last_motion:
+      friendly_name: Last Ring Motion    
+    sensor.ring_front_door_volume:
+      friendly_name: Ring Front Door Volume
+
+group:
+  Ring Door Bell:
+    entities:
+      - binary_sensor.ring_front_door_ding
+      - binary_sensor.ring_front_door_motion
+      - sensor.ring_front_door_battery
+      - sensor.ring_front_door_last_activity
+      - sensor.ring_front_door_last_ding
+      - sensor.ring_front_door_last_motion
+      - sensor.ring_front_door_volume
+      - automation.someone_rang_the_doorbell
+      - automation.someone_at_the_front_door
+
+sensor:
+  - platform: ring
+    monitored_conditions:
+      - battery
+      - last_activity
+      - last_ding
+      - last_motion
+      - volume
+
+binary_sensor:
+  - platform: ring
+    monitored_conditions:
+      - ding
+      - motion
+
+automation:
+
+  - alias: Someone Rang the Doorbell
+    hide_entity: false
+    trigger:
+      platform: state
+      entity_id: binary_sensor.ring_front_door_ding
+      to: 'on'
+    condition:
+      - condition: state
+        entity_id: group.all_devices
+        state: 'home'
+    action:
+      - service: script.notify_me
+        data_template:
+          value1: "Someone rang the door bell."
+          value2: ""
+      - service: script.voice_notify
+        data_template:
+          value1: "Someone is at the front door, and rang the door bell."
+
+  - alias: Motion Detected at the Front Door
+    hide_entity: false
+    trigger:
+      platform: state
+      entity_id: binary_sensor.ring_front_door_motion
+      to: 'on'
+    condition:
+      - condition: state
+        entity_id: group.all_devices
+        state: 'home'
+    action:
+      - service: script.voice_notify
+        data_template:
+          value1: "Motion detected at the front door"
