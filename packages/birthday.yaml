@@ -33,11 +33,12 @@ group:
       - automation.birthday_countdown_30_days
       - automation.random_birthday_wishes
 
+# the following is a sample birthday - April 1, 2017. You can hard code template like below, or add to secrets.yaml file
 sensor:
   - platform: template
     sensors:
       srinika_birthday:
-        value_template: !secret srinika_birthday_template
+        value_template: "{{ ((as_timestamp(strptime('2017-04-01', '%Y-%m-%d')) | timestamp_custom('%j', true) | int ) - (as_timestamp(now()) | timestamp_custom('%j', true) | int)) }}"
         unit_of_measurement: days to go
   - platform: template
     sensors:
