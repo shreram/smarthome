@@ -1,0 +1,123 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/28/2017
+#   @package        :   Birthday
+#   @description    :   Birthday reminders, greetings/wishes - all good stuff!
+#
+#   THREE IMPORTANT THINGS YOU NEED:
+#     1. Add the following to your secrets.yaml file, change name and date
+# name_birthday_template: "{{ ((as_timestamp(strptime('2017-04-01', '%Y-%m-%d')) | timestamp_custom('%j', true) | int ) - (as_timestamp(now()) | timestamp_custom('%j', true) | int)) }}"
+#     2. Copy birtday_wishes.yaml file from templates folder to your templates folder
+#     3. Make sure you copy this file to Packages folder and add the following to configuration.yaml file:
+# packages: !include_dir_named packages  
+###############################################################################
+homeassistant:
+  customize:
+    sensor.srinika_birthday:
+      friendly_name: Srinika's Birthday
+      icon: mdi:cake-variant
+    sensor.hasika_birthday:
+      friendly_name: Hasika's Birthday
+      icon: mdi:cake-variant
+    sensor.mallika_birthday:
+      friendly_name: Mallika's Birthday
+      icon: mdi:cake-variant
+
+group:
+  Birthdays:
+    entities:
+      - sensor.srinika_birthday
+      - sensor.hasika_birthday
+      - sensor.mallika_birthday
+      - automation.today_is_the_birthday
+      - automation.birthday_countdown_30_days
+      - automation.random_birthday_wishes
+
+sensor:
+  - platform: template
+    sensors:
+      srinika_birthday:
+        value_template: !secret srinika_birthday_template
+        unit_of_measurement: days to go
+  - platform: template
+    sensors:
+      hasika_birthday:
+        value_template: !secret hasika_birthday_template
+        unit_of_measurement: days to go
+
+  - platform: template
+    sensors:
+      mallika_birthday:
+        value_template: !secret mallika_birthday_template
+        unit_of_measurement: days to go
+
+automation:
+
+# Build the excitement
+  - alias: Birthday Countdown 30 Days
+    hide_entity: true
+    trigger:
+      platform: state
+      entity_id: 
+        - sensor.srinika_birthday
+        - sensor.hasika_birthday
+        - sensor.mallika_birthday
+    condition:
+      - condition: state
+        entity_id: group.all_devices
+        state: 'home'
+      - condition: template
+        value_template: "{% if trigger.to_state.state | int > 0 and trigger.to_state.state | int < 30 %}true{% else %}false{% endif %}"
+    action:
+      - service: script.notify_me
+        data_template:
+          value1: "{{ trigger.entity_id.split('.')[1].split('_')[0] | title }}'s Birthday is only {{ trigger.to_state.state }} days to go!"
+          value2: ""
+
+# Celebrate Birthday!!!
+  - alias: Today is the Birthday
+    hide_entity: true
+    trigger:
+      platform: state
+      entity_id: 
+        - sensor.srinika_birthday
+        - sensor.hasika_birthday
+        - sensor.mallika_birthday
+    condition:
+      - condition: state
+        entity_id: group.all_devices
+        state: 'home'
+      - condition: template
+        value_template: "{% if trigger.to_state.state | int == 0 %}true{% else %}false{% endif %}"
+    action:
+      - service: script.notify_me
+        data_template:
+          value1: "Hurray! Today is {{ trigger.entity_id.split('.')[1].split('_')[0] | title }}'s Birthday!"
+          value2: ""
+
+# Announce Happy Birthday message every hour starting 7 am until 9 PM
+  - alias: Random Birthday Wishes
+    hide_entity: true
+    trigger:
+      platform: time
+      hours: '/1'
+      minutes: 00
+      seconds: 00
+    condition:
+      - condition: state
+        entity_id: group.all_devices
+        state: 'home'
+      - condition: time
+        after: '07:00:00'
+        before: '21:00:00'
+      - condition: template
+        value_template: >-
+          {% if states.sensor.srinika_birthday.state | int == 0 or states.sensor.hasika_birthday.state | int == 0 or states.sensor.mallika_birthday.state | int == 0 %}
+            true
+          {% else %}
+            false
+          {% endif %}
+    action:
+      - service: script.voice_notify
+        data_template:
+          value1: !include ../templates/birthday_wishes.yaml
