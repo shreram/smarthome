@@ -26,11 +26,6 @@ history:
 http:
   api_password: !secret api_password
 
-device_tracker:
-  - platform: owntracks
-    max_gps_accuracy: 200
-    waypoints: True
-
 mqtt:
   broker: !secret pi_hole_mqtt_server
   port: !secret pi_hole_mqtt_port
