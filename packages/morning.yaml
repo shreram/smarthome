@@ -59,6 +59,7 @@ automation:
 # Turn Indoor lights ON only during weekdays
 ###############################################################################
   - alias: Indoor Lights ON Early Morning
+    initial_state: true
     trigger:
       platform: time
       after: '05:30:00'
@@ -79,6 +80,7 @@ automation:
 # Turn off outdoor lights 15 minutes after sunrise
 ###############################################################################
   - alias: Outdoor Lights OFF at Sunrise
+    initial_state: true
     trigger:
       platform: sun
       event: sunrise
@@ -98,6 +100,7 @@ automation:
 # Turn ON Master Bedroom lights ON in the morning
 ###############################################################################
   - alias: Master Bedroom Lights ON in the Morning Mallika
+    initial_state: true
     trigger:
       platform: time
       after: '05:20:00'
@@ -114,6 +117,7 @@ automation:
           color_temp: 366
   
   - alias: Master Bedroom Lights OFF in the Morning Mallika
+    initial_state: true
     trigger:
       platform: time
       after: '05:45:00'
@@ -130,6 +134,7 @@ automation:
 # Turn ON Master Bedroom lights ON in the morning
 ###############################################################################
   - alias: Master Bedroom Lights ON in the Morning Suresh
+    initial_state: true
     trigger:
       platform: time
       after: '06:55:00'
@@ -146,6 +151,7 @@ automation:
           color_temp: 366
   
   - alias: Master Bedroom Lights OFF in the Morning Suresh
+    initial_state: true
     trigger:
       platform: time
       after: '10:00:00'
@@ -162,6 +168,7 @@ automation:
 # Turn OF Kitchen Lights at 8:15 AM Clock
 ###############################################################################
   - alias: Kitchen Light OFF at Eight AM
+    initial_state: true
     trigger:
       platform: time
       after: '08:15:00'
@@ -186,9 +193,10 @@ automation:
 #       2. Announce in the speaker @ home
 ##############################################################
   - alias: Morning Commute
+    initial_state: true
     trigger:
       platform: time
-      minutes: '/30'
+      minutes: '/40'
       seconds: 00
     condition:
       - condition: state
@@ -199,10 +207,13 @@ automation:
         state: 'on'
       - condition: time
         after: '07:00:00'
-        before: '9:00:00'
+        before: '09:00:00'
     action:
       - service: script.notify_me
         data_template:
           value1: >
             Suresh, if you leave now, it will take you around {{ states('sensor.home2work') }} minutes to get to your office.
           value2: ""
+      - service: script.voice_notify
+        data_template:
+          value1: "Suresh, if you leave now, it will take you around {{ states('sensor.home2work') }} minutes to get to your office."
