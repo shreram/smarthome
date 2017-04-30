@@ -4,16 +4,36 @@
 #   @package        :   Device Tracker
 #   @description    :   Device Tracker stuff
 ###############################################################################
+homeassistant:
+  customize:
+
+    group.family:
+      order: 1
+
 device_tracker:
   - platform: owntracks
     max_gps_accuracy: 200
     waypoints: True
 
+group:
+  Family:
+    entities:
+      - device_tracker.suresh_suresh
+      - device_tracker.mallika_mallika
+      - device_tracker.srinika_srinika
+      - device_tracker.hasika_hasika
+      - device_tracker.suresh
+      - device_tracker.mallika
+      - device_tracker.srinika
+      - device_tracker.hasika
+      - device_tracker.ipad
+    
 automation:
 ###############################################################################
 # Welcome Family Members
 ###############################################################################
   - alias: Welcome Family
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
@@ -38,6 +58,7 @@ automation:
 # Alert when every one is away
 ###############################################################################
   - alias: Alert when everyone is AWAY
+    initial_state: true
     trigger:
       platform: state
       entity_id:
