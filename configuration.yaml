@@ -32,7 +32,7 @@ mqtt:
   username: !secret pi_hole_mqtt_username
   password: !secret pi_hole_mqtt_password
   keepalive: 60
-  client_id: PI_SMART
+  client_id: pi_ha
 
 binary_sensor:
   - platform: workday
