@@ -146,8 +146,9 @@ automation:
               homeassistant.turn_on
           {%- else  -%}
               homeassistant.turn_off
-          {%- endif -%}    
-        entity_id: switch.switch_five
+          {%- endif -%}
+        data:
+          entity_id: switch.switch_five
 
 ###############################################################################
 # RF Switch for Basement/Grow Light Automations
