@@ -4,6 +4,11 @@
 #   @package        :   Device Tracker
 #   @description    :   Device Tracker stuff
 ###############################################################################
+device_tracker:
+  - platform: owntracks
+    max_gps_accuracy: 200
+    waypoints: True
+
 automation:
 ###############################################################################
 # Welcome Family Members
@@ -23,22 +28,25 @@ automation:
       - service: script.notify_me
         data_template:
           value1: >
-            Welcome home, {{ trigger.entity_id.split('.')[1].split('_')[1] }}!
+            Welcome home, {{ trigger.entity_id.split('.')[1].split('_')[1] | title }}!
           value2: ""
       - service: script.voice_notify
         data_template:
-          value1: "Welcome home, {{ trigger.entity_id.split('.')[1].split('_')[1] }}!"
-          
+          value1: "Welcome home, my dear {{ trigger.entity_id.split('.')[1].split('_')[1] | title }}."
+
 ###############################################################################
 # Alert when every one is away
 ###############################################################################
   - alias: Alert when everyone is AWAY
     trigger:
       platform: state
-      entity_id: group.all_devices
+      entity_id:
+        - device_tracker.mallika_mallika
+        - device_tracker.suresh_suresh
+        - device_tracker.srinika_srinika
+        - device_tracker.hasika_hasika      
       from: 'home'
       to: 'not_home'
     action:
-      - service: script.notify_home_status
       - service: script.notify_me
         data: {"value1":"Warning - No one's at home at the moment!!!", "value2":""}
