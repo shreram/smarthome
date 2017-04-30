@@ -50,6 +50,7 @@ binary_sensor:
 automation:
 
   - alias: Motion Detected at the Front Door
+    initial_state: true
     hide_entity: false
     trigger:
       platform: state
@@ -65,4 +66,9 @@ automation:
           topic: /home/tv/backlight
           payload: 'FLICKER'
           retain: true
-      - service: script.lifx_breathe
+      - service: light.lifx_effect_breathe
+        data:
+          entity_id: light.dinette
+          color_name: red
+          cycles: 3
+          power_on: true
