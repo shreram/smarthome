@@ -6,6 +6,10 @@
 ###############################################################################
 homeassistant:
   customize:
+  
+    group.home_security_system:
+      order: 7
+
     alarm_control_panel.simplisafe:
       friendly_name: Home Security System
       icon: mdi:security
@@ -18,9 +22,16 @@ alarm_control_panel:
   name: Simplisafe
   username: !secret simplisafe_username
   password: !secret simplisafe_password
+
+group:
+  Home Security System:
+    entities:
+      - alarm_control_panel.simplisafe
+      - automation.notify_home_security_status_change
   
 automation:
   - alias: Notify Home Security Status Change
+    initial_state: true
     trigger:
       platform: state
       entity_id: alarm_control_panel.simplisafe
