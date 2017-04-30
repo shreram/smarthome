@@ -8,6 +8,9 @@
 homeassistant:
   customize:
   
+    group.ads_blocked:
+      order: 5
+
     sensor.ads_percentage_today:
       friendly_name: Percentage of Ad Traffic Blocked
       unit_of_measurement: '%'
@@ -25,6 +28,14 @@ homeassistant:
       friendly_name: DNS Queries Today
       icon: mdi:note-text
 
+group:
+  Ads Blocked:
+    entities:
+      - sensor.dns_queries_today
+      - sensor.domains_being_blocked
+      - sensor.ads_blocked_today
+      - sensor.ads_percentage_today
+    
 ###############################################################################
 #  Sensors
 ###############################################################################
@@ -53,7 +64,8 @@ sensor:
 #  Automations
 ###############################################################################
 automation:
-  - alias: Thousand Ads Blocked
+  - alias: Thousand Ads blocked
+    initial_state: true
     trigger:
       platform: numeric_state
       entity_id: sensor.ads_blocked_today
