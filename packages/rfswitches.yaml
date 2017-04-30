@@ -6,6 +6,10 @@
 ###############################################################################
 homeassistant:
   customize:
+  
+    group.etekcity_rf_switches:
+      order: 13
+
     switch.switch_one:
       friendly_name: RF Grow Light (Basement)      
     switch.switch_two:
@@ -28,6 +32,18 @@ homeassistant:
     sensor.rf_switch_five:
       hidden: true
 
+group:
+  Etekcity RF Switches:
+    control: hidden
+    entities:
+      - switch.switch_one
+      - switch.switch_two
+      - switch.switch_three
+      - switch.switch_four
+      - switch.switch_five
+      - automation.turn_growlight_off_in_the_morning
+      - automation.turn_growlight_on_in_the_evening          
+      
 ###############################################################################
 #  RF Switches
 ###############################################################################
@@ -90,6 +106,7 @@ sensor:
 ###############################################################################
 automation:
   - alias: Save RF Switch State
+    initial_state: true
     hide_entity: true
     trigger:
       platform: state
@@ -106,6 +123,7 @@ automation:
 # Startup event - restores states of dropdowns, and RF Switches...etc
 ###############################################################################
   - alias: Restore RF Switch Status on Startup
+    initial_state: true
     hide_entity: true
     trigger:
       platform: homeassistant
@@ -154,6 +172,7 @@ automation:
 # RF Switch for Basement/Grow Light Automations
 ###############################################################################
   - alias: Turn Growlight ON in the evening
+    initial_state: true
     trigger:
       - platform: time
         after: '18:00:00'
@@ -165,6 +184,7 @@ automation:
         data: {"value1":"Turned ON grow light in the basement.", "value2":""}
   
   - alias: Turn Growlight OFF in the morning
+    initial_state: true
     trigger:
       - platform: time
         after: '07:00:00'
