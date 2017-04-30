@@ -23,7 +23,30 @@ homeassistant:
     script.voice_notify:
       friendly_name: Notify via TTS
       icon: mdi:speaker-wireless
-      
+
+group:
+  Scripts:
+    entities:
+      - script.ifttt_notify
+      - script.pushbullet_notify
+      - script.notify_me
+      - script.voice_notify
+
+ifttt:
+  key: !secret ifttt_key
+  
+notify:
+  - name: notify
+    platform: pushbullet
+    api_key: !secret pushbulley_apikey
+
+tts:
+  - platform: amazon_polly
+    aws_access_key_id: !secret aws_access_key_id
+    aws_secret_access_key: !secret aws_secret_access_key
+    region_name: 'us-east-1'
+    text_type: ssml
+    
 script:
   ifttt_notify:
     sequence:
@@ -36,7 +59,7 @@ script:
         data_template:
           message: "{{ value1 }} {{ value2 }}"
           title: "{{ value1 }} {{ value2 }}"
-  
+
   notify_me:
     sequence:
       - service: script.ifttt_notify
@@ -44,11 +67,6 @@ script:
           event: "Smart_Home"
           value1: '{{ value1 }}'
           value2: '{{ value2 }}'
-          
-      # - service: notify.notify
-        # data_template:
-          # message: "{{ value1 }} {{ value2 }}"
-          # title: "{{ value1 }} {{ value2 }}"
           
 ###############################################################################
 # Voice Notify
@@ -87,12 +105,19 @@ script:
           entity_id: media_player.gstreamer
           message: >
             <speak>
-            {% if now().strftime("%H")|int < 12 %}
-              Good morning.
-            {% elif now().strftime("%H")|int < 18 %}
-              Good afternoon.
-            {% else %}
-              Good evening.<break time='1s'/>
+            {% if greeting | default('yes', true ) == "yes" %}
+              {% if now().strftime("%H")|int < 12 %}
+                Good morning.
+              {% elif now().strftime("%H")|int < 18 %}
+                Good afternoon.
+              {% else %}
+                Good evening.<break time='1s'/>
+              {% endif %}
+              <break time='0.5s'/>
             {% endif %}
-            <break time='0.5s'/>{{ value1 }}<break time='0.5s'/>Thank you.<break time='0.5s'/></speak>
+            {{ value1 }}
+            {% if greeting |default('yes', true ) == "yes" %}
+            <break time='0.5s'/>Thank you.
+            {% endif %}
+            </speak>
           cache: true
