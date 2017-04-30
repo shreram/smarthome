@@ -22,6 +22,7 @@ sensor:
 
 automation:
   - alias: Chuck Norris Fact of the Day
+    initial_state: true
     trigger:
       platform: time
       after: '20:15:00'
