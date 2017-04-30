@@ -14,3 +14,6 @@
 
 ## Recycle Pickup Card
 <img src="https://github.com/skalavala/smarthome/blob/master/packages/images/recycle.jpg" alt="Home Assistant Card" />
+
+## Birthday Package
+<img src="https://github.com/skalavala/smarthome/blob/master/packages/images/birthday.png" alt="Birthday" />
