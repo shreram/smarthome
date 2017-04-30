@@ -8,17 +8,17 @@ homeassistant:
   customize:
 
 # Media Players
-    media_player.pi_ha_snapcast_client:
+    media_player.snapcast_client_b827eb8604f5:
       friendly_name: Front Room Music
-    media_player.pi_audio_one_snapcast_client:
+    media_player.snapcast_client_b827ebaa08f7:
       friendly_name: Kitchen Music
-    media_player.pi_audio_two_snapcast_client:
+    media_player.snapcast_client_b827eb011e00:
       friendly_name: TV Room Music
-    media_player.pi_audio_three_snapcast_client:
+    media_player.snapcast_client_b827eb4445b1:
       friendly_name: Master Bedroom Music
-    media_player.pi_audio_four_snapcast_client:
+    media_player.snapcast_client_b827eba8e7ef:
       friendly_name: Guest Room 1 Music
-    media_player.pi_audio_five_snapcast_client:
+    media_player.snapcast_client_b827eb505e2d:
       friendly_name: Basement Music
 
     media_player.mpd:
