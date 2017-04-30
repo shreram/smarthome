@@ -9,7 +9,8 @@
 # name_birthday_template: "{{ ((as_timestamp(strptime('2017-04-01', '%Y-%m-%d')) | timestamp_custom('%j', true) | int ) - (as_timestamp(now()) | timestamp_custom('%j', true) | int)) }}"
 #     2. Copy birtday_wishes.yaml file from templates folder to your templates folder
 #     3. Make sure you copy this file to Packages folder and add the following to configuration.yaml file:
-# packages: !include_dir_named packages  
+# packages: !include_dir_named packages 
+#  Maintain the similar directory structure, so that the files are found/loaded appropriately.
 ###############################################################################
 homeassistant:
   customize:
@@ -33,12 +34,11 @@ group:
       - automation.birthday_countdown_30_days
       - automation.random_birthday_wishes
 
-# the following is a sample birthday - April 1, 2017. You can hard code template like below, or add to secrets.yaml file
 sensor:
   - platform: template
     sensors:
       srinika_birthday:
-        value_template: "{{ ((as_timestamp(strptime('2017-04-01', '%Y-%m-%d')) | timestamp_custom('%j', true) | int ) - (as_timestamp(now()) | timestamp_custom('%j', true) | int)) }}"
+        value_template: !secret srinika_birthday_template
         unit_of_measurement: days to go
   - platform: template
     sensors:
@@ -56,6 +56,7 @@ automation:
 
 # Build the excitement
   - alias: Birthday Countdown 30 Days
+    initial_state: true
     hide_entity: true
     trigger:
       platform: state
@@ -77,6 +78,7 @@ automation:
 
 # Celebrate Birthday!!!
   - alias: Today is the Birthday
+    initial_state: true
     hide_entity: true
     trigger:
       platform: state
@@ -98,6 +100,7 @@ automation:
 
 # Announce Happy Birthday message every hour starting 7 am until 9 PM
   - alias: Random Birthday Wishes
+    initial_state: true
     hide_entity: true
     trigger:
       platform: time
