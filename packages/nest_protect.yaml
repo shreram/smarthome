@@ -1,0 +1,18 @@
+homeassistant:
+  customize:
+    binary_sensor.hallway_nest_protect_online:
+    sensor.hallway_nest_protect_battery_health:
+    sensor.hallway_nest_protect_co_status:
+    sensor.hallway_nest_protect_smoke_status:
+    
+group:
+  Nest Protect Hallway:
+    entities:
+      - binary_sensor.hallway_nest_protect_online
+      - sensor.hallway_nest_protect_battery_health
+      - sensor.hallway_nest_protect_co_status
+      - sensor.hallway_nest_protect_smoke_status
+
+nest:
+  client_id: !secret nest_client_id
+  client_secret: !secret nest_secret
