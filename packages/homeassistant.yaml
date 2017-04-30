@@ -20,21 +20,6 @@ homeassistant:
     sensor.speedtest_download:
       friendly_name: Download Speed
 
-    sensor.dns_queries_today:
-      friendly_name: DNS Queries today 
-     
-# Pi-Hole Sensor
-    sensor.ads_percentage_today:
-      friendly_name: Percentage of Ad Traffic Blocked
-      unit_of_measurement: '%'
-     
-    sensor.domains_being_blocked:
-      friendly_name: Total Domains Blocking
-
-    sensor.ads_blocked_today:
-      friendly_name: Ads Blocked Today
-      icon: mdi:do-not-disturb
-
 # System Info Sensor
     sensor.cpu_speed:
       friendly_name: CPU Speed
@@ -72,7 +57,7 @@ homeassistant:
 
     automation.update_available_notification:
       friendly_name: Notify of new updates
-      icon: mdi:update    
+      icon: mdi:update
 
 sensor:
   - platform: rest
@@ -115,26 +100,6 @@ sensor:
       - type: since_last_boot
 
   - platform: rest
-    name: dns_queries_today
-    resource: http://192.168.200.50/admin/api.php  
-    value_template: '{{ value_json.dns_queries_today }}'
-  
-  - platform: rest
-    name: domains_being_blocked
-    resource: http://192.168.200.50/admin/api.php  
-    value_template: '{{ value_json.domains_being_blocked }}'
-  
-  - platform: rest
-    name: ads_blocked_today
-    resource: http://192.168.200.50/admin/api.php  
-    value_template: '{{ value_json.ads_blocked_today }}'
-  
-  - platform: rest
-    name: ads_percentage_today
-    resource: http://192.168.200.50/admin/api.php  
-    value_template: '{{ value_json.ads_percentage_today }}'
-  
-  - platform: rest
     resource: https://pypi.python.org/pypi/homeassistant/json
     name: HA Current Version
     value_template: '{{ value_json.info.version }}'
@@ -142,7 +107,8 @@ sensor:
   - platform: command_line
     name: HA Installed Version
     command: /srv/homeassistant/homeassistant_venv/bin/hass --version
-  
+    scan_interval: 86400
+
   - platform: template
     sensors:
       ha_last_restart:
@@ -157,7 +123,11 @@ automation:
       entity_id: sensor.external_ip
     condition:
       - condition: template
-        value_template: "{% if trigger.from_state and trigger.to_state %} True {% else %} False {% endif %}"
+        value_template: "{% if trigger.from_state and trigger.to_state %} true {% else %} false {% endif %}"
+      - condition: template
+        value_template: "{% if trigger.from_state.state == "unknown" %} false {% else %} true {% endif %}"
+      - condition: template
+        value_template: "{% if trigger.to_state.state == "unknown" %} false {% else %} true {% endif %}"
     action:
       - service: script.notify_me
         data_template:
