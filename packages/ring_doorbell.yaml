@@ -6,6 +6,7 @@ homeassistant:
       friendly_name: Front Door Motion
     sensor.ring_front_door_battery:
       friendly_name: Ring Battery
+      hidden: true
     sensor.ring_front_door_last_activity:
       friendly_name: Ring Last Activity
     sensor.ring_front_door_last_ding:
@@ -14,6 +15,7 @@ homeassistant:
       friendly_name: Last Ring Motion    
     sensor.ring_front_door_volume:
       friendly_name: Ring Front Door Volume
+
 group:
   Ring Door Bell:
     entities:
@@ -24,9 +26,12 @@ group:
       - sensor.ring_front_door_last_ding
       - sensor.ring_front_door_last_motion
       - sensor.ring_front_door_volume
-      - automation.someone_rang_the_doorbell
       - automation.motion_detected_at_the_front_door
 
+ring:
+  username: !secret ring_username
+  password: !secret ring_password
+      
 sensor:
   - platform: ring
     monitored_conditions:
@@ -44,25 +49,6 @@ binary_sensor:
 
 automation:
 
-  - alias: Someone Rang the Doorbell
-    hide_entity: false
-    trigger:
-      platform: state
-      entity_id: binary_sensor.ring_front_door_ding
-      to: 'on'
-    condition:
-      - condition: state
-        entity_id: group.all_devices
-        state: 'home'
-    action:
-      - service: script.notify_me
-        data_template:
-          value1: "Someone rang the door bell."
-          value2: ""
-      - service: script.voice_notify
-        data_template:
-          value1: "Someone is at the front door, and rang the door bell."
-
   - alias: Motion Detected at the Front Door
     hide_entity: false
     trigger:
@@ -74,6 +60,9 @@ automation:
         entity_id: group.all_devices
         state: 'home'
     action:
-      - service: script.voice_notify
-        data_template:
-          value1: "Motion detected at the front door"
+      - service: mqtt.publish
+        data:
+          topic: /home/tv/backlight
+          payload: 'FLICKER'
+          retain: true
+      - service: script.lifx_breathe
