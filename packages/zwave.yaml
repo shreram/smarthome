@@ -1,8 +1,8 @@
 ###############################################################################
 #   @author         :   Mahasri Kalavala
 #   @date           :   04/15/2017
-#   @package        :   ZWave
-#   @description    :   ZWave stick stuff
+#   @package        :   Z-Wave package
+#   @description    :   Z-Wave Still and it's configuration stuff
 ###############################################################################
 homeassistant:
   customize:
@@ -11,6 +11,10 @@ homeassistant:
     zwave.aeotec_zw090_zstick_gen5_1:
       hidden: False
       friendly_name: The Aeotec Z-Wave Stick
+
+zwave:
+  usb_path: /dev/ttyACM0
+  config_path: /srv/homeassistant/homeassistant_venv/lib/python3.4/site-packages/libopenzwave-0.3.2-py3.4-linux-armv7l.egg/config
 
 automation:
   - alias: Heal Z-Wave Network
