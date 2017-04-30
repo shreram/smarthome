@@ -6,7 +6,11 @@
 ###############################################################################
 homeassistant:
   customize:
-  
+    group.scripts:
+      order: 25
+    group.tts_announcements:
+      order: 52
+    
 # Script Stuff
     script.ifttt_notify:
       friendly_name: Notify Via IFTTT
@@ -31,6 +35,11 @@ group:
       - script.pushbullet_notify
       - script.notify_me
       - script.voice_notify
+      
+  TTS Announcements:
+    entities:
+      - automation.bedtime_report
+      - automation.morning_commute      
 
 ifttt:
   key: !secret ifttt_key
