@@ -6,6 +6,14 @@
 ###############################################################################
 homeassistant:
   customize:
+  
+    group.trash_schedule:
+      order: 10
+    group.recycle_schedule:
+      order: 11
+    group.trash_and_recycle_automations:
+      order: 12
+
     sensor.trash_day:
       friendly_name: Is it Trash Day today?
       icon: mdi:delete-variant
@@ -31,6 +39,27 @@ homeassistant:
       friendly_name: Trash & Recycle
       icon: mdi:recycle
 
+group:
+  Trash Schedule:
+    entities:
+      - sensor.trash_day
+      - sensor.trash_pickup_day
+      - sensor.number_of_days_to_trash_pickup
+      - input_select.trash_pickup_day
+  
+  Recycle Schedule:
+    entities:
+      - sensor.recycle_day    
+      - sensor.recycle_pickup_day
+      - sensor.recycle_pickup_week
+      - input_select.recycle_pickup_day
+      - sensor.current_week
+      - input_select.recycle_pickup_week
+  
+  Trash and Recycle Automations:
+    entities:
+      - automation.trash_and_recycle_pickup_reminder
+    
 ###############################################################################
 #  UI Elements
 ###############################################################################
@@ -173,6 +202,7 @@ automation:
 #  Save & Restore Functionality
 ###############################################################################
   - alias: Trash Pickup Day Changed
+    initial_state: true
     hide_entity: true
     trigger:
       platform: state
@@ -185,6 +215,7 @@ automation:
         payload: '{{ states.input_select.trash_pickup_day.state }}'
   
   - alias: Recycle Pickup Day Changed
+    initial_state: true
     hide_entity: true
     trigger:
       platform: state
@@ -197,6 +228,7 @@ automation:
         payload: '{{ states.input_select.recycle_pickup_day.state }}'
   
   - alias: Recycle Pickup Week Changed
+    initial_state: true
     hide_entity: true
     trigger:
       platform: state
@@ -209,6 +241,7 @@ automation:
         payload: '{{ states.input_select.recycle_pickup_week.state }}'
 
   - alias: Restore Trash Recycle Settings on Startup
+    initial_state: true
     hide_entity: true
     trigger:
       platform: homeassistant
@@ -234,6 +267,7 @@ automation:
 #  Conditions: Only notifies when someone is at home 
 ###############################################################################
   - alias: Trash and Recycle Pickup Reminder
+    initial_state: true
     trigger:
       - platform: time
         after: '16:00:00'
