@@ -7,14 +7,17 @@
 homeassistant:
   customize:
 
-    sensor.suresh_iphone_battery:
+    group.batteries:
+      order: 2
+
+    sensor.suresh_iphone_battery_ot:
       friendly_name: Suresh's iPhone Battery
-    sensor.mallika_iphone_battery:
+    sensor.mallika_iphone_battery_ot:
       friendly_name: Mallika's iPhone Battery
-    sensor.srinika_iphone_battery:
+    sensor.srinika_iphone_battery_ot:
       friendly_name: Srinika's iPhone Battery
-    sensor.hasika_iphone_battery:
-      friendly_name: Hasika's iPhone Battery  
+    sensor.hasika_iphone_battery_ot:
+      friendly_name: Hasika's iPhone Battery
 
 # Multi Sensor Batteries
     sensor.upstairs_multisensor_battery:
@@ -32,40 +35,64 @@ homeassistant:
     automation.alert_low_battery_level_of_multisensors:
       friendly_name: Alert Low Battery of Multisensors
 
+group:
+  Batteries:
+    control: hidden
+    entities:
+      - sensor.suresh_iphone_battery
+      - sensor.mallika_iphone_battery
+      - sensor.srinika_iphone_battery
+      - sensor.hasika_iphone_battery
+  
+      - sensor.suresh_iphone_battery_ot
+      - sensor.mallika_iphone_battery_ot
+      - sensor.srinika_iphone_battery_ot
+      - sensor.hasika_iphone_battery_ot
+      
+      - sensor.front_door_sensor_battery
+      - sensor.back_door_sensor_battery
+      - sensor.frontroom_multisensor_battery
+      - sensor.upstairs_multisensor_battery
+      - sensor.downstairs_multisensor_battery
+      - sensor.single_car_garage_door_sensor_battery
+      - sensor.two_car_garage_door_sensor_battery
+      - automation.alert_low_battery_level_of_sensors
+      - automation.notify_low_battery
+
 sensor:
 
   - platform: mqtt
     state_topic: "owntracks/mallika/mallika"
-    name: "Mallika's iPhone Battery"
+    name: "Mallika's iPhone Battery (OT)"
     unit_of_measurement: "%"
     value_template: "{{ value_json.batt }}"
     
   - platform: mqtt
     state_topic: "owntracks/suresh/suresh"
-    name: "Suresh's iPhone Battery"
+    name: "Suresh's iPhone Battery (OT)"
     unit_of_measurement: "%"
     value_template: "{{ value_json.batt }}"
   
   - platform: mqtt
     state_topic: "owntracks/srinika/Srinika"
-    name: "Srinika's iPhone Battery"
+    name: "Srinika's iPhone Battery (OT)"
     unit_of_measurement: "%"
     value_template: "{{ value_json.batt }}"
       
   - platform: mqtt
     state_topic: "owntracks/hasika/Hasika"
-    name: "Hasika's iPhone Battery"
+    name: "Hasika's iPhone Battery (OT)"
     unit_of_measurement: "%"
     value_template: "{{ value_json.batt }}"
 
   - platform: template
     sensors:
-      suresh_iphone_battery:
+      suresh_iphone_battery_ot:
         unit_of_measurement: '%'
         entity_id: device_tracker.suresh_suresh
-        value_template: "{{ states.device_tracker.suresh_suresh.attributes.battery | default | int('unknown') }}"
+        value_template: "{{ states('sensor.sureshs_iphone_battery_ot')|int('unknown') }}"
         icon_template: >-
-          {% set battery_level = states('sensor.sureshs_iphone_battery')|int('unknown') %}
+          {% set battery_level = states('sensor.sureshs_iphone_battery_ot')|int('unknown') %}
           {% if battery_level == 'unknown' %}
             mdi:battery-unknown
           {% else %}
@@ -81,12 +108,12 @@ sensor:
   
   - platform: template
     sensors:
-      mallika_iphone_battery:
+      mallika_iphone_battery_ot:
         unit_of_measurement: '%'
         entity_id: device_tracker.mallika_mallika
-        value_template: "{{ states.device_tracker.mallika_mallika.attributes.battery | default | int('unknown') }}"
+        value_template: "{{ states('sensor.mallikas_iphone_battery_ot')|int('unknown') }}"
         icon_template: >-
-          {% set battery_level = states('sensor.mallikas_iphone_battery')|int('unknown') %}
+          {% set battery_level = states('sensor.mallikas_iphone_battery_ot')|int('unknown') %}
           {% if battery_level == 'unknown' %}
             mdi:battery-unknown
           {% else %}
@@ -102,12 +129,12 @@ sensor:
   
   - platform: template
     sensors:
-      srinika_iphone_battery:
+      srinika_iphone_battery_ot:
         unit_of_measurement: '%'
         entity_id: device_tracker.srinika_srinika
-        value_template: "{{ states.device_tracker.srinika_srinika.attributes.battery | default | int('unknown') }}"
+        value_template: "{{ states('sensor.srinikas_iphone_battery_ot')|int('unknown') }}"
         icon_template: >-
-          {% set battery_level = states('sensor.srinikas_iphone_battery')|int('unknown') %}
+          {% set battery_level = states('sensor.srinikas_iphone_battery_ot')|int('unknown') %}
           {% if battery_level == 'unknown' %}
             mdi:battery-unknown
           {% else %}
@@ -123,12 +150,12 @@ sensor:
   
   - platform: template
     sensors:
-      hasika_iphone_battery:
+      hasika_iphone_battery_ot:
         unit_of_measurement: '%'
         entity_id: device_tracker.hasika_hasika
-        value_template: "{{ states.device_tracker.hasika_hasika.attributes.battery | default | int('unknown') }}"
+        value_template: "{{ states('sensor.hasikas_iphone_battery_ot')|int('unknown') }}"
         icon_template: >-
-          {% set battery_level = states('sensor.hasikas_iphone_battery')|int('unknown') %}
+          {% set battery_level = states('sensor.hasikas_iphone_battery_ot')|int('unknown') %}
           {% if battery_level == 'unknown' %}
             mdi:battery-unknown
           {% else %}
@@ -143,7 +170,12 @@ sensor:
           {% endif %}
 
 automation:
+
+###############################################################################
+# Automation: Notify of iPhone Low Battery
+###############################################################################
   - alias: Notify Low battery
+    initial_state: true
     trigger:
       platform: numeric_state
       entity_id:
@@ -156,14 +188,17 @@ automation:
     action:
       - service: script.notify_me
         data_template:
-          value1: >
-            {{ trigger.to_state.attributes.friendly_name }}'s phone battery is less than: {{ trigger.to_state.attributes.battery }}%.
+          value1: "{{ trigger.to_state.attributes.friendly_name }}'s phone battery is less than: {{ trigger.to_state.attributes.battery }}%."
           value2: ""
       - service: script.voice_notify
         data_template:
           value1: "{{ trigger.to_state.attributes.friendly_name }}'s phone battery is less than: {{ trigger.to_state.attributes.battery }}%."
 
+###############################################################################
+# Automation: Notify of Sensor's Low Battery
+###############################################################################
   - alias: Alert Low Battery Level of Sensors
+    initial_state: true
     trigger:
       platform: numeric_state
       entity_id:
@@ -171,13 +206,13 @@ automation:
       - sensor.downstairs_multisensor_battery
       - sensor.single_car_garage_door_sensor_battery
       - sensor.two_car_garage_door_sensor_battery
-      below: 20
+      - sensor.frontroom_multisensor_battery
+      below: 10
     action:
       - service: script.notify_me
         data_template:
-          value1: >
-            Action Required: {{ trigger.to_state.attributes.friendly_name }}'s battery is: {{ trigger.to_state.state }}%.
+          value1: "Attention! {{ trigger.to_state.attributes.friendly_name }} level is: {{ trigger.to_state.state }}%."
           value2: ""
       - service: script.voice_notify
         data_template:
-          value1: "Action Required: {{ trigger.to_state.attributes.friendly_name }}'s battery is: {{ trigger.to_state.state }}%."
+          value1: "Attention! {{ trigger.to_state.attributes.friendly_name }} level is: {{ trigger.to_state.state }}%."
