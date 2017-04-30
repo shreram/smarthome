@@ -6,6 +6,12 @@
 ###############################################################################
 homeassistant:
   customize:
+  
+    group.lights:
+      order: 8
+    group.light_automations:
+      order: 9
+
     switch.wemofrontporchlightswitch:
       friendly_name: Front Porch Lights
       icon: mdi:lightbulb
@@ -44,6 +50,34 @@ homeassistant:
     script.stop_colorloop:
       friendly_name: Stop Colorloop
       icon: mdi:palette
+
+group:
+  Lights:
+    entities:
+      - light.dinette
+      - switch.kids_bedroom
+      - switch.garage_lights
+      - switch.guest_bedroom_1
+      - switch.guest_bedroom_2
+      - light.hue_color_lamp_1
+      - light.hue_color_lamp_2
+      - light.hue_color_lamp_3
+      - light.family_room
+      - light.master_bedroom_1
+      - light.master_bedroom_2
+      - light.master_bedroom
+      - switch.wemofrontporchlightswitch
+      - switch.wemobackyardlightswitch
+      - switch.wemoswitch1
+  
+  Light Automations:
+    entities:
+      - automation.animate_master_bedroom_lights
+      - input_boolean.animate_kitchen_lights
+      - input_boolean.animate_downstairs_lights
+      - input_boolean.animate_upstairs_lights
+      - input_boolean.short_flash
+      - input_boolean.long_flash
 
 light:
   - platform: lifx
@@ -116,6 +150,7 @@ script:
 
 automation:
   - alias: Animate Master Bedroom Lights
+    initial_state: true
     hide_entity: True
     trigger:
       platform: time
@@ -135,6 +170,7 @@ automation:
           rgb_color: ['{{ "{0:d}".format(range(0, 255)|random) }}' , '{{ "{0:d}".format(range(0, 255)|random) }}', '{{ "{0:d}".format(range(0, 255)|random) }}']
   
   - alias: Restore Masterbedroom Lights
+    initial_state: true
     hide_entity: True
     trigger:
       platform: state
@@ -150,7 +186,8 @@ automation:
           color_temp: 366
   
   - alias: Animate Familyroom Lights
-    hide_entity: True
+    initial_state: true
+    hide_entity: true
     trigger:
       platform: time
       seconds: '/5'
@@ -169,7 +206,8 @@ automation:
           rgb_color: ['{{ "{0:d}".format(range(0, 255)|random) }}' , '{{ "{0:d}".format(range(0, 255)|random) }}', '{{ "{0:d}".format(range(0, 255)|random) }}']
           
   - alias: Restore Familyroom Lights
-    hide_entity: True
+    initial_state: true
+    hide_entity: true
     trigger:
       platform: state
       entity_id: input_boolean.animate_downstairs_lights
@@ -184,7 +222,8 @@ automation:
           color_temp: 162
         
   - alias: Animate Kitchen Lights ON
-    hide_entity: True
+    initial_state: true
+    hide_entity: true
     trigger:
       - platform: time
         seconds: '/3'
@@ -201,7 +240,8 @@ automation:
           transition: '{{ (range(1, 2)|random) }}'
   
   - alias: Animate Kitchen Lights OFF
-    hide_entity: True
+    initial_state: true
+    hide_entity: true
     trigger:
       - platform: state
         entity_id: input_boolean.animate_kitchen_lights
@@ -215,7 +255,8 @@ automation:
           color_temp: 155
   
   - alias: Long Flash all lights
-    hide_entity: True
+    initial_state: true
+    hide_entity: true
     trigger:
       - platform: state
         entity_id: input_boolean.long_flash
@@ -231,7 +272,8 @@ automation:
         entity_id: input_boolean.long_flash
   
   - alias: Short Flash all_lights
-    hide_entity: True
+    initial_state: true
+    hide_entity: true
     trigger:
       - platform: state
         entity_id: input_boolean.short_flash
