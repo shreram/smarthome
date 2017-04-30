@@ -13,6 +13,12 @@ homeassistant:
       friendly_name: Home Security System
       icon: mdi:security
 
+alarm_control_panel:
+  platform: simplisafe
+  name: Simplisafe
+  username: !secret simplisafe_username
+  password: !secret simplisafe_password
+  
 automation:
   - alias: Notify Home Security Status Change
     trigger:
