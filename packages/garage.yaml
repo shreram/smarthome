@@ -7,6 +7,9 @@
 homeassistant:
   customize:
 
+    group.garage_door_sensors:
+      order: 6
+
 # Tilt Sensors  
     zwave.ecolink_garage_door_tilt_sensor_4:
       hidden: False
@@ -42,7 +45,7 @@ homeassistant:
       hidden: False
       friendly_name: Single Car Garage Door
       device_class: opening
-      
+
 # Two Car Garage Door Sensor
     sensor.ecolink_garage_door_tilt_sensor_access_control_4_9:
       hidden: True
@@ -70,6 +73,13 @@ homeassistant:
       hidden: False
       friendly_name: Two Car Garage Door
       device_class: opening
+
+group:
+  Garage Door Sensors:
+    entities:
+      - sensor.single_car_garage_door_sensor_status
+      - sensor.two_car_garage_door_sensor_status
+      - input_boolean.working_in_garage
 
 sensor:
 
@@ -176,6 +186,7 @@ sensor:
 automation:
 
   - alias: Notify Garage Door Status
+    initial_state: true
     trigger:
       platform: state
       entity_id: 
