@@ -7,12 +7,26 @@
 homeassistant:
   customize:
   
+    group.multi_sensor_6_front_room:
+      order: 17
+    group.downstairs_multisensor:
+      order: 18
+    group.upstairs_multisensor:
+      order: 19
+    group.upstairs_motion_automations:
+      order: 54
+    group.downstairs_motion_automations:
+      order: 55
+
     zwave.aeotec_zw074_multisensor_gen5_2:
-      hidden: False
+      hidden: false
       friendly_name: Downstairs Multi-Sensor
     zwave.aeotec_zw074_multisensor_gen5_3:
-      hidden: False
+      hidden: false
       friendly_name: Upstairs Multi-Sensor
+    zwave.aeotec_zw100_multisensor_6_11:
+      hidden: false
+      friendly_name: Front Room Multi-Sensor
 
 # Multi Sensor default data
     sensor.aeotec_zw074_multisensor_gen5_burglar_3_10:
@@ -43,16 +57,16 @@ homeassistant:
       device_class: motion
       friendly_name: Upstairs Motion
 
-# Downstairs Multisensor
+# TV Room Multisensor
     sensor.aeotec_zw074_multisensor_gen5_temperature_2_1:
-      friendly_name: Downstairs Temperature
+      friendly_name: TV Room
     sensor.aeotec_zw074_multisensor_gen5_luminance_2_3:
-      friendly_name: Downstairs Light Level
+      friendly_name: TV Room Light Level
     sensor.aeotec_zw074_multisensor_gen5_relative_humidity_2_5:
-      friendly_name: Downstairs Humidity
+      friendly_name: TV Room Humidity
     binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0:
       device_class: motion
-      friendly_name: Downstairs Motion
+      friendly_name: TV Room Motion
       
 # Automation Stuff
     automation.motion001:
@@ -80,6 +94,69 @@ homeassistant:
     automation.upstairs_motion_on:
       friendly_name: Motion ON
       icon: mdi:run-fast  
+
+    sensor.aeotec_zw100_multisensor_6_ultraviolet_9_27:
+      friendly_name: Multi Sensor 6
+    sensor.aeotec_zw100_multisensor_6_temperature_9_1:
+      friendly_name: Multi Sensor 6 Temperature
+    sensor.aeotec_zw100_multisensor_6_sourcenodeid_9_2:
+      friendly_name: Multi Sensor 6
+    sensor.aeotec_zw100_multisensor_6_relative_humidity_9_5:
+      friendly_name: Multi Sensor 6 Humidity
+    sensor.aeotec_zw100_multisensor_6_luminance_9_3:
+      friendly_name: Multi Sensor 6 Luminance
+    sensor.aeotec_zw100_multisensor_6_burglar_9_10:
+      friendly_name: Multi Sensor 6
+    
+group:
+  Multi Sensor 6 Front Room:
+    entities:
+      - zwave.aeotec_zw100_multisensor_6_11
+      - binary_sensor.aeotec_zw100_multisensor_6_sensor_11_0
+      - sensor.aeotec_zw100_multisensor_6_alarm_level_11_1
+      - sensor.aeotec_zw100_multisensor_6_alarm_type_11_0
+      - sensor.aeotec_zw100_multisensor_6_burglar_11_10
+      - sensor.aeotec_zw100_multisensor_6_luminance_11_3
+      - sensor.aeotec_zw100_multisensor_6_relative_humidity_11_5
+      - sensor.aeotec_zw100_multisensor_6_sourcenodeid_11_2
+      - sensor.aeotec_zw100_multisensor_6_temperature_11_1
+      - sensor.aeotec_zw100_multisensor_6_ultraviolet_11_27
+  
+  Downstairs MultiSensor:
+    entities:
+      - binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
+      - sensor.aeotec_zw074_multisensor_gen5_temperature_2_1
+      - sensor.aeotec_zw074_multisensor_gen5_relative_humidity_2_5
+      - sensor.aeotec_zw074_multisensor_gen5_luminance_2_3
+      - sensor.aeotec_zw074_multisensor_gen5_alarm_level_2_1
+      - sensor.aeotec_zw074_multisensor_gen5_alarm_type_2_0
+      - sensor.aeotec_zw074_multisensor_gen5_burglar_2_10
+      - sensor.aeotec_zw074_multisensor_gen5_sourcenodeid_2_2
+  
+  Upstairs MultiSensor:
+    entities:
+      - binary_sensor.aeotec_zw074_multisensor_gen5_sensor_3_0
+      - sensor.aeotec_zw074_multisensor_gen5_temperature_3_1
+      - sensor.aeotec_zw074_multisensor_gen5_relative_humidity_3_5
+      - sensor.aeotec_zw074_multisensor_gen5_luminance_3_3
+      - sensor.aeotec_zw074_multisensor_gen5_burglar_3_10
+      - sensor.aeotec_zw074_multisensor_gen5_sourcenodeid_3_2
+      - sensor.aeotec_zw074_multisensor_gen5_alarm_type_3_0
+      - sensor.aeotec_zw074_multisensor_gen5_alarm_level_3_1
+
+  Downstairs Motion Automations:
+    entities:
+      - automation.motion001
+      - automation.motion002
+      - automation.motion003
+      - automation.motion004
+      - automation.motion005
+      - automation.motion007
+      
+  Upstairs Motion Automations:
+    entities:
+      - automation.upstairs_motion_off
+      - automation.upstairs_motion_on
 
 sensor:
   - platform: template
@@ -134,30 +211,57 @@ sensor:
             mdi:battery-unknown
           {% endif %}
       
+  - platform: template
+    sensors:
+      frontroom_multisensor_battery:
+        value_template: >-
+          {{ states.zwave.aeotec_zw100_multisensor_6_11.attributes["battery_level"] }}
+        friendly_name: Upstairs Multisensor Battery
+        unit_of_measurement: "%"
+        icon_template: >-
+          {% if states.zwave.aeotec_zw100_multisensor_6_11.attributes["battery_level"] %}
+          {% set battery_level = states.zwave.aeotec_zw100_multisensor_6_11.attributes["battery_level"]|int('unknown') %}
+          {% if battery_level == 'unknown' %}
+            mdi:battery-unknown
+          {% else %}
+            {% set battery_round = (battery_level|int / 10)|int * 10 %}
+            {% if battery_round >= 100 %}
+              mdi:battery
+            {% elif battery_round > 0 %}
+              mdi:battery-{{ battery_round }}
+            {% else %}
+              mdi:battery-alert
+            {% endif %}
+          {% endif %}
+          {% else %}
+            mdi:battery-unknown
+          {% endif %}      
+
 automation:
 ###############################################################################
 # Motion Sensor - Downstairs  
 ###############################################################################  
 
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
 #===============================================================================================#
-#   MOTION001       YES		    ON		    ON		ON		Dim Lights                                  #
-#   MOTION002       YES		    ON		    ON		OFF		Dim Lights                                  #
-#   MOTION003       YES		    ON		    OFF		ON		Increase the brightness to 100%             #
-#   MOTION004       YES		    ON		    OFF		OFF		Turn Lights ON at 100% brightness           #
+#   MOTION001       YES		    ON		    ON		ON		Dim Lights                          #
+#   MOTION002       YES		    ON		    ON		OFF		Dim Lights                          #
+#   MOTION003       YES		    ON		    OFF		ON		Increase the brightness to 100%     #
+#   MOTION004       YES		    ON		    OFF		OFF		Turn Lights ON at 100% brightness   #
 #===============================================================================================#
-#   MOTION005       YES		    OFF		    ON		ON		Lights OFF                                  #
-#   MOTION006       YES		    OFF		    ON		OFF		Don't to anything                           #
-#   MOTION007       YES		    OFF		    OFF		ON		Turn Lights OFF                             #
-#   MOTION008       YES		    OFF		    OFF		OFF		Don't to anything                           #
+#   MOTION005       YES		    OFF		    ON		ON		Lights OFF                          #
+#   MOTION006       YES		    OFF		    ON		OFF		Don't to anything                   #
+#   MOTION007       YES		    OFF		    OFF		ON		Turn Lights OFF                     #
+#   MOTION008       YES		    OFF		    OFF		OFF		Don't to anything                   #
 #===============================================================================================#
 
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
-#   MOTION001       YES		      ON		    ON		ON		Dim Lights                                #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
+#   MOTION001       YES		    ON		    ON		ON		Dim Lights                          #
 #===============================================================================================#
   - alias: MOTION001
+    initial_state: true
     trigger:
       platform: state
       entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
@@ -171,7 +275,7 @@ automation:
         entity_id: media_player.sharp_tv
         state: 'on'
       - condition: state
-        entity_id: group.family_room_lights
+        entity_id: light.family_room
         state: 'on'      
     action:
       - service: light.turn_on
@@ -197,10 +301,11 @@ automation:
           transition: 5
   
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
-#   MOTION002       YES		      ON		    ON		OFF		Dim Lights                                #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
+#   MOTION002       YES		    ON		    ON		OFF		Dim Lights                          #
 #===============================================================================================#
   - alias: MOTION002
+    initial_state: true
     trigger:
       platform: state
       entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
@@ -214,7 +319,7 @@ automation:
         entity_id: media_player.sharp_tv
         state: 'on'
       - condition: state
-        entity_id: group.family_room_lights
+        entity_id: light.family_room
         state: 'off'
     action:
       - service: light.turn_on
@@ -240,10 +345,11 @@ automation:
           transition: 5
   
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
-#   MOTION003       YES		      ON		    OFF		ON		 Increase the brightness to 100%          #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
+#   MOTION003       YES		    ON		    OFF		ON		Increase the brightness to 100%     #
 #===============================================================================================#
   - alias: MOTION003
+    initial_state: true
     trigger:
       platform: state
       entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
@@ -257,7 +363,7 @@ automation:
         entity_id: media_player.sharp_tv
         state: 'off'
       - condition: state
-        entity_id: group.family_room_lights
+        entity_id: light.family_room
         state: 'on'
     action:
       - service: light.turn_on
@@ -283,10 +389,11 @@ automation:
           transition: 5
   
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
-#   MOTION004       YES		      ON		    OFF		OFF		  Turn Lights ON at 100% brightness       #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
+#   MOTION004       YES		    ON		    OFF		OFF		Turn Lights ON at 100% brightness   #
 #===============================================================================================#
   - alias: MOTION004
+    initial_state: true
     trigger:
       platform: state
       entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
@@ -300,8 +407,8 @@ automation:
         entity_id: media_player.sharp_tv
         state: 'off'
       - condition: state
-        entity_id: group.family_room_lights
-        state: 'off'      
+        entity_id: light.family_room
+        state: 'off'
     action:
       - service: light.turn_on
         data:
@@ -326,10 +433,11 @@ automation:
           transition: 5
   
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
-#   MOTION005       YES		      OFF		    ON		ON		  Lights OFF                              #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
+#   MOTION005       YES		    OFF		    ON		ON		Lights OFF                          #
 #===============================================================================================#        
   - alias: MOTION005
+    initial_state: true
     trigger:
       platform: state
       entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
@@ -343,7 +451,7 @@ automation:
         entity_id: media_player.sharp_tv
         state: 'on'
       - condition: state
-        entity_id: group.family_room_lights
+        entity_id: light.family_room
         state: 'on'      
     action:
       - service: light.turn_off
@@ -360,15 +468,16 @@ automation:
           transition: 5
   
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #        
-#   MOTION006       YES		      OFF		    ON		OFF		  Don't to anything                       #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #        
+#   MOTION006       YES		    OFF		    ON		OFF		Don't to anything                   #
 #===============================================================================================#       
 
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #        
-#   MOTION007       YES		      OFF		    OFF		ON		  Turn Lights OFF                         #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #        
+#   MOTION007       YES		    OFF		    OFF		ON		Turn Lights OFF                     #
 #===============================================================================================#
   - alias: MOTION007
+    initial_state: true
     trigger:
       platform: state
       entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
@@ -382,7 +491,7 @@ automation:
         entity_id: media_player.sharp_tv
         state: 'off'
       - condition: state
-        entity_id: group.family_room_lights
+        entity_id: light.family_room
         state: 'on'      
     action:
       - service: light.turn_off
@@ -399,14 +508,15 @@ automation:
           transition: 5
   
 #===============================================================================================#
-#   Automation      It's Dark 	Motion		TV		Lights	ACTION                                  #
-#   MOTION008       YES		      OFF		    OFF		OFF		  Don't to anything                       #
+#   Automation      It's Dark 	Motion		TV		Lights	ACTION                              #
+#   MOTION008       YES		    OFF		    OFF		OFF		Don't to anything                   #
 #===============================================================================================#
   
 ###############################################################################
 # Motion Sensor - Upstairs  
 ###############################################################################  
   - alias: Upstairs Motion ON
+    initial_state: true
     trigger:
       platform: state
       entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_3_0
@@ -431,6 +541,7 @@ automation:
           color_temp: 366
 
   - alias: Upstairs Motion OFF
+    initial_state: true
     trigger:
       platform: state
       entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_3_0
@@ -447,3 +558,45 @@ automation:
       - service: light.turn_off
         data:
           entity_id: light.master_bedroom_2
+
+###############################################################################
+#  Turn On Front room light When Motion detected, and turn OFF when no motion
+#    -> Only during night
+###############################################################################
+  - alias: Front Room Motion ON
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: binary_sensor.aeotec_zw100_multisensor_6_sensor_11_0
+      from: 'off'
+      to: 'on'
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: 'below_horizon'
+      - condition: state
+        entity_id: switch.wemoswitch1
+        state: 'off'
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.wemoswitch1
+
+  - alias: Front Room Motion OFF
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: binary_sensor.aeotec_zw100_multisensor_6_sensor_11_0
+      from: 'on'
+      to: 'off'
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: 'below_horizon'
+      - condition: state
+        entity_id: switch.wemoswitch1
+        state: 'on' 
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.wemoswitch1
