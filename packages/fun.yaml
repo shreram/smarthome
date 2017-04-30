@@ -1,0 +1,39 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   04/15/2017
+#   @package        :   Random Chuck Norris Facts
+#   @description    :   Daily dose of Chuck Norris. 
+#                       It is INTENTIONALLY set to query once a day. 
+#                       Know your limits, and DO NOT mess with Chuck Norris!
+###############################################################################
+homeassistant:
+  customize:
+    sensor.fact_of_the_day:
+      friendly_name: Fact Of The Day
+      icon: mdi:panda
+      hidden: true
+
+sensor:
+  - platform: rest
+    name: fact_of_the_day
+    resource: http://api.icndb.com/jokes/random?firstName=Chuck&lastName=Norris&limitTo=[nerdy]
+    value_template: '{{ value_json.value.joke }}'
+    scan_interval: 86400
+
+automation:
+  - alias: Chuck Norris Fact of the Day
+    trigger:
+      platform: time
+      after: '20:15:00'
+    condition:
+      condition: state
+      entity_id: group.all_devices
+      state: 'home'
+    action:
+      - service: script.voice_notify
+        data_template:
+          value1: "{{ states.sensor.fact_of_the_day.state }}"
+      - service: script.notify_me
+        data_template:
+          value1: "{{ states.sensor.fact_of_the_day.state }}"
+          value2: ""
