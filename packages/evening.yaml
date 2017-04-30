@@ -4,11 +4,24 @@
 #   @package        :   Evening
 #   @description    :   Evening Routines
 ###############################################################################
+homeassistant:
+  customize:
+    group.evening_automations:
+      order: 51
+  
+group:
+  Evening Automations:
+    entities:
+      - automation.home_security_system_on_at_sunset
+      - automation.outdoor_lights_on_at_sunset
+      - automation.indoor_lights_on_before_sunset
+
 automation:
 ###############################################################################
 # Turn Home Security System ON at sunset time
 ###############################################################################
   - alias: Home Security System ON at Sunset
+    initial_state: true
     trigger:
       platform: sun
       event: sunset
@@ -34,6 +47,7 @@ automation:
 # Turn outdoor lights on 15 minutes before sunset
 ###############################################################################
   - alias: Outdoor Lights ON at Sunset
+    initial_state: true
     trigger:
       platform: sun
       event: sunset
@@ -56,6 +70,7 @@ automation:
 # Turn indoor lights on 60 minutes before sunset
 ###############################################################################
   - alias: Indoor Lights ON before Sunset
+    initial_state: true
     trigger:
       platform: sun
       event: sunset
