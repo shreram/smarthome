@@ -7,6 +7,9 @@
 
 homeassistant:
   customize:
+    group.watchdog_automations:
+      order: 58
+
     input_boolean.working_in_garage:
       friendly_name: Working in Garage
       icon: mdi:worker
@@ -26,6 +29,22 @@ homeassistant:
       friendly_name: Prayer Room Light Watchdog
       icon: mdi:timer
 
+group:
+  Watchdog Automations:
+    entities:
+      - automation.backyard_light_watchdog
+      - automation.frontroom_light_watchdog
+      - automation.frontyard_light_watchdog
+      - automation.garage_lights_watchdog
+      - automation.guest_bedroom_1_light_watchdog
+      - automation.kids_bedroom_light_watchdog
+      - automation.guest_bedroom_2_light_watchdog
+      - automation.single_car_garage_door_watchdog
+      - automation.home_security_system_watchdog_10_minutes
+      - automation.home_security_system_watchdog_30_minutes
+      - automation.working_in_garage_watchdog
+      - automation.two_car_garage_door_watchdog
+
 input_boolean:
   working_in_garage:
     name: Working in Garage
@@ -33,6 +52,7 @@ input_boolean:
 
 automation:
   - alias: Working In Garage WatchDog
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
@@ -47,6 +67,7 @@ automation:
         entity_id: input_boolean.working_in_garage
   
   - alias: Single Car garage Door WatchDog
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
@@ -67,6 +88,7 @@ automation:
           value2: ""
   
   - alias: Two Car garage Door WatchDog
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
@@ -87,6 +109,7 @@ automation:
           value2: ""
           
   - alias: Home Security System WatchDog 10 minutes
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
@@ -107,6 +130,7 @@ automation:
           value2: ""
           
   - alias: Home Security System WatchDog 30 minutes
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
@@ -123,10 +147,11 @@ automation:
         data: {"value1":"Home Security System is OFF for more than 30 minutes!", "value2":""}
       - service: script.voice_notify
         data_template:
-          value1: "Attention! The Home Security System is OFF for more than 10 minutes! This is the last reminder!"
+          value1: "Attention! The Home Security System is OFF for more than 30 minutes! This is the last reminder!"
           value2: ""
   
   - alias: Frontroom Light WatchDog
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
@@ -149,6 +174,7 @@ automation:
           value2: ""
   
   - alias: Frontyard Light WatchDog
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
@@ -171,6 +197,7 @@ automation:
           value2: ""
   
   - alias: Backyard Light WatchDog
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
@@ -193,6 +220,7 @@ automation:
           value2: ""
   
   - alias: Garage Lights WatchDog
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
@@ -214,6 +242,7 @@ automation:
             {{ trigger.to_state.attributes.friendly_name }} are left ON for about 5 minutes. Saving power by turning it off!
   
   - alias: Guest Bedroom 1 Light WatchDog
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
@@ -232,6 +261,7 @@ automation:
           value2: ""
   
   - alias: Guest Bedroom 2 Light WatchDog
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
@@ -250,6 +280,7 @@ automation:
           value2: ""
   
   - alias: Kids Bedroom Light WatchDog
+    initial_state: true
     trigger:
       - platform: state
         entity_id:
