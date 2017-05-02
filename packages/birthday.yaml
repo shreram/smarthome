@@ -5,11 +5,16 @@
 #   @description    :   Birthday reminders, greetings/wishes - all good stuff!
 #
 #   THREE IMPORTANT THINGS YOU NEED:
-#     1. Add the following to your secrets.yaml file, change name and date
-#        name_birthday: "MM-DD"
-#     2. Copy birtday_wishes.yaml file from templates folder to your templates folder
-#     3. Copy this file to Packages folder & add following to configuration.yaml
+#     1. Copy birtday_wishes.yaml file from templates folder to your templates folder
+#     2. Copy this file to Packages folder & add following to configuration.yaml
 #        packages: !include_dir_named packages
+#     3. Add the following to your secrets.yaml file, change name and date
+#        name_birthday: "MM-DD". See below for example:
+#
+#        srinika_birthday: "04-01"
+#        hasika_birthday:  "07-25"
+#        mallika_birthday: "12-31"
+#
 ###############################################################################
 homeassistant:
   customize:
