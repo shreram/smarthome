@@ -1,0 +1,43 @@
+###############################################################################
+# @Package: Constants
+# @Author: Mahasri Kalavala
+# @Description: Rest Command Sensor to load a bunch of pre-defined values
+#
+# Add the folllwing to your secrets.yaml
+# sensor_constants_url: http://192.168.1.101:8123/api/states/sensor.constants?api_password=XXX
+###############################################################################
+homeassistant:
+  customize:
+    sensor.constants:
+      hidden: true
+      friendly_name: "My Constants"
+
+rest_command:
+  setup_constants:
+    url: !secret sensor_constants_url
+    method: 'post'
+    payload: >
+      {
+      	"state": "my constants",
+      	"attributes": {
+            "constant_birthday_countdown": "30"
+      	}
+      }
+
+automation:
+
+# Load constants during startup
+  - alias: Setup Constants
+    initial_state: true
+    hide_entity: false
+    trigger:
+      platform: homeassistant
+      event: start
+    action:
+      - service: rest_command.setup_constants
+
+###############################################################################
+# HOW TO USE THIS SENSOR:
+# At access constants from your Jinja2 code, use the following code
+# {{ states.sensor.constants.attributes.constant_birthday_countdown }}
+###############################################################################
