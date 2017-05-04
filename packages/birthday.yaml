@@ -125,7 +125,7 @@ automation:
         entity_id: group.all_devices
         state: 'home'
       - condition: template
-        value_template: "{% if trigger.to_state.state | int > 0 and trigger.to_state.state | int < 30 %}true{% else %}false{% endif %}"
+        value_template: "{{ trigger.to_state.state | int > 0 and trigger.to_state.state | int < (states.sensor.constants.attributes.constant_birthday_countdown | int) }}"
     action:
       - service: script.notify_me
         data_template:
@@ -147,7 +147,7 @@ automation:
         entity_id: group.all_devices
         state: 'home'
       - condition: template
-        value_template: "{% if trigger.to_state.state | int == 0 %}true{% else %}false{% endif %}"
+        value_template: "{{ trigger.to_state.state | int == 0 }}"
     action:
       - service: script.notify_me
         data_template:
@@ -164,19 +164,22 @@ automation:
       minutes: 00
       seconds: 00
     condition:
-      - condition: state
-        entity_id: group.all_devices
-        state: 'home'
-      - condition: time
-        after: '07:00:00'
-        before: '21:00:00'
-      - condition: template
-        value_template: >-
-          {% if states.sensor.srinika_birthday_days2go.state | int == 0 or states.sensor.hasika_birthday_days2go.state | int == 0 or states.sensor.mallika_birthday_days2go.state | int == 0 %}
-            true
-          {% else %}
-            false
-          {% endif %}
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: group.all_devices
+          state: 'home'
+        - condition: time
+          after: '07:00:00'
+          before: '21:00:00'
+        - condition: or
+          conditions:
+            - condition: template
+              value_template: "{{ states.sensor.srinika_birthday_days2go.state | int == 0 }}"
+            - condition: template
+              value_template: "{{ states.sensor.hasika_birthday_days2go.state | int == 0 }}"
+            - condition: template
+              value_template: "{{ states.sensor.mallika_birthday_days2go.state | int == 0 }}"
     action:
       - service: script.voice_notify
         data_template:
