@@ -1,0 +1,254 @@
+homeassistant:
+  customize:
+  
+    switch.linear_fs20z_isolated_contact_fixture_module_switch_13_0:
+      friendly_name: Single Car Garage Switch
+      
+    switch.linear_fs20z_isolated_contact_fixture_module_switch_14_0:
+      friendly_name: Two Car Garage Switch
+
+    zwave.linear_fs20z_isolated_contact_fixture_module_13:
+      friendly_name: Single Car Garage Switch (Open/Close)
+
+    zwave.linear_fs20z_isolated_contact_fixture_module_14:
+      friendly_name: Two Car Garage Switch (Open/Close)
+
+    # Garage Door Tilt Sensors
+    zwave.ecolink_garage_door_tilt_sensor_4:
+      hidden: false
+      friendly_name: 2-Car Garage Door Sensor
+
+    zwave.ecolink_garage_door_tilt_sensor_5:
+      hidden: false
+      friendly_name: 1-Car Garage Door Sensor
+
+# Single Car Garage Door Sensor
+    sensor.ecolink_garage_door_tilt_sensor_sourcenodeid_5_2:
+      hidden: true
+    sensor.ecolink_garage_door_tilt_sensor_power_management_5_11:
+      hidden: true
+    sensor.ecolink_garage_door_tilt_sensor_burglar_5_10:
+       hidden: true
+    sensor.ecolink_garage_door_tilt_sensor_alarm_type_5_0:
+      hidden: true
+    sensor.ecolink_garage_door_tilt_sensor_alarm_level_5_1:
+      hidden: true
+    sensor.ecolink_garage_door_tilt_sensor_access_control_5_9:
+      hidden: true
+    binary_sensor.ecolink_garage_door_tilt_sensor_sensor_5_0:
+      hidden: true
+      device_class: opening
+      friendly_name: Single Car Garage Door
+    sensor.single_car_garage_door_sensor_status:
+      hidden: false
+      friendly_name: Single Car Garage Door
+      device_class: opening
+
+# Two Car Garage Door Sensor
+    sensor.ecolink_garage_door_tilt_sensor_access_control_4_9:
+      hidden: true
+    sensor.ecolink_garage_door_tilt_sensor_burglar_4_10:
+      hidden: true
+    sensor.ecolink_garage_door_tilt_sensor_power_management_4_11:
+      hidden: true
+    sensor.ecolink_garage_door_tilt_sensor_sourcenodeid_4_2:
+      hidden: true
+    sensor.ecolink_garage_door_tilt_sensor_alarm_level_4_1:
+      hidden: true
+    sensor.ecolink_garage_door_tilt_sensor_alarm_type_4_0:
+      hidden: true
+    binary_sensor.ecolink_garage_door_tilt_sensor_sensor_4_0:
+      hidden: true
+      device_class: opening
+      friendly_name: Two Car Garage Door
+    sensor.two_car_garage_door_sensor_status:
+      hidden: false
+      friendly_name: Two Car Garage Door
+      device_class: opening
+
+group:
+  Garage:
+    entities:
+      - sensor.single_car_garage_door_sensor_status
+      - sensor.two_car_garage_door_sensor_status
+      - input_boolean.working_in_garage
+      - switch.linear_fs20z_isolated_contact_fixture_module_switch_13_0
+      - switch.linear_fs20z_isolated_contact_fixture_module_switch_14_0
+      - automation.notify_garage_door_status
+
+sensor:
+  - platform: template
+    sensors:
+      single_car_garage_door_sensor_battery:
+        value_template: >-
+          {% if states.zwave.ecolink_garage_door_tilt_sensor_5 %}
+            {{ states.zwave.ecolink_garage_door_tilt_sensor_5.attributes["battery_level"] | int(0) }}
+          {% else %}
+            0
+          {% endif %}
+        friendly_name: Single Car Garage Door Sensor Battery
+        unit_of_measurement: "%"
+        icon_template: >-
+          {% if states.zwave.ecolink_garage_door_tilt_sensor_5 %}
+            {% if states.zwave.ecolink_garage_door_tilt_sensor_5.attributes["battery_level"] %}
+            {% set battery_level = states.zwave.ecolink_garage_door_tilt_sensor_5.attributes["battery_level"]|int('unknown') %}
+            {% if battery_level == 'unknown' %}
+              mdi:battery-unknown
+            {% else %}
+              {% set battery_round = (battery_level|int / 10)|int * 10 %}
+              {% if battery_round >= 100 %}
+                mdi:battery
+              {% elif battery_round > 0 %}
+                mdi:battery-{{ battery_round }}
+              {% else %}
+                mdi:battery-alert
+              {% endif %}
+            {% endif %}
+            {% else %}
+              mdi:battery-unknown
+            {% endif %}
+          {% else %}
+            mdi:battery-unknown
+          {% endif %}
+  
+  - platform: template
+    sensors:
+      two_car_garage_door_sensor_battery:
+        value_template: >-
+          {% if states.zwave.ecolink_garage_door_tilt_sensor_4 %}
+            {{ states.zwave.ecolink_garage_door_tilt_sensor_4.attributes["battery_level"] | int(0) }}
+          {% else %}
+            0
+          {% endif %}
+        friendly_name: Two Car Garage Door Sensor Battery
+        unit_of_measurement: "%"
+        icon_template: >-
+          {% if states.zwave.ecolink_garage_door_tilt_sensor_4 %}
+            {% if states.zwave.ecolink_garage_door_tilt_sensor_4.attributes["battery_level"] %}
+            {% set battery_level = states.zwave.ecolink_garage_door_tilt_sensor_4.attributes["battery_level"]|int('unknown') %}
+            {% if battery_level == 'unknown' %}
+              mdi:battery-unknown
+            {% else %}
+              {% set battery_round = (battery_level|int / 10)|int * 10 %}
+              {% if battery_round >= 100 %}
+                mdi:battery
+              {% elif battery_round > 0 %}
+                mdi:battery-{{ battery_round }}
+              {% else %}
+                mdi:battery-alert
+              {% endif %}
+            {% endif %}
+            {% else %}
+              mdi:battery-unknown
+            {% endif %}
+          {% else %}
+            mdi:battery-unknown
+          {% endif %}
+
+  - platform: template
+    sensors:
+      single_car_garage_door_sensor_status:
+        friendly_name: Single Car Garage Door Sensor Status
+        value_template: >-
+          {% if states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_5_0.state == 'on' %}
+            Open
+          {% elif states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_5_0.state == 'off' %}
+            Closed
+          {% else %}
+            Unknown
+          {% endif %}
+        icon_template: >-
+          {% set door_status = states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_5_0.state |d('unknown') %}
+          {% if door_status == 'unknown' %}
+            mdi:alert-circle
+          {% else %}
+            {% if door_status == 'on' %}
+              mdi:garage-open
+            {% else %}
+              mdi:garage
+            {% endif %}
+          {% endif %}
+  
+  - platform: template
+    sensors:
+      two_car_garage_door_sensor_status:
+        value_template: >-
+          {% if states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_4_0.state == 'on' %}
+            Open
+          {% elif states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_4_0.state == 'off' %}
+            Closed
+          {% else %}
+            Unknown
+          {% endif %}
+        friendly_name: Two Car Garage Door Sensor Status
+        icon_template: >-
+          {% set door_status = states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_4_0.state |d('unknown') %}
+          {% if door_status == 'unknown' %}
+            mdi:alert-circle
+          {% else %}
+            {% if door_status == 'on' %}
+              mdi:garage-open
+            {% else %}
+              mdi:garage
+            {% endif %}
+          {% endif %}
+          
+automation:
+
+  - alias: 'Reset 1-Car Garage Relay'
+    initial_state: 'on'
+    hide_entity: true
+    trigger:
+      - platform: time
+        seconds: '/5'
+    condition:
+      - condition: state
+        entity_id: switch.linear_fs20z_isolated_contact_fixture_module_switch_13_0
+        state: "on"
+    action:
+      - service: switch.turn_off
+        entity_id: switch.linear_fs20z_isolated_contact_fixture_module_switch_13_0      
+
+  - alias: 'Reset 2-Car Garage Relay'
+    initial_state: 'on'
+    hide_entity: true
+    trigger:
+      - platform: time
+        seconds: '/5'
+    condition:
+      - condition: state
+        entity_id: switch.linear_fs20z_isolated_contact_fixture_module_switch_14_0
+        state: "on"
+    action:
+      - service: switch.turn_off
+        entity_id: switch.linear_fs20z_isolated_contact_fixture_module_switch_14_0      
+
+  - alias: Notify Garage Door Status
+    initial_state: true
+    hide_entity: true
+    trigger:
+      platform: state
+      entity_id: 
+      - binary_sensor.ecolink_garage_door_tilt_sensor_sensor_4_0
+      - binary_sensor.ecolink_garage_door_tilt_sensor_sensor_5_0
+    condition:
+      - condition: template
+        value_template: "{% if trigger.from_state %} True {% else %} False {% endif %}"
+    action:
+      - service: script.notify_me
+        data_template:
+          value1: >
+              {% if trigger.to_state.state | lower == "on" %}
+                  {{ trigger.to_state.attributes.friendly_name }} is now OPENED!
+              {% elif trigger.to_state.state | lower == "off" %}
+                  {{ trigger.to_state.attributes.friendly_name }} is now CLOSED!
+              {% endif %}
+          value2: ""
+      - service: script.voice_notify
+        data_template:
+          value1: >
+            {% if trigger.to_state.state | lower == "on" %}
+              Attention! Your {{ trigger.to_state.attributes.friendly_name }} is now OPENED!
+            {% elif trigger.to_state.state | lower == "off" %}
+              Attention! Your {{ trigger.to_state.attributes.friendly_name }} is now CLOSED!
+            {% endif %}
