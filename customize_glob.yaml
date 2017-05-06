@@ -2,4 +2,19 @@
   hidden: true
 
 'automation.*':
-  icon: mdi:star-circle
+  icon: mdi:arrow-right-drop-circle
+  
+'automation.*watchdog*':
+  icon: mdi:timer
+  
+'automation.night_*':
+  icon: mdi:weather-night
+
+'automation.morning_*':
+  icon: mdi:weather-sunset
+
+'automation.evening_*':
+  icon: mdi:weather-sunset-down
+  
+'automation.tv_*':
+  icon: mdi:television
