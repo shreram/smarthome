@@ -30,7 +30,8 @@ Enjoy!
               {{statePrefix ~ ".last_changed: "}} {{- stateObj.last_changed }}{{- "\n" -}}
               {%- for attrib in stateObj.attributes | sort() %}
                 {%- if attrib is defined -%} 
-                {{- statePrefix ~ ".attributes." ~ attrib ~ ": " -}} {{- stateObj.attributes[attrib] -}}{{- "\n" -}}
+                {{- statePrefix ~ ".attributes." ~ attrib ~ ": " -}} {{- stateObj.attributes[attrib] -}}
+                {{- "\n" -}}
                 {%- endif -%}
               {%- endfor -%}
             {%- endmacro -%}
@@ -67,7 +68,7 @@ Enjoy!
             {%- endif -%}
             
             {%- if p == "state" or p == "numeric_state" or p == "template" or p == "zone" -%}
-            {{"trigger.entity_id: "}} {{ trigger.entity_id }}{{- "\n" -}}            
+            {{"trigger.entity_id: "}} {{ trigger.entity_id }}{{- "\n" -}}{{- "\n" -}}
             {{"trigger.from_state: "}} {{- "\n" -}}
             -------------------{{- "\n" -}}
             {{ dumpState("trigger.from_state", trigger.from_state) }} {{- "\n" -}}
