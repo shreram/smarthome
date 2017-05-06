@@ -143,5 +143,5 @@ To add the same to logbook instead of MQTT, use the following code:
             trigger.to_state:{{- "\n" -}}
             -----------------{{- "\n" -}}
             {{ dumpState("trigger.to_state", trigger.to_state) }}            
-            {%- endif -%%
+            {%- endif -%}
 ```
