@@ -71,6 +71,7 @@ group:
       - switch.wemoswitch1
   
   Light Automations:
+    control: hidden
     entities:
       - automation.animate_master_bedroom_lights
       - input_boolean.animate_kitchen_lights
