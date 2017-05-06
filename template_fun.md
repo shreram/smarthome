@@ -48,7 +48,7 @@ Enjoy!
             {%- endif -%}
             
             {%- if trigger.platform == "numeric_state" -%}
-            {{"trigger.above: "}} {{ trigger.above }}{{- "\n" -}}{{- "\n" -}}
+            {{"trigger.above: "}} {{ trigger.above }}{{- "\n" -}}
             {{"trigger.below: "}} {{trigger.below }}{{- "\n" -}}
             {%- endif -%}
             
