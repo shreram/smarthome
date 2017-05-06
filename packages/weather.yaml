@@ -54,6 +54,12 @@ homeassistant:
       hidden: true
     input_boolean.hurricane_wind_alert:
       hidden: true
+    sensor.pws_uv:
+      friendly_name: 'UV Index'
+      icon: mdi:white-balance-sunny
+    sensor.uv_burn_time:
+      friendly_name: 'Burn Time'
+      icon: mdi:fire      
 
     group.weather:
       order: 14
@@ -77,7 +83,9 @@ group:
       - sensor.pollen_level
       - sensor.cold_flu_risk
       - sensor.air_quality
-  
+      - sensor.pws_uv
+      - sensor.uv_burn_time      
+
   Dark Sky:
     entities:
       - sensor.dark_sky_wind_speed
@@ -107,6 +115,7 @@ group:
       - sensor.dark_sky_apparent_temperature
   
   Weather Automations:
+    control: hidden
     entities:
       - automation.alert_daily_weather
       - automation.remind_me_to_enjoy_warm_and_windy_weather
@@ -138,8 +147,21 @@ input_boolean:
   sleet_alert:
     name: Sleet Alert
     initial: off
-    
+
 sensor:
+  - platform: template
+    sensors:
+      uv_burn_time:
+       # Celtic"all babies and children" = 67Min // caucasian = 100Min // Central Europe = 200Min // south american = 200Min // Middle Eastern = 400Min // African = 500Min
+        value_template: >
+          {% if is_state('sensor.pws_uv', '0') %}
+            0 Minutes
+          {% elif is_state('sensor.pws_uv', '-1') %}
+            0 Minutes
+          {% else %}
+            {{ (400 / states.sensor.pws_uv.state | float) | round }} Minutes
+          {% endif %}
+
   - platform: wunderground
     api_key: !secret wunderground_key
     monitored_conditions:
@@ -150,6 +172,7 @@ sensor:
       - wind_mph
       - relative_humidity
       - visibility_mi
+      - UV
   
   - platform: darksky
     api_key: !secret darksky_api_key
