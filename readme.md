@@ -57,7 +57,11 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 * Cheap Bluetooth speakers from Amazon
 
-* Radio Frequency Transmitters and Receivers ( RioRand 433 MHz Superheterodyne RF
+* Radio Frequency Transmitters and Receivers ( RioRand 433 MHz Superheterodyne RF )
+
+* GoControl Z-Wave Smart Fixer Modules for garage doors (Model # FS20Z-1)
+
+* ESP8266 and DHT 11/22 Sensors
 
 * Sensor kit from Raspberry Pi for experimentation - 
 
