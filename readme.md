@@ -13,27 +13,27 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 **Devices I have currently:**
 
-* Wemo Switches
+* Wemo Smart Switches
 
-* TP Link HS-200 Switches
+* TP Link HS-200 Smart Switches
 
-* Wemo Outlets
+* Wemo Smart Outlets
 
 * Eteckcity RF Outlets
 
 * Lifx Bulbs
 
-* Philips Hue Bulbs
+* Philips Hue Hub & Bulbs
 
 * Sharp Aquos Smart TV
 
 * Onkyo Receiver (TX-NR 807)
 
-* Home Security System
+* Home Security System (Simplisafe)
 
 * Ring Door Bell Pro
 
-* Nest Protect (Smoke and CO Monitor)
+* ~~Nest Protect (Smoke and CO Monitor)~~
 
 * Aeotec ZWave Z-Stick Gen 5 (ZW090)
 
@@ -55,13 +55,13 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 * Bunch of Pi Zero's
 
-* Cheap Bluetooth speakers from Amazon
+* Cheap Bluetooth speakers from Amazon for Audio Announcements around the house
 
-* Radio Frequency Transmitters and Receivers ( RioRand 433 MHz Superheterodyne RF )
+* Radio Frequency Transmitters and Receivers (RioRand 433 MHz Superheterodyne RF)
 
 * GoControl Z-Wave Smart Fixer Modules for garage doors (Model # FS20Z-1)
 
-* ESP8266 and DHT 11/22 Sensors
+* ESP8266 and DHT11/22 Sensors for temperature and humidity (attic and garage...etc)
 
 * Sensor kit from Raspberry Pi for experimentation - 
 
