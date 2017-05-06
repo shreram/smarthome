@@ -9,8 +9,6 @@ homeassistant:
 
     group.zwave_devices:
       order: 97
-    group.zwave_automations:
-      order: 99
 
 # Z-Wave Device(s)
     zwave.aeotec_zw090_zstick_gen5_1:
@@ -22,20 +20,20 @@ zwave:
   config_path: /srv/homeassistant/homeassistant_venv/lib/python3.4/site-packages/libopenzwave-0.3.2-py3.4-linux-armv7l.egg/config
 
 group:
-  ZWave Automations:
-    entities:
-      - automation.heal_zwave_network
 
   ZWave Devices:
     entities:
       - zwave.aeotec_zw090_zstick_gen5_1
       - zwave.aeotec_zw074_multisensor_gen5_3
       - zwave.aeotec_zw074_multisensor_gen5_2
+      - zwave.aeotec_zw100_multisensor_6_11
       - zwave.ecolink_garage_door_tilt_sensor_5
       - zwave.ecolink_garage_door_tilt_sensor_4
       - zwave.ecolink_door_sensor_6
       - zwave.ecolink_door_sensor_7
-      - zwave.aeotec_zw100_multisensor_6_8
+      - zwave.linear_fs20z_isolated_contact_fixture_module_13
+      - zwave.linear_fs20z_isolated_contact_fixture_module_14
+      - automation.heal_zwave_network
 
 automation:
   - alias: Heal Z-Wave Network
