@@ -35,11 +35,6 @@ group:
       - script.pushbullet_notify
       - script.notify_me
       - script.voice_notify
-      
-  TTS Announcements:
-    entities:
-      - automation.bedtime_report
-      - automation.morning_commute      
 
 ifttt:
   key: !secret ifttt_key
@@ -76,7 +71,7 @@ script:
           event: "Smart_Home"
           value1: '{{ value1 }}'
           value2: '{{ value2 }}'
-          
+
 ###############################################################################
 # Voice Notify
 # Conditions:
@@ -109,6 +104,17 @@ script:
       - condition: state
         entity_id: group.all_devices
         state: 'home'
+      - condition: template
+        value_template: >
+          {% if only_at_night | default('no', true ) == "yes" %}
+            {% if states.sun.sun.state == "above_horizon" %}
+              false
+            {% else %}
+              true
+            {% endif %}
+          {% else %}
+            true
+          {% endif %}
       - service: tts.amazon_polly_say
         data_template:
           entity_id: media_player.gstreamer
