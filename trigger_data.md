@@ -1,16 +1,14 @@
 # Trigger Data in Templates
 
 Ever wondered what trigger data is available for you when writing automations? Just copy the mqtt.publish service below 
-and put it in <u>any</u> of your automation, and <i>it will dump all the attributes and information into your mqtt</i>.
+and put it in **any** of your automation action section, and <b>it will dump all the attributes and information related to trigger, and state into your mqtt with a topic name "/dump/platform" </b>.
 
 Pre-requisite is to have MQTT configured in your Home Assistant. Use tools like `mqttfx` to browse mqtt data.
 
-Enjoy!
+Hope you find it useful!
 
 ```
   - alias: Test Kitchen Light
-    initial_state: true
-    hide_entity: false
     trigger:
       platform: state
       entity_id: light.dinette
