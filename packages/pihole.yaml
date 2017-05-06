@@ -90,20 +90,3 @@ sensor:
     name: queries_cached
     resource: !secret pi_hole_url
     value_template: '{{ value_json.queries_cached }}'
-
-###############################################################################
-#  Automations
-###############################################################################
-automation:
-  - alias: Thousand Ads blocked
-    initial_state: true
-    hide_entity: true
-    trigger:
-      platform: numeric_state
-      entity_id: sensor.ads_blocked_today
-      above: 999
-    action:
-      - service: script.notify_me
-        data_template:
-          value1: "Pi-Hole blocked 1000 Ads today! Hurray!!!"
-          value2: ""
