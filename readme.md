@@ -15,39 +15,41 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 * <a href="http://amzn.to/2pairYc">Wemo Smart Switches</a>
 
-* TP Link HS-200 Smart Switches
+* <a href="http://amzn.to/2qeilPx">TP Link HS-200 Smart Switches</a>
 
 * Wemo Smart Outlets
 
-* Eteckcity RF Outlets
+* <a href="http://amzn.to/2pTIDFA">Eteckcity RF Outlets</a>
 
-* Lifx Bulbs
+* <a href="http://amzn.to/2pTWaNm">Lifx Bulbs</a>
 
-* Philips Hue Hub & Bulbs
+* <a href="http://amzn.to/2qefqX6">3rd Gen Philips Hue Hub and Bulbs</a>
 
 * Sharp Aquos Smart TV
 
 * Onkyo Receiver (TX-NR 807)
 
-* Home Security System (Simplisafe)
+* <a href="http://amzn.to/2pTIpyv">Home Security System (Simplisafe)</a>
 
-* Ring Door Bell Pro
+* <a href="http://amzn.to/2pVmS6y">Ring Door Bell Pro</a>
 
 * ~~Nest Protect (Smoke and CO Monitor)~~
 
-* Aeotec ZWave Z-Stick Gen 5 (ZW090)
+* <a href="http://amzn.to/2pa9uhO">Aeotec ZWave Z-Stick Gen 5 (ZW090)</a>
 
-* Aeotec ZWave Multi Sensors (5 in 1) - Gen 5
+* <a href="http://amzn.to/2qdYUqa">Aeotec ZWave Multi Sensors (5 in 1) - Gen 5</a>
 
-* Aeotec ZWave Multi Sensors (6 in 1) - Gen 5
+* <a href="http://amzn.to/2pV5yOT">Aeotec ZWave Multi Sensors (6 in 1) - Gen 5</a>
 
-* Ecobee Garage Door Tilt Sensors
+* <a href="http://amzn.to/2pTKVEL">Ecobee Garage Door Tilt Sensors</a>
 
-* Ecobee Door & Window Sensors
+* <a href="http://amzn.to/2pohSpI">Ecobee Door and Window Sensors</a>
 
-* Leeo Smoke and CO Remote Alarm Monitor
+* <a href="http://amzn.to/2papVuj">Leeo Smoke and CO Remote Alarm Monitor</a>
 
-* Lutron Motion Sensors (Single Pole and 3-Way Switches) 
+* <a href="http://amzn.to/2pV6SkH">Lutron Motion Sensors (Single Pole and 3-Way Switches) </a>
+
+* <a href="http://amzn.to/2pU2V1Y">Bluetooth Speakers</a>
 
 * Amazon Dash Buttons
 
@@ -57,11 +59,11 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 * Cheap Bluetooth speakers from Amazon for Audio Announcements around the house
 
-* Radio Frequency Transmitters and Receivers (RioRand 433 MHz Superheterodyne RF)
+* <a href="http://amzn.to/2qe8PMo"> Radio Frequency Transmitters and Receivers (RioRand 433 MHz Superheterodyne RF)</a>
 
-* GoControl Z-Wave Smart Fixer Modules for garage doors (Model # FS20Z-1)
+* <a href="http://amzn.to/2pV2wu1">GoControl Z-Wave Smart Fixer Modules for garage doors (Model # FS20Z-1)</a>
 
-* ESP8266 and DHT11/22 Sensors for temperature and humidity (attic and garage...etc)
+* <a href="http://amzn.to/2pV60wx">ESP8266 and DHT11/22 Sensors for temperature and humidity (attic and garage...etc)</a>
 
 * Sensor kit from Raspberry Pi for experimentation - 
 
