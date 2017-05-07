@@ -53,7 +53,7 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 * Amazon Dash Buttons
 
-* Bunch of Raspberry Pi's
+* <a href="http://amzn.to/2p9RVhQ">Bunch of Raspberry Pi's</a>
 
 * Bunch of Pi Zero's
 
@@ -64,6 +64,8 @@ Please feel free to let me know if you find any issues with my code, and/or have
 * <a href="http://amzn.to/2pV2wu1">GoControl Z-Wave Smart Fixer Modules for garage doors (Model # FS20Z-1)</a>
 
 * <a href="http://amzn.to/2pV60wx">ESP8266 and DHT11/22 Sensors for temperature and humidity (attic and garage...etc)</a>
+
+* <a href="http://amzn.to/2pTQ1kv">Relay Switches </a>
 
 * Sensor kit from Raspberry Pi for experimentation - 
 
