@@ -13,7 +13,7 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 **Devices I have currently:**
 
-* Wemo Smart Switches
+* <a href="http://amzn.to/2pairYc">Wemo Smart Switches</a>
 
 * TP Link HS-200 Smart Switches
 
