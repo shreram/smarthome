@@ -12,6 +12,9 @@
 ## Trash Pickup Card
 <img src="https://github.com/skalavala/smarthome/blob/master/packages/images/trash.jpg" alt="Home Assistant Card" />
 
+## Actionable Trash Notification (iOS) 
+<img src="https://github.com/skalavala/smarthome/blob/master/packages/images/trash.jpg" />
+
 ## Recycle Pickup Card
 <img src="https://github.com/skalavala/smarthome/blob/master/packages/images/recycle.jpg" alt="Home Assistant Card" />
 
