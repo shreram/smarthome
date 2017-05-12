@@ -73,14 +73,18 @@ sensor:
       {% set month = value.split('-')[0] %}
       {% set date = value.split('-')[1] %}
       {% set year = value.split('-')[2] %}
-      {%- set bDayMonth = states.sensor.srinika_birthday.state.split('-')[0] -%}
-      {%- set bDayDate = states.sensor.srinika_birthday.state.split('-')[1] -%}
-      {%- set numOfDays = ((as_timestamp(strptime(year ~ '-' ~ bDayMonth ~ '-' ~ bDayDate , '%Y-%m-%d')) | timestamp_custom('%j', true) | int ) - (as_timestamp(strptime(year ~ '-' ~ month~ '-' ~ date , '%Y-%m-%d')) | timestamp_custom('%j', true) | int)) -%}
-      {%- if numOfDays < 0 -%}
-        {{ numOfDays + 365 }}
-      {%- else -%}
-        {{ numOfDays }}
-      {%- endif -%}
+      {% if states('sensor.srinika_birthday') != "unknown" %}
+        {%- set bDayMonth = states.sensor.srinika_birthday.state.split('-')[0] -%}
+        {%- set bDayDate = states.sensor.srinika_birthday.state.split('-')[1] -%}
+        {%- set numOfDays = ((as_timestamp(strptime(year ~ '-' ~ bDayMonth ~ '-' ~ bDayDate , '%Y-%m-%d')) | timestamp_custom('%j', true) | int ) - (as_timestamp(strptime(year ~ '-' ~ month~ '-' ~ date , '%Y-%m-%d')) | timestamp_custom('%j', true) | int)) -%}
+        {%- if numOfDays < 0 -%}
+          {{ numOfDays + 365 }}
+        {%- else -%}
+          {{ numOfDays }}
+        {%- endif -%}
+      {% else %}
+        -
+      {% endif %}
 
   - platform: mqtt
     state_topic: "/home/today"
@@ -90,14 +94,18 @@ sensor:
       {% set month = value.split('-')[0] %}
       {% set date = value.split('-')[1] %}
       {% set year = value.split('-')[2] %}
-      {%- set bDayMonth = states.sensor.hasika_birthday.state.split('-')[0] -%}
-      {%- set bDayDate = states.sensor.hasika_birthday.state.split('-')[1] -%}
-      {%- set numOfDays = ((as_timestamp(strptime(year ~ '-' ~ bDayMonth ~ '-' ~ bDayDate , '%Y-%m-%d')) | timestamp_custom('%j', true) | int ) - (as_timestamp(strptime(year ~ '-' ~ month~ '-' ~ date , '%Y-%m-%d')) | timestamp_custom('%j', true) | int)) -%}
-      {%- if numOfDays < 0 -%}
-        {{ numOfDays + 365 }}
-      {%- else -%}
-        {{ numOfDays }}
-      {%- endif -%}
+      {% if states('sensor.hasika_birthday') != "unknown" %}
+        {%- set bDayMonth = states.sensor.hasika_birthday.state.split('-')[0] -%}
+        {%- set bDayDate = states.sensor.hasika_birthday.state.split('-')[1] -%}
+        {%- set numOfDays = ((as_timestamp(strptime(year ~ '-' ~ bDayMonth ~ '-' ~ bDayDate , '%Y-%m-%d')) | timestamp_custom('%j', true) | int ) - (as_timestamp(strptime(year ~ '-' ~ month~ '-' ~ date , '%Y-%m-%d')) | timestamp_custom('%j', true) | int)) -%}
+        {%- if numOfDays < 0 -%}
+          {{ numOfDays + 365 }}
+        {%- else -%}
+          {{ numOfDays }}
+        {%- endif -%}
+      {% else %}
+        -
+      {% endif %}      
 
   - platform: mqtt
     state_topic: "/home/today"
@@ -107,14 +115,18 @@ sensor:
       {% set month = value.split('-')[0] %}
       {% set date = value.split('-')[1] %}
       {% set year = value.split('-')[2] %}
-      {%- set bDayMonth = states.sensor.mallika_birthday.state.split('-')[0] -%}
-      {%- set bDayDate = states.sensor.mallika_birthday.state.split('-')[1] -%}
-      {%- set numOfDays = ((as_timestamp(strptime(year ~ '-' ~ bDayMonth ~ '-' ~ bDayDate , '%Y-%m-%d')) | timestamp_custom('%j', true) | int ) - (as_timestamp(strptime(year ~ '-' ~ month~ '-' ~ date , '%Y-%m-%d')) | timestamp_custom('%j', true) | int)) -%}
-      {%- if numOfDays < 0 -%}
-        {{ numOfDays + 365 }}
-      {%- else -%}
-        {{ numOfDays }}
-      {%- endif -%}
+      {% if states('sensor.mallika_birthday') != "unknown" %}
+        {%- set bDayMonth = states.sensor.mallika_birthday.state.split('-')[0] -%}
+        {%- set bDayDate = states.sensor.mallika_birthday.state.split('-')[1] -%}
+        {%- set numOfDays = ((as_timestamp(strptime(year ~ '-' ~ bDayMonth ~ '-' ~ bDayDate , '%Y-%m-%d')) | timestamp_custom('%j', true) | int ) - (as_timestamp(strptime(year ~ '-' ~ month~ '-' ~ date , '%Y-%m-%d')) | timestamp_custom('%j', true) | int)) -%}
+        {%- if numOfDays < 0 -%}
+          {{ numOfDays + 365 }}
+        {%- else -%}
+          {{ numOfDays }}
+        {%- endif -%}
+      {% else %}
+        -
+      {% endif %}      
 
 automation:
 
