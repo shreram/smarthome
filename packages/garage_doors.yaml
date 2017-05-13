@@ -2,16 +2,16 @@ homeassistant:
   customize:
   
     switch.linear_fs20z_isolated_contact_fixture_module_switch_13_0:
-      friendly_name: Single Car Garage Switch
+      friendly_name: Single Car Garage Switch (Open/Close)
       
     switch.linear_fs20z_isolated_contact_fixture_module_switch_14_0:
-      friendly_name: Two Car Garage Switch
+      friendly_name: Two Car Garage Switch (Open/Close)
 
     zwave.linear_fs20z_isolated_contact_fixture_module_13:
-      friendly_name: Single Car Garage Switch (Open/Close)
+      friendly_name: Single Car Garage Relay
 
     zwave.linear_fs20z_isolated_contact_fixture_module_14:
-      friendly_name: Two Car Garage Switch (Open/Close)
+      friendly_name: Two Car Garage Relay
 
     # Garage Door Tilt Sensors
     zwave.ecolink_garage_door_tilt_sensor_4:
@@ -81,7 +81,7 @@ sensor:
     sensors:
       single_car_garage_door_sensor_battery:
         value_template: >-
-          {% if states.zwave.ecolink_garage_door_tilt_sensor_5 %}
+          {% if states('zwave.ecolink_garage_door_tilt_sensor_5.attributes') != "unknown" %}
             {{ states.zwave.ecolink_garage_door_tilt_sensor_5.attributes["battery_level"] | int(0) }}
           {% else %}
             0
@@ -89,7 +89,7 @@ sensor:
         friendly_name: Single Car Garage Door Sensor Battery
         unit_of_measurement: "%"
         icon_template: >-
-          {% if states.zwave.ecolink_garage_door_tilt_sensor_5 %}
+          {% if states('zwave.ecolink_garage_door_tilt_sensor_5.attributes') != "unknown" %}
             {% if states.zwave.ecolink_garage_door_tilt_sensor_5.attributes["battery_level"] %}
             {% set battery_level = states.zwave.ecolink_garage_door_tilt_sensor_5.attributes["battery_level"]|int('unknown') %}
             {% if battery_level == 'unknown' %}
@@ -115,7 +115,7 @@ sensor:
     sensors:
       two_car_garage_door_sensor_battery:
         value_template: >-
-          {% if states.zwave.ecolink_garage_door_tilt_sensor_4 %}
+          {% if states('zwave.ecolink_garage_door_tilt_sensor_4.attributes') != "unknown" %}
             {{ states.zwave.ecolink_garage_door_tilt_sensor_4.attributes["battery_level"] | int(0) }}
           {% else %}
             0
@@ -123,7 +123,7 @@ sensor:
         friendly_name: Two Car Garage Door Sensor Battery
         unit_of_measurement: "%"
         icon_template: >-
-          {% if states.zwave.ecolink_garage_door_tilt_sensor_4 %}
+          {% if states('zwave.ecolink_garage_door_tilt_sensor_4.attributes') != "unknown" %}
             {% if states.zwave.ecolink_garage_door_tilt_sensor_4.attributes["battery_level"] %}
             {% set battery_level = states.zwave.ecolink_garage_door_tilt_sensor_4.attributes["battery_level"]|int('unknown') %}
             {% if battery_level == 'unknown' %}
@@ -195,33 +195,21 @@ sensor:
           
 automation:
 
-  - alias: 'Reset 1-Car Garage Relay'
+  - alias: Reset Garage Relays
     initial_state: 'on'
     hide_entity: true
     trigger:
-      - platform: time
-        seconds: '/5'
-    condition:
-      - condition: state
-        entity_id: switch.linear_fs20z_isolated_contact_fixture_module_switch_13_0
+      - platform: state
+        entity_id:
+          - switch.linear_fs20z_isolated_contact_fixture_module_switch_13_0
+          - switch.linear_fs20z_isolated_contact_fixture_module_switch_14_0
         state: "on"
+        for :
+          seconds: 10
     action:
-      - service: switch.turn_off
-        entity_id: switch.linear_fs20z_isolated_contact_fixture_module_switch_13_0      
-
-  - alias: 'Reset 2-Car Garage Relay'
-    initial_state: 'on'
-    hide_entity: true
-    trigger:
-      - platform: time
-        seconds: '/5'
-    condition:
-      - condition: state
-        entity_id: switch.linear_fs20z_isolated_contact_fixture_module_switch_14_0
-        state: "on"
-    action:
-      - service: switch.turn_off
-        entity_id: switch.linear_fs20z_isolated_contact_fixture_module_switch_14_0      
+      - service_template: switch.turn_off
+        data_template:
+          entity_id: '{{ trigger.entity_id }}'
 
   - alias: Notify Garage Door Status
     initial_state: true
@@ -252,3 +240,57 @@ automation:
             {% elif trigger.to_state.state | lower == "off" %}
               Attention! Your {{ trigger.to_state.attributes.friendly_name }} is now CLOSED!
             {% endif %}
+      - condition: and
+        conditions:
+          - condition: template
+            value_template: >
+              {% if trigger.to_state.state | lower == "on" %}
+                true
+              {% else %}
+                false
+              {% endif %}
+      - service: notify.ios_suresh
+        data_template:
+          title: "Garage Door"
+          message: 'Attention: Your {{ trigger.to_state.attributes.friendly_name }} is now OPENED!'
+          data_template:
+            push:
+              badge: 0
+              category: >
+                {% if trigger.entity_id == "switch.linear_fs20z_isolated_contact_fixture_module_switch_13_0" %}
+                  1CAR_GARAGE
+                {% else %}
+                 2CAR_GARAGE
+                {% endif%}
+              action_data:
+                entity_id: '{{ trigger.entity_id }}'
+
+  - alias: Close Single Car Garage Door
+    initial_state: true
+    hide_entity: true
+    trigger:
+      platform: event
+      event_type: ios.notification_action_fired
+      event_data:
+        actionName: 1CAR_GARAGE_CLOSE
+    action:
+      - service: notify.ios_suresh
+        data:
+          message: "Closing Single Car Garage Door.."
+      - service: switch.turn_on
+        entity_id: switch.linear_fs20z_isolated_contact_fixture_module_switch_13_0
+
+  - alias: Close Two Car Garage Door
+    initial_state: true
+    hide_entity: true
+    trigger:
+      platform: event
+      event_type: ios.notification_action_fired
+      event_data:
+        actionName: 2CAR_GARAGE_CLOSE
+    action:
+      - service: notify.ios_suresh
+        data:
+          message: "Closing Two Car Garage Door.."
+      - service: switch.turn_on
+        entity_id: switch.linear_fs20z_isolated_contact_fixture_module_switch_14_0
