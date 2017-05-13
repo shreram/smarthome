@@ -10,6 +10,15 @@ homeassistant:
     group.batteries:
       order: 2
 
+    sensor.sureshs_iphone_battery_ot:
+      hidden: true
+    sensor.mallikas_iphone_battery_ot:
+      hidden: true
+    sensor.srinikas_iphone_battery_ot:
+      hidden: true
+    sensor.hasikas_iphone_battery_ot:
+      hidden: true
+
     sensor.suresh_iphone_battery_ot:
       friendly_name: Suresh's iPhone Battery
     sensor.mallika_iphone_battery_ot:
@@ -39,11 +48,6 @@ group:
   Batteries:
     control: hidden
     entities:
-      - sensor.suresh_iphone_battery
-      - sensor.mallika_iphone_battery
-      - sensor.srinika_iphone_battery
-      - sensor.hasika_iphone_battery
-  
       - sensor.suresh_iphone_battery_ot
       - sensor.mallika_iphone_battery_ot
       - sensor.srinika_iphone_battery_ot
@@ -74,13 +78,13 @@ sensor:
     value_template: "{{ value_json.batt }}"
   
   - platform: mqtt
-    state_topic: "owntracks/srinika/Srinika"
+    state_topic: "owntracks/srinika/srinika"
     name: "Srinika's iPhone Battery (OT)"
     unit_of_measurement: "%"
     value_template: "{{ value_json.batt }}"
       
   - platform: mqtt
-    state_topic: "owntracks/hasika/Hasika"
+    state_topic: "owntracks/hasika/hasika"
     name: "Hasika's iPhone Battery (OT)"
     unit_of_measurement: "%"
     value_template: "{{ value_json.batt }}"
@@ -90,20 +94,29 @@ sensor:
       suresh_iphone_battery_ot:
         unit_of_measurement: '%'
         entity_id: device_tracker.suresh_suresh
-        value_template: "{{ states('sensor.sureshs_iphone_battery_ot')|int('unknown') }}"
-        icon_template: >-
-          {% set battery_level = states('sensor.sureshs_iphone_battery_ot')|int('unknown') %}
-          {% if battery_level == 'unknown' %}
-            mdi:battery-unknown
+        value_template: >
+          {% if states('sensor.sureshs_iphone_battery_ot') != "unknown" %}
+            {{ states('sensor.sureshs_iphone_battery_ot')| int }}"
           {% else %}
-            {% set battery_round = (battery_level|int / 10)|int * 10 %}
-            {% if battery_round >= 100 %}
-              mdi:battery
-            {% elif battery_round > 0 %}
-              mdi:battery-{{ battery_round }}
+            0
+          {% endif %}
+        icon_template: >-
+          {% if states('sensor.sureshs_iphone_battery_ot') != "unknown" %}
+            {% set battery_level = states('sensor.sureshs_iphone_battery_ot')|int %}
+            {% if battery_level == 'unknown' %}
+              mdi:battery-unknown
             {% else %}
-              mdi:battery-alert
+              {% set battery_round = (battery_level|int / 10)|int * 10 %}
+              {% if battery_round >= 100 %}
+                mdi:battery
+              {% elif battery_round > 0 %}
+                mdi:battery-{{ battery_round }}
+              {% else %}
+                mdi:battery-alert
+              {% endif %}
             {% endif %}
+          {% else %}
+            mdi:battery-alert
           {% endif %}
   
   - platform: template
@@ -184,7 +197,7 @@ automation:
       - device_tracker.srinika_srinika
       - device_tracker.hasika_hasika
       value_template: '{{ state.attributes.battery }}'
-      below: 30
+      below: 25
     action:
       - service: script.notify_me
         data_template:
@@ -193,10 +206,36 @@ automation:
       - service: script.voice_notify
         data_template:
           value1: "{{ trigger.to_state.attributes.friendly_name }}'s phone battery is less than: {{ trigger.to_state.attributes.battery }}%."
+      # - service: mqtt.publish
+        # data_template:
+          # topic: /dump/numeric_state
+          # retain: false
+          # payload: >-
+            # {% macro dumpState(type, stateObj) %}
+              # type ~ ".state: " {{ stateObj.state }}{{- "\n" -}}
+              # type ~ ".entity_id: " {{ stateObj.entity_id }}{{- "\n" -}}
+              # type ~ ".domain: " {{ stateObj.domain }}{{- "\n" -}}
+              # type ~ ".object_id: " {{ stateObj.object_id }}{{- "\n" -}}
+              # type ~ ".name: " {{ stateObj.name }}{{- "\n" -}}
+              # type ~ ".state.last_updated: "{{ stateObj.state.last_updated }}{{- "\n" -}}
+              # type ~ ".state.last_changed: " {{ stateObj.state.last_changed }}{{- "\n" -}}
+              # type ~ ".state.attributes: "{{- "\n" -}}
+              # {%- for attrib in stateObj.attributes | sort() %}
+                # {%- if attrib is defined %} 
+                  # {{attrib}}: {{ item.attributes[attrib] }}{{- "\n" -}}
+                # {%- endif %}
+              # {% endfor %}
+            # {% endmacro %}
+            # trigger.platform: {{ trigger.platform }}{{- "\n" -}}
+            # trigger.entity_id: {{ trigger.entity_id }}{{- "\n" -}}
+            # trigger.below: {{trigger.below }}{{- "\n" -}}
+            # trigger.above: {{ trigger.above }}{{- "\n" -}}
+            # trigger.from_state Attributes: {{ dumpState("trigger.from_state.state", trigger.from_state) }} {{- "\n" -}}
+            # trigger.to_state Attributes: {{ dumpState("trigger.to_state.state", trigger.to_state) }}
 
-###############################################################################
-# Automation: Notify of Sensor's Low Battery
-###############################################################################
+# ###############################################################################
+# # Automation: Notify of Sensor's Low Battery
+# ###############################################################################
   - alias: Alert Low Battery Level of Sensors
     initial_state: true
     trigger:
@@ -208,6 +247,46 @@ automation:
       - sensor.two_car_garage_door_sensor_battery
       - sensor.frontroom_multisensor_battery
       below: 10
+    condition:
+      - condition: template
+        value_template: >-
+          {%- if states.sensor.upstairs_multisensor_battery -%}
+            true
+          {%- else -%}
+            true
+          {%- endif -%}
+      - condition: template
+        value_template: >-
+          {%- if states.sensor.downstairs_multisensor_battery -%}
+            true
+          {%- else -%}
+            true
+          {%- endif -%}
+      - condition: template
+        value_template: >-
+          {%- if states.sensor.single_car_garage_door_sensor_battery -%}
+            true
+          {%- else -%}
+            true
+          {%- endif -%}
+      - condition: template
+        value_template: >-
+          {%- if states.sensor.two_car_garage_door_sensor_battery -%}
+            true
+          {%- else -%}
+            true
+          {%- endif -%}
+      - condition: template
+        value_template: >-
+          {%- if states.sensor.frontroom_multisensor_battery -%}
+            true
+          {%- else -%}
+            true
+          {%- endif -%}
+      - condition: template
+        value_template: "{{ trigger.to_state.state != 'unknown' and trigger.from_state.state != 'unknown'}}"
+      - condition: template
+        value_template: "{{ trigger.to_state.state > 0 and trigger.to_state.state < 10 }}"
     action:
       - service: script.notify_me
         data_template:
