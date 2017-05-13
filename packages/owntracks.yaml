@@ -1,0 +1,122 @@
+homeassistant:
+  customize:
+    device_tracker.suresh_suresh:
+      friendly_name: Suresh
+      entity_picture: /local/suresh.jpg
+    device_tracker.mallika_mallika:
+      friendly_name: Mallika
+      entity_picture: /local/mallika.jpg
+    device_tracker.srinika_srinika:
+      friendly_name: Srinika
+      entity_picture: /local/srinika.jpg
+    device_tracker.hasika_hasika:
+      friendly_name: Hasika
+      entity_picture: /local/hasika.jpg
+    device_tracker.ipad_ipad:
+      hidden: true
+
+device_tracker:
+  - platform: owntracks
+    max_gps_accuracy: 200
+    waypoints: True 
+
+group:
+  Family:
+    entities:
+      - device_tracker.suresh_suresh
+      - device_tracker.mallika_mallika
+      - device_tracker.srinika_srinika
+      - device_tracker.hasika_hasika
+      - automation.alert_when_everyone_is_away
+      - automation.welcome_family_owntracks
+
+automation:
+###############################################################################
+# Welcome Family Members
+###############################################################################
+  - alias: Welcome Family OwnTracks
+    initial_state: true
+    hide_entity: true
+    trigger:
+      - platform: state
+        entity_id:
+          - device_tracker.mallika_mallika
+          - device_tracker.suresh_suresh
+          - device_tracker.srinika_srinika
+          - device_tracker.hasika_hasika
+        from: 'not_home'
+        to: 'home'
+        for: '00:02:00'
+    action:
+      - service: script.notify_me
+        data_template:
+          value1: >
+            Welcome home, {{ trigger.entity_id.split('.')[1].split('_')[1] | title }}!
+          value2: ""
+      - service: script.voice_notify
+        data_template:
+          value1: >
+            {%- macro inside_weather() -%}
+              Inside the house, it is {{ states.sensor.aeotec_zw100_multisensor_6_temperature_11_1.state }} degrees with around {{ states.sensor.aeotec_zw100_multisensor_6_sourcenodeid_11_2.state }} percent humidity.
+              Upstairs, the temperature is {{ states.sensor.aeotec_zw074_multisensor_gen5_temperature_3_1.state }} degrees with around {{ states.sensor.aeotec_zw074_multisensor_gen5_relative_humidity_3_5.state }} percent humidity.
+            {%- endmacro -%}
+            
+            {%- macro outside_weather() -%}
+              Outside, it is going to be {{states('sensor.dark_sky_minutely_summary')}} And the temperature is around {{ states.sensor.dark_sky_apparent_temperature.state | round(0)}} degrees. 
+            {%- endmacro -%}
+            
+            {%- macro uv_levels() -%}
+              {%- set uv = states.sensor.pws_uv.state | int -%}
+              {%- if  uv >= 0 and uv <= 2 -%}
+                Today's UV index is low. It is safe to go out and have fun.
+              {%- elif  uv >= 3 and uv <= 5 -%}
+                Today's UV index is moderate. It is okay to go out and have fun, but do not stay outside too long.
+              {%- elif  uv >= 6 and uv <= 7 -%}
+                Today's UV index is high. It is not very safe to go out. Only go out if you really need to.
+              {%- elif  uv >= 8 and uv <= 10 -%}
+                Today's UV index is very high. It is not at all safe to go out. Please make sure you have sun screen lotion when going outdoors.
+              {%- elif  uv >= 11 -%}
+                Today's UV index is extremely high. It is advised not to go out at all. Stay indoors, and stay cool.
+              {%- endif -%}
+              Do not stay more than {{ states.sensor.uv_burn_time.state }} outdoors. Use Sunscreen lotion if you want to go out.
+            {%- endmacro -%}
+            
+            {%- macro garage_check() -%}
+              {%- if states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_5_0.state == "on" -%}
+                The single car garage door is still open.
+              {%- endif -%}
+              {%- if states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_4_0.state == "on" -%}
+                The 2-car garage door is still open.
+              {%- endif -%}
+            {%- endmacro -%}
+            
+            {%- macro pihole() -%}
+              {%- if states.sensor.ads_blocked_today.state|int > 100 -%}
+                Our internet blocking system has blocked {{states.sensor.ads_blocked_today.state}} ads today! Happy Internet surfing!
+              {%- endif -%}
+            {%- endmacro -%}
+            
+            {%- macro pollenLevels() -%}
+              Current Pollen level is {{ states.sensor.pollen_level.state }}
+            {%- endmacro -%}
+            Welcome home, my dear {{ trigger.entity_id.split('.')[1].split('_')[1] | title }}. I want to give you a quick update in and around the house.
+            {{- inside_weather() }} {{ outside_weather() }} {{ uv_levels() }} {{ pollenLevels() }} {{ pihole() }} {{ garage_check() }}
+
+###############################################################################
+# Alert when every one is away
+###############################################################################
+  - alias: Alert when everyone is AWAY
+    initial_state: true
+    hide_entity: true
+    trigger:
+      platform: state
+      entity_id:
+        - device_tracker.mallika_mallika
+        - device_tracker.suresh_suresh
+        - device_tracker.srinika_srinika
+        - device_tracker.hasika_hasika      
+      from: 'home'
+      to: 'not_home'
+    action:
+      - service: script.notify_me
+        data: {"value1":"Warning - No one's at home at the moment.", "value2":""}
