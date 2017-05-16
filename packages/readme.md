@@ -15,8 +15,14 @@
 ## Recycle Pickup Card
 <img src="https://github.com/skalavala/smarthome/blob/master/packages/images/recycle.jpg" alt="Home Assistant Card" />
 
-## Actionable Trash Notification (iOS) 
-<img src="https://github.com/skalavala/smarthome/blob/master/packages/images/trash_recycle.jpg" />
-
 ## Birthday Package
 <img src="https://github.com/skalavala/smarthome/blob/master/packages/images/birthday.png" alt="Birthday" />
+
+# Actionable iOS Notifications
+
+## Trash Notification (iOS) 
+<img src="https://github.com/skalavala/smarthome/blob/master/packages/images/trash_recycle.jpg" alt="Trash & Recycle" />
+## Actionable Trash Notification (iOS) 
+
+## Garage Door Notification
+<img src="https://github.com/skalavala/smarthome/blob/master/packages/images/garage_door.jpg" alt="Garage Door"/>
