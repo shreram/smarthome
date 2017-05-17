@@ -96,14 +96,14 @@ sensor:
         entity_id: device_tracker.suresh_suresh
         value_template: >
           {% if states('sensor.sureshs_iphone_battery_ot') != "unknown" %}
-            {{ states('sensor.sureshs_iphone_battery_ot')| int }}"
+            {{ states('sensor.sureshs_iphone_battery_ot')| int }}
           {% else %}
             0
           {% endif %}
         icon_template: >-
           {% if states('sensor.sureshs_iphone_battery_ot') != "unknown" %}
-            {% set battery_level = states('sensor.sureshs_iphone_battery_ot')|int %}
-            {% if battery_level == 'unknown' %}
+            {% set battery_level = states('sensor.sureshs_iphone_battery_ot')|int (-1)%}
+            {% if battery_level == -1 %}
               mdi:battery-unknown
             {% else %}
               {% set battery_round = (battery_level|int / 10)|int * 10 %}
@@ -124,10 +124,10 @@ sensor:
       mallika_iphone_battery_ot:
         unit_of_measurement: '%'
         entity_id: device_tracker.mallika_mallika
-        value_template: "{{ states('sensor.mallikas_iphone_battery_ot')|int('unknown') }}"
+        value_template: "{{ states('sensor.mallikas_iphone_battery_ot')|int(-1) }}"
         icon_template: >-
-          {% set battery_level = states('sensor.mallikas_iphone_battery_ot')|int('unknown') %}
-          {% if battery_level == 'unknown' %}
+          {% set battery_level = states('sensor.mallikas_iphone_battery_ot')|int(-1) %}
+          {% if battery_level == -1 %}
             mdi:battery-unknown
           {% else %}
             {% set battery_round = (battery_level|int / 10)|int * 10 %}
@@ -145,10 +145,10 @@ sensor:
       srinika_iphone_battery_ot:
         unit_of_measurement: '%'
         entity_id: device_tracker.srinika_srinika
-        value_template: "{{ states('sensor.srinikas_iphone_battery_ot')|int('unknown') }}"
+        value_template: "{{ states('sensor.srinikas_iphone_battery_ot')|int(-1) }}"
         icon_template: >-
-          {% set battery_level = states('sensor.srinikas_iphone_battery_ot')|int('unknown') %}
-          {% if battery_level == 'unknown' %}
+          {% set battery_level = states('sensor.srinikas_iphone_battery_ot')|int(-1) %}
+          {% if battery_level == -1 %}
             mdi:battery-unknown
           {% else %}
             {% set battery_round = (battery_level|int / 10)|int * 10 %}
@@ -166,10 +166,10 @@ sensor:
       hasika_iphone_battery_ot:
         unit_of_measurement: '%'
         entity_id: device_tracker.hasika_hasika
-        value_template: "{{ states('sensor.hasikas_iphone_battery_ot')|int('unknown') }}"
+        value_template: "{{ states('sensor.hasikas_iphone_battery_ot')|int(-1) }}"
         icon_template: >-
-          {% set battery_level = states('sensor.hasikas_iphone_battery_ot')|int('unknown') %}
-          {% if battery_level == 'unknown' %}
+          {% set battery_level = states('sensor.hasikas_iphone_battery_ot')|int(-1) %}
+          {% if battery_level == -1 %}
             mdi:battery-unknown
           {% else %}
             {% set battery_round = (battery_level|int / 10)|int * 10 %}
