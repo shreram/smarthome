@@ -39,25 +39,6 @@ homeassistant:
       friendly_name: Trash & Recycle
       icon: mdi:recycle
 
-ios:
-  push:
-    categories:
-      - name: Trash Recycle
-        identifier: 'TRASH_RECYCLE'
-        actions:
-          - identifier: 'TRASH_LEFT'
-            title: 'Done'
-            activationMode: 'background'
-            authenticationRequired: yes
-            destructive: yes
-            behavior: 'default'
-          - identifier: 'TRASH_REMIND_LATER'
-            title: 'Remind Later'
-            activationMode: 'background'
-            authenticationRequired: yes
-            destructive: yes
-            behavior: 'default'
-
 group:
   Trash Schedule:
     entities:
@@ -141,79 +122,90 @@ sensor:
 ###############################################################################
 # Sensor to hold info about current week is an odd week or an even week of the year
 ###############################################################################
-  - platform: template
-    sensors:
-      current_week:
-        value_template: >-
-          {%- if (as_timestamp(now()) | timestamp_custom('%U', true) | int ) % 2 == 0 -%}
-            Even Week (Week# {{ as_timestamp(now()) | timestamp_custom('%U', true) }})
-          {%- else -%}
-            Odd Week (Week# {{ as_timestamp(now()) | timestamp_custom('%U', true) }})
-          {%- endif -%}
+  - platform: mqtt
+    state_topic: "/home/today"
+    name: "current week"
+    value_template: >-
+      {% set month = value.split('-')[0] %}
+      {% set date = value.split('-')[1] %}
+      {% set year = value.split('-')[2] %}
+      {% set today = strptime(year ~ '-' ~ month ~ '-' ~ date , '%Y-%m-%d') %}
+      {%- if (as_timestamp(today) | timestamp_custom('%U', true) | int ) % 2 == 0 -%}
+        Even Week (Week# {{ as_timestamp(today) | timestamp_custom('%U', true) }})
+      {%- else -%}
+        Odd Week (Week# {{ as_timestamp(today) | timestamp_custom('%U', true) }})
+      {%- endif -%}
 
 ###############################################################################
 # Trash  - Pickup schedule is EVERY week.
 # Set the day to a day before the actual day leaving time for reminders
 ###############################################################################
-  - platform: template
-    sensors:
-      trash_day:
-        value_template: >-
-          {%- set pickupDay = states.sensor.trash_pickup_day.state | lower -%}
-          {%- if as_timestamp(now())| timestamp_custom('%A', true) | lower == pickupDay -%}
-            yes
-          {%- else -%}
-            no
-          {%- endif -%}
+  - platform: mqtt
+    state_topic: "/home/today"
+    name: "trash day"
+    value_template: >-
+      {% set month = value.split('-')[0] %}
+      {% set date = value.split('-')[1] %}
+      {% set year = value.split('-')[2] %}
+      {% set today = strptime(year ~ '-' ~ month ~ '-' ~ date , '%Y-%m-%d') %}
+      {%- set pickupDay = states.sensor.trash_pickup_day.state | lower -%}      
+      {%- if as_timestamp(today)| timestamp_custom('%A', true) | lower == pickupDay -%}
+        yes
+      {%- else -%}
+        no
+      {%- endif -%}
 
 ###############################################################################
 # Recycle - Pickup schedule is every other week.
 # Set the day to a day before the actual day leaving time for reminders
 ###############################################################################
-
-  - platform: template
-    sensors:
-      recycle_day:
-        value_template: >-
-          {%- set pickupDay = states.sensor.recycle_pickup_day.state | lower -%}
-          {% if states.input_select.recycle_pickup_week.state | lower == "even weeks" %}
-            {%- set evenWeekPickup = "true" %}
-          {% else %}
-            {%- set evenWeekPickup = "false" %}
-          {% endif %}
-          {%- macro day_of_week(timestamp) -%}
-            {{ as_timestamp(timestamp)| timestamp_custom('%A', true) | lower }}
-          {%- endmacro %}      
-          {%- macro week_number_of_year() -%}
-            {{ as_timestamp(now()) | timestamp_custom('%U', true) | int }}
-          {%- endmacro %}
-          {%- macro is_it_this_week() -%}
-            {%- if as_timestamp(now()) | timestamp_custom('%U', true) | int % 2 == 0 -%}
-              {%- if evenWeekPickup == "true" -%}
-                true
-              {%- else -%}
-                false
-              {%- endif -%}
-            {%- else -%}
-              {%- if evenWeekPickup == "true" -%}
-                false
-              {%- else -%}
-                true
-              {%- endif -%}
-            {%- endif -%}
-          {%- endmacro -%}
-          {%- macro is_it_today() -%}
-          {%- if is_it_this_week() == "true" -%}
-            {%- if day_of_week(now()) | lower == pickupDay -%}
-              yes
-            {%- else -%}
-              no
-            {%- endif -%}
+  - platform: mqtt
+    state_topic: "/home/today"
+    name: "recycle day"
+    value_template: >-
+      {% set month = value.split('-')[0] %}
+      {% set date = value.split('-')[1] %}
+      {% set year = value.split('-')[2] %}
+      {% set today = strptime(year ~ '-' ~ month ~ '-' ~ date , '%Y-%m-%d') %}    
+      {%- set pickupDay = states.sensor.recycle_pickup_day.state | lower -%}
+      {% if states.input_select.recycle_pickup_week.state | lower == "even weeks" %}
+        {%- set evenWeekPickup = "true" %}
+      {% else %}
+        {%- set evenWeekPickup = "false" %}
+      {% endif %}
+      {%- macro day_of_week(timestamp) -%}
+        {{ as_timestamp(timestamp)| timestamp_custom('%A', true) | lower }}
+      {%- endmacro %}      
+      {%- macro week_number_of_year() -%}
+        {{ as_timestamp(today) | timestamp_custom('%U', true) | int }}
+      {%- endmacro %}
+      {%- macro is_it_this_week() -%}
+        {%- if as_timestamp(today) | timestamp_custom('%U', true) | int % 2 == 0 -%}
+          {%- if evenWeekPickup == "true" -%}
+            true
           {%- else -%}
-            no
+            false
           {%- endif -%}
-          {%- endmacro -%}
-          {{- is_it_today() -}}
+        {%- else -%}
+          {%- if evenWeekPickup == "true" -%}
+            false
+          {%- else -%}
+            true
+          {%- endif -%}
+        {%- endif -%}
+      {%- endmacro -%}
+      {%- macro is_it_today() -%}
+      {%- if is_it_this_week() == "true" -%}
+        {%- if day_of_week(today) | lower == pickupDay -%}
+          yes
+        {%- else -%}
+          no
+        {%- endif -%}
+      {%- else -%}
+        no
+      {%- endif -%}
+      {%- endmacro -%}
+      {{- is_it_today() -}}
 
 ###############################################################################
 #                               Automations
@@ -233,12 +225,17 @@ automation:
       platform: state
       entity_id: input_select.trash_pickup_day
     action:
-      service: mqtt.publish
-      data_template:
-        topic: "/home/trashpickupday"
-        retain: true
-        payload: '{{ states.input_select.trash_pickup_day.state }}'
-  
+      - service: mqtt.publish
+        data_template:
+          topic: "/home/trashpickupday"
+          retain: true
+          payload: '{{ states.input_select.trash_pickup_day.state }}'
+      - service: mqtt.publish
+        data_template:
+          topic: '/home/today'
+          retain: true
+          payload: '{{ as_timestamp(now() ) | timestamp_custom("%m-%d-%Y", true) }}'
+
   - alias: Recycle Pickup Day Changed
     initial_state: true
     hide_entity: true
@@ -246,12 +243,17 @@ automation:
       platform: state
       entity_id: input_select.recycle_pickup_day
     action:
-      service: mqtt.publish
-      data_template:
-        topic: "/home/recyclepickupday"
-        retain: true
-        payload: '{{ states.input_select.recycle_pickup_day.state }}'
-  
+      - service: mqtt.publish
+        data_template:
+          topic: "/home/recyclepickupday"
+          retain: true
+          payload: '{{ states.input_select.recycle_pickup_day.state }}'
+      - service: mqtt.publish
+        data_template:
+          topic: '/home/today'
+          retain: true
+          payload: '{{ as_timestamp(now() ) | timestamp_custom("%m-%d-%Y", true) }}'
+
   - alias: Recycle Pickup Week Changed
     initial_state: true
     hide_entity: true
@@ -259,11 +261,16 @@ automation:
       platform: state
       entity_id: input_select.recycle_pickup_week
     action:
-      service: mqtt.publish
-      data_template:
-        topic: "/home/recyclepickupweek"
-        retain: true
-        payload: '{{ states.input_select.recycle_pickup_week.state }}'
+      - service: mqtt.publish
+        data_template:
+          topic: "/home/recyclepickupweek"
+          retain: true
+          payload: '{{ states.input_select.recycle_pickup_week.state }}'
+      - service: mqtt.publish
+        data_template:
+          topic: '/home/today'
+          retain: true
+          payload: '{{ as_timestamp(now() ) | timestamp_custom("%m-%d-%Y", true) }}'
 
   - alias: Restore Trash Recycle Settings on Startup
     initial_state: true
@@ -286,6 +293,11 @@ automation:
         data_template:
           entity_id: input_select.recycle_pickup_week
           option: "{{states.sensor.recycle_pickup_week.state}}"
+      - service: mqtt.publish
+        data_template:
+          topic: '/home/today'
+          retain: true
+          payload: '{{ as_timestamp(now() ) | timestamp_custom("%m-%d-%Y", true) }}'
 
 ###############################################################################
 #  Reminder code - Reminds 5 times every hour starting 4 PM
@@ -398,3 +410,30 @@ automation:
     action:
       - service: input_boolean.turn_on
         entity_id: input_boolean.trash_reminders
+      - service: input_select.select_option
+        data_template:
+          entity_id: input_select.trash_pickup_day
+          option: "{{states.sensor.trash_pickup_day.state}}"
+      - service: input_select.select_option
+        data_template:
+          entity_id: input_select.recycle_pickup_day
+          option: "{{states.sensor.recycle_pickup_day.state}}"
+      - service: input_select.select_option
+        data_template:
+          entity_id: input_select.recycle_pickup_week
+          option: "{{states.sensor.recycle_pickup_week.state}}"
+
+  - alias: Update Current Date In MQTT
+    initial_state: true
+    hide_entity: true
+    trigger:
+      platform: time
+      hours: '/01'
+      minutes: 00
+      seconds: 00
+    action:
+      - service: mqtt.publish
+        data_template:
+          topic: '/home/today'
+          retain: true
+          payload: '{{ as_timestamp(now() ) | timestamp_custom("%m-%d-%Y", true) }}'
