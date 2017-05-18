@@ -157,104 +157,65 @@ sensor:
   - platform: template
     sensors:
       downstairs_multisensor_battery:
-        value_template: >-
-          {% if states('zwave.aeotec_zw074_multisensor_gen5_2.attributes') != "unknown" %}
-            {{ states.zwave.aeotec_zw074_multisensor_gen5_2.attributes["battery_level"] | int(0) }}
-          {% else %}
-            0
-          {% endif %}
+        value_template: "{{ (states.zwave.aeotec_zw074_multisensor_gen5_2.attributes|default).battery_level|default|int('unknown') }}"
         friendly_name: Downstairs Multisensor Battery
         unit_of_measurement: "%"
         icon_template: >-
-          {% if states('zwave.aeotec_zw074_multisensor_gen5_2.attributes') != "unknown" %}
-            {% if states.zwave.aeotec_zw074_multisensor_gen5_2.attributes["battery_level"] %}
-            {% set battery_level = states.zwave.aeotec_zw074_multisensor_gen5_2.attributes["battery_level"]|int('unknown') %}
-            {% if battery_level == 'unknown' %}
-              mdi:battery-unknown
-            {% else %}
-              {% set battery_round = (battery_level|int / 10)|int * 10 %}
-              {% if battery_round >= 100 %}
-                mdi:battery
-              {% elif battery_round > 0 %}
-                mdi:battery-{{ battery_round }}
-              {% else %}
-                mdi:battery-alert
-              {% endif %}
-            {% endif %}
-            {% else %}
-              mdi:battery-unknown
-            {% endif %}
-          {% else %}
+          {% set battery_level = states('sensor.downstairs_multisensor_battery')|int('unknown')  %}
+          {% if battery_level == 'unknown' %}
             mdi:battery-unknown
+          {% else %}
+            {% set battery_round = (battery_level|int / 10)|int * 10 %}
+            {% if battery_round >= 100 %}
+              mdi:battery
+            {% elif battery_round > 0 %}
+              mdi:battery-{{ battery_round }}
+            {% else %}
+              mdi:battery-alert
+            {% endif %}
           {% endif %}
-  
+
   - platform: template
     sensors:
       upstairs_multisensor_battery:
-        value_template: >-
-          {% if states('zwave.aeotec_zw074_multisensor_gen5_3.attributes') != "unknown" %}
-            {{ states.zwave.aeotec_zw074_multisensor_gen5_3.attributes["battery_level"] | int(0) }}
-          {% else %}
-            0
-          {% endif %}
+        value_template: "{{ (states.zwave.aeotec_zw074_multisensor_gen5_3.attributes|default).battery_level|default|int('unknown') }}"
         friendly_name: Upstairs Multisensor Battery
         unit_of_measurement: "%"
         icon_template: >-
-          {% if states('zwave.aeotec_zw074_multisensor_gen5_3.attributes') != "unknown" %}
-            {% if states.zwave.aeotec_zw074_multisensor_gen5_3.attributes["battery_level"] %}
-              {% set battery_level = states.zwave.aeotec_zw074_multisensor_gen5_3.attributes["battery_level"]|int('unknown') %}
-              {% if battery_level == 'unknown' %}
-                mdi:battery-unknown
-              {% else %}
-                {% set battery_round = (battery_level|int / 10)|int * 10 %}
-                {% if battery_round >= 100 %}
-                  mdi:battery
-                {% elif battery_round > 0 %}
-                  mdi:battery-{{ battery_round }}
-                {% else %}
-                  mdi:battery-alert
-                {% endif %}
-              {% endif %}
-            {% else %}
-              mdi:battery-unknown
-            {% endif %}
-          {% else %}
+          {% set battery_level = states('sensor.upstairs_multisensor_battery')|int('unknown') %}
+          {% if battery_level == 'unknown' %}
             mdi:battery-unknown
+          {% else %}
+            {% set battery_round = (battery_level|int / 10)|int * 10 %}
+            {% if battery_round >= 100 %}
+              mdi:battery
+            {% elif battery_round > 0 %}
+              mdi:battery-{{ battery_round }}
+            {% else %}
+              mdi:battery-alert
+            {% endif %}
           {% endif %}
 
   - platform: template
     sensors:
       frontroom_multisensor_battery:
-        value_template: >-
-          {% if states('zwave.aeotec_zw100_multisensor_6_11.attributes') != "unknown" %}
-            {{ states.zwave.aeotec_zw100_multisensor_6_11.attributes["battery_level"] | int(0) }}
-          {% else %}
-            0
-          {% endif %}
+        value_template: "{{ (states.zwave.aeotec_zw100_multisensor_6_11.attributes|default).battery_level|default|int('unknown') }}"
         friendly_name: Front Room Multisensor Battery
         unit_of_measurement: "%"
         icon_template: >-
-          {% if states('zwave.aeotec_zw100_multisensor_6_11.attributes') != "unknown" %}
-            {% if states.zwave.aeotec_zw100_multisensor_6_11.attributes["battery_level"] %}
-            {% set battery_level = states.zwave.aeotec_zw100_multisensor_6_11.attributes["battery_level"]|int('unknown') %}
-            {% if battery_level == 'unknown' %}
-              mdi:battery-unknown
-            {% else %}
-              {% set battery_round = (battery_level|int / 10)|int * 10 %}
-              {% if battery_round >= 100 %}
-                mdi:battery
-              {% elif battery_round > 0 %}
-                mdi:battery-{{ battery_round }}
-              {% else %}
-                mdi:battery-alert
-              {% endif %}
-            {% endif %}
-            {% else %}
-              mdi:battery-unknown
-            {% endif %}
-          {% else %}
-            mdi:battery-unknown
-          {% endif %}
+           {% set battery_level = states('sensor.frontroom_multisensor_battery')|int('unknown') %}
+           {% if battery_level == 'unknown' %}
+             mdi:battery-unknown
+           {% else %}
+             {% set battery_round = (battery_level|int / 10)|int * 10 %}
+             {% if battery_round >= 100 %}
+               mdi:battery
+             {% elif battery_round > 0 %}
+               mdi:battery-{{ battery_round }}
+             {% else %}
+               mdi:battery-alert
+             {% endif %}
+           {% endif %}
 
 automation:
 ###############################################################################
