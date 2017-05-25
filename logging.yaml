@@ -5,9 +5,13 @@
 #---------------------------------------------------------------------------------------
 # Log Severities: notset, debug, info, warn, warning, error, fatal, critical
 
-default: debug
+default: error
 logs:
+  libopenzwave: error
+  openzwave: error
   homeassistant.core: error
+  homeassistant.setup: error
+  homeassistant.loader: error
   homeassistant.components.automation: error
   homeassistant.components.device_tracker: error
   homeassistant.components.discovery: error
@@ -19,4 +23,7 @@ logs:
   homeassistant.helpers.script: error
   homeassistant.components.light.lifx: error
   homeassistant.components.mqtt: error
-
+  homeassistant.components.api: error
+  custom_components.media_player.sharptv: error
+  custom_components.sensor.command_line: error
+  custom_components.sensor.life360: error
