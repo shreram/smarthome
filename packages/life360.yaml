@@ -7,13 +7,12 @@ homeassistant:
 sensor:
   - platform: life360
     name: Life360 Sensor
-    username: XXXXX
-    password: XXXXX
+    username: XXX.XXX@email.com
+    password: XXXXXXXXX
     command1: "curl -s -X POST -H \"Authorization: Basic cFJFcXVnYWJSZXRyZTRFc3RldGhlcnVmcmVQdW1hbUV4dWNyRUh1YzptM2ZydXBSZXRSZXN3ZXJFQ2hBUHJFOTZxYWtFZHI0Vg==\" -F \"grant_type=password\" -F \"username=USERNAME360\" -F \"password=PASSWORD360\" https://api.life360.com/v3/oauth2/token.json | grep -Po '(?<=\"access_token\":\")\\w*'"
     command2: "curl -s -X GET -H \"Authorization: Bearer ACCESS_TOKEN\" https://api.life360.com/v3/circles.json | grep -Po '(?<=\"id\":\")[\\w-]*'"
     command3: "curl -s -X GET -H \"Authorization: Bearer ACCESS_TOKEN\" https://api.life360.com/v3/circles/ID"
     value_template: '{{ value_json }}'
-    scan_interval: 30
 
 automation:
 
@@ -29,12 +28,8 @@ automation:
           topic: 'life360/data'
           retain: false
           payload: '{{states.sensor.life360_sensor.state}}'
-      - service: script.notify_me
-        data_template:
-          value1: "Life360 Data is updated."
-          value2: ""
 
-  - alias: Parse Life360 Data
+  - alias: Populate OwnTracks Data From Life360
     initial_state: true
     hide_entity: true
     trigger:
@@ -43,25 +38,25 @@ automation:
     action:
       - service: mqtt.publish
         data_template:
-          topic: 'owntracks/suresh/suresh'
+          topic: 'owntracks/{{trigger.payload_json.members.0.firstName | lower}}/{{trigger.payload_json.members.0.firstName | lower}}'
           retain: false
           payload: >
-            {"t":"p", "tst": "{{trigger.payload_json.members.0.location.timestamp}}", "acc": "{{trigger.payload_json.members.0.location.accuracy}}", "_type": "location", "alt": "0", "lon": "{{trigger.payload_json.members.0.location.longitude}}", "lat": "{{trigger.payload_json.members.0.location.latitude}}", "batt": "{{trigger.payload_json.members.0.location.battery}}" }
+            {"t":"p", "tst":"{{trigger.payload_json.members.0.location.timestamp}}", "acc":{{trigger.payload_json.members.0.location.accuracy | int }}, "_type":"location", "alt":"0", "lon":{{trigger.payload_json.members.0.location.longitude | float }}, "lat":{{trigger.payload_json.members.0.location.latitude | float }}, "batt":{{trigger.payload_json.members.0.location.battery | int }} }
       - service: mqtt.publish
         data_template:
-          topic: 'owntracks/mallika/mallika'
+          topic: 'owntracks/{{trigger.payload_json.members.1.firstName | lower}}/{{trigger.payload_json.members.1.firstName | lower}}'
           retain: false
           payload: >
-            {"t":"p", "tst": "{{trigger.payload_json.members.1.location.timestamp}}", "acc": "{{trigger.payload_json.members.1.location.accuracy}}", "_type": "location", "alt": "0", "lon": "{{trigger.payload_json.members.1.location.longitude}}", "lat": "{{trigger.payload_json.members.1.location.latitude}}", "batt": "{{trigger.payload_json.members.1.location.battery}}" }
+            {"t":"p", "tst":"{{trigger.payload_json.members.1.location.timestamp}}", "acc":{{trigger.payload_json.members.1.location.accuracy | int }}, "_type":"location", "alt":"0", "lon":{{trigger.payload_json.members.1.location.longitude | float }}, "lat":{{trigger.payload_json.members.1.location.latitude | float }}, "batt":{{trigger.payload_json.members.1.location.battery | int }} }
       - service: mqtt.publish
         data_template:
-          topic: 'owntracks/srinika/srinika'
+          topic: 'owntracks/{{trigger.payload_json.members.2.firstName | lower}}/{{trigger.payload_json.members.2.firstName | lower}}'
           retain: false
           payload: >
-            {"t":"p", "tst": "{{trigger.payload_json.members.2.location.timestamp}}", "acc": "{{trigger.payload_json.members.2.location.accuracy}}", "_type": "location", "alt": "0", "lon": "{{trigger.payload_json.members.2.location.longitude}}", "lat": "{{trigger.payload_json.members.2.location.latitude}}", "batt": "{{trigger.payload_json.members.2.location.battery}}" }
+            {"t":"p", "tst":"{{trigger.payload_json.members.2.location.timestamp}}", "acc":{{trigger.payload_json.members.2.location.accuracy | int }}, "_type":"location", "alt":"0", "lon":{{trigger.payload_json.members.2.location.longitude | float }}, "lat":{{trigger.payload_json.members.2.location.latitude | float }}, "batt":{{trigger.payload_json.members.2.location.battery | int }} }
       - service: mqtt.publish
         data_template:
-          topic: 'owntracks/hasika/hasika'
+          topic: 'owntracks/{{trigger.payload_json.members.3.firstName | lower}}/{{trigger.payload_json.members.3.firstName | lower}}'
           retain: false
           payload: >
-            {"t":"p", "tst": "{{trigger.payload_json.members.3.location.timestamp}}", "acc": "{{trigger.payload_json.members.3.location.accuracy}}", "_type": "location", "alt": "0", "lon": "{{trigger.payload_json.members.3.location.longitude}}", "lat": "{{trigger.payload_json.members.3.location.latitude}}", "batt": "{{trigger.payload_json.members.3.location.battery}}" }
+            {"t":"p", "tst":"{{trigger.payload_json.members.3.location.timestamp}}", "acc":{{trigger.payload_json.members.3.location.accuracy | int }}, "_type":"location", "alt":"0", "lon":{{trigger.payload_json.members.3.location.longitude | float }}, "lat":{{trigger.payload_json.members.3.location.latitude | float }}, "batt":{{trigger.payload_json.members.3.location.battery | int }} }
