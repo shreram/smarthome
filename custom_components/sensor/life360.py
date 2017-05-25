@@ -1,3 +1,15 @@
+'''
+@ Author		: 	Suresh Kalavala, a.k.a Mahasri Kalavala (@skalavala)
+@ Date			:   05/24/2017
+@ Descrition	:	Life360 Sensor - It queries Life360 API and retrieves information at a specified interval
+
+@ How To		:	Copy this file and place it in your Home Assistant Config folder\custom_components\sensor\ folder
+					Copy corresponding Life360 Package frommy repo, and make sure you have MQTT installed and Configured
+
+@ Notes			: 	1) PLEASE NOTE THAT IF YOU ENABLE LOGGING, YOU MIGHT SEE PASSWORDS...
+					2) To make this custom component portable, I've hard coded CONFIG parameters - like "command1", "command2"...etc
+                    3) This sensor is based on a Shell Script from https://community.home-assistant.io/t/life-360-support/1690/9
+'''
 from datetime import timedelta
 import logging
 import subprocess
@@ -86,9 +98,9 @@ class Life360Sensor(Entity):
 
         if value is None:
             value = STATE_UNKNOWN
-        elif self._value_template is not None:
-            self._state = self._value_template.render_with_possible_json_value(
-                value, STATE_UNKNOWN)
+        # elif self._value_template is not None:
+            # self._state = self._value_template.render_with_possible_json_value(
+                # value, STATE_UNKNOWN)
         else:
             self._state = value
 
@@ -100,41 +112,49 @@ class Life360SensorData(object):
         """Initialize the data object."""
         self.username = username
         self.password = password
-        self.command1 = command1
-        self.command2 = command2
-        self.command3 = command3
+        self.COMMAND_ACCESS_TOKEN = command1
+        self.COMMAND_ID = command2
+        self.COMMAND_MEMBERS = command3
         self.hass = hass
         self.value = None
 
     def update(self):
 
-        self.command1 = self.command1.replace("USERNAME360", self.username)
-        self.command1 = self.command1.replace("PASSWORD360", self.password)
+        ''' Prepare and Execute Commands '''
+        _LOGGER.info( "Preparing and executing get Access Token command." )
+        self.COMMAND_ACCESS_TOKEN = self.COMMAND_ACCESS_TOKEN.replace("USERNAME360", self.username)
+        self.COMMAND_ACCESS_TOKEN = self.COMMAND_ACCESS_TOKEN.replace("PASSWORD360", self.password)
+        access_token = self.execShellCommand( self.COMMAND_ACCESS_TOKEN )
+        
+        _LOGGER.info( "Preparing and executing get ID command." )
+        self.COMMAND_ID = self.COMMAND_ID.replace("ACCESS_TOKEN", access_token)
+        id = self.execShellCommand( self.COMMAND_ID )
+
+        _LOGGER.info( "Preparing and executing get Member command." )
+        self.COMMAND_MEMBERS = self.COMMAND_MEMBERS.replace("ACCESS_TOKEN", access_token)
+        self.COMMAND_MEMBERS = self.COMMAND_MEMBERS.replace("ID", id)
+        members = self.execShellCommand( self.COMMAND_MEMBERS )
+
+        self.value = members
+
+    def execShellCommand( self, command ):
 
         try:
-            """Get the latest data with a shell command."""
-            _LOGGER.info("Running command 1: %s", self.command1)
-
-            return_value = subprocess.check_output(
-                self.command1, shell=True, timeout=15)
-            access_token = return_value.strip().decode('utf-8')
-
-            self.command2 = self.command2.replace("ACCESS_TOKEN", access_token)
-            _LOGGER.info("Running command 2: %s", self.command2)
-
-            return_value = subprocess.check_output(
-                self.command2, shell=True, timeout=15)
-            id = return_value.strip().decode('utf-8')
-
-            self.command3 = self.command3.replace("ACCESS_TOKEN", access_token)
-            self.command3 = self.command3.replace("ID", id)
-
-            _LOGGER.info("Running command 3: %s", self.command3)
-            return_value = subprocess.check_output(
-                self.command3, shell=True, timeout=15)
-            self.value = return_value.strip().decode('utf-8')
+            _LOGGER.info( "Running command: %s", command )
+            output = subprocess.check_output( command, shell=True, timeout=15 )
+            output = output.strip().decode('utf-8')
+            _LOGGER.debug( "Command executed successfully, here is the output: %s", output )
 
         except subprocess.CalledProcessError:
-            _LOGGER.error("Command failed: %s", self.command1)
+            _LOGGER.error("Command failed: %s", command)
+            self.value = None
         except subprocess.TimeoutExpired:
-            _LOGGER.error("Timeout for command: %s", self.command1)
+            _LOGGER.error("Timeout for command: %s", command)
+            self.value = None
+
+        if output == None:
+            _LOGGER.error( "Empty data reveived from Life360 API" )
+            return None
+
+        self.value = output
+        return output
