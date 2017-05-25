@@ -1,14 +1,14 @@
 '''
-@ Author		: 	Suresh Kalavala, a.k.a Mahasri Kalavala (@skalavala)
-@ Date			:   05/24/2017
-@ Descrition	:	Life360 Sensor - It queries Life360 API and retrieves information at a specified interval
+@ Author : 	Suresh Kalavala, a.k.a Mahasri Kalavala (@skalavala)
+@ Date :   05/24/2017
+@ Descrition :	Life360 Sensor - It queries Life360 API and retrieves information at a specified interval
 
-@ How To		:	Copy this file and place it in your Home Assistant Config folder\custom_components\sensor\ folder
+@ How To :	Copy this file and place it in your Home Assistant Config folder\custom_components\sensor\ folder
 					Copy corresponding Life360 Package frommy repo, and make sure you have MQTT installed and Configured
 
-@ Notes			: 	1) PLEASE NOTE THAT IF YOU ENABLE LOGGING, YOU MIGHT SEE PASSWORDS...
-					2) To make this custom component portable, I've hard coded CONFIG parameters - like "command1", "command2"...etc
-                    3) This sensor is based on a Shell Script from https://community.home-assistant.io/t/life-360-support/1690/9
+@ Notes	: 	1) PLEASE NOTE THAT IF YOU ENABLE LOGGING, YOU MIGHT SEE PASSWORDS...
+		2) To make this custom component portable, I've hard coded CONFIG parameters - like "command1", "command2"...etc
+                3) This sensor is based on a Shell Script from https://community.home-assistant.io/t/life-360-support/1690/9
 '''
 from datetime import timedelta
 import logging
