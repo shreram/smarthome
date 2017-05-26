@@ -11,7 +11,7 @@
 
 @ Notes		:   1) Only enable logging on need basis - it might show passwords
 		    2) To make it portable, a lot of stuff is hard coded :)
-		    3) Make sure the life360 password don't contain '#' or '$' symbols
+		    3) Make sure the life360 password doesn't contain '#' or '$' symbols
 '''
 
 from datetime import timedelta
