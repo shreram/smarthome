@@ -11,7 +11,7 @@
 
 @ Notes		:   1) Only enable logging on need basis - it might show passwords
 		    2) To make it portable, a lot of stuff is hard coded :)
-		    3) Make sure the life360 password don't contain '#' or '$' symbols
+			3) Make sure the life360 password don't contain '#' or '$' symbols
 '''
 
 from datetime import timedelta
@@ -26,7 +26,8 @@ from homeassistant.helpers import template
 from homeassistant.exceptions import TemplateError
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
-    CONF_NAME, CONF_VALUE_TEMPLATE, CONF_UNIT_OF_MEASUREMENT, STATE_UNKNOWN)
+    CONF_NAME, CONF_VALUE_TEMPLATE, CONF_UNIT_OF_MEASUREMENT, 
+    STATE_UNKNOWN)
 from homeassistant.helpers.entity import Entity
 import homeassistant.helpers.config_validation as cv
 
@@ -58,7 +59,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 # pylint: disable=unused-argument
 def setup_platform(hass, config, add_devices, discovery_info=None):
-    # Set up the Life360 Sensor.
+    """Set up the Life360 Sensor."""
     name = config.get(CONF_NAME)
     username = config.get(CONST_USERNAME)
     password = config.get(CONST_PASSWORD)
@@ -75,7 +76,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 class Life360Sensor(Entity):
-    # Representation of a sensor.
+    """Representation of a sensor."""
 
     def __init__(self, hass, data, name, unit_of_measurement, value_template):
         """Initialize the sensor."""
