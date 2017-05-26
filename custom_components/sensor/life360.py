@@ -11,6 +11,7 @@
 
 @ Notes		:   1) Only enable logging on need basis - it might show passwords
 		    2) To make it portable, a lot of stuff is hard coded :)
+		    3) Make sure the life360 password don't contain '#' or '$' symbols
 '''
 
 from datetime import timedelta
@@ -25,8 +26,7 @@ from homeassistant.helpers import template
 from homeassistant.exceptions import TemplateError
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
-    CONF_NAME, CONF_VALUE_TEMPLATE, CONF_UNIT_OF_MEASUREMENT, 
-    STATE_UNKNOWN)
+    CONF_NAME, CONF_VALUE_TEMPLATE, CONF_UNIT_OF_MEASUREMENT, STATE_UNKNOWN)
 from homeassistant.helpers.entity import Entity
 import homeassistant.helpers.config_validation as cv
 
@@ -35,6 +35,11 @@ _LOGGER = logging.getLogger(__name__)
 DEPENDENCIES = ['mqtt']
 
 DEFAULT_NAME = 'Life360 Sensor'
+CONST_MQTT_TOPIC = "mqtt_topic"
+CONST_STATE_ERROR = "error"
+CONST_STATE_RUNNING = "running"
+CONST_USERNAME = "username"
+CONST_PASSWORD = "password"
 
 COMMAND1 = "curl -s -X POST -H \"Authorization: Basic cFJFcXVnYWJSZXRyZTRFc3RldGhlcnVmcmVQdW1hbUV4dWNyRUh1YzptM2ZydXBSZXRSZXN3ZXJFQ2hBUHJFOTZxYWtFZHI0Vg==\" -F \"grant_type=password\" -F \"username=USERNAME360\" -F \"password=PASSWORD360\" https://api.life360.com/v3/oauth2/token.json | grep -Po '(?<=\"access_token\":\")\\w*'"
 COMMAND2 = "curl -s -X GET -H \"Authorization: Bearer ACCESS_TOKEN\" https://api.life360.com/v3/circles.json | grep -Po '(?<=\"id\":\")[\\w-]*'"
@@ -43,9 +48,9 @@ COMMAND3 = "curl -s -X GET -H \"Authorization: Bearer ACCESS_TOKEN\" https://api
 SCAN_INTERVAL = timedelta(seconds=60)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Required("username"): cv.string,
-    vol.Required("password"): cv.string,
-    vol.Required("mqtt_topic"): cv.string,
+    vol.Required(CONST_USERNAME): cv.string,
+    vol.Required(CONST_PASSWORD): cv.string,
+    vol.Required(CONST_MQTT_TOPIC): cv.string,
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
     vol.Optional(CONF_UNIT_OF_MEASUREMENT): cv.string,
     vol.Optional(CONF_VALUE_TEMPLATE): cv.template,
@@ -53,11 +58,11 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 # pylint: disable=unused-argument
 def setup_platform(hass, config, add_devices, discovery_info=None):
-    """Set up the Life360 Sensor."""
+    # Set up the Life360 Sensor.
     name = config.get(CONF_NAME)
-    username = config.get("username")
-    password = config.get("password")
-    mqtt_topic = config.get("mqtt_topic")
+    username = config.get(CONST_USERNAME)
+    password = config.get(CONST_PASSWORD)
+    mqtt_topic = config.get(CONST_MQTT_TOPIC)
 
     unit = config.get(CONF_UNIT_OF_MEASUREMENT)
     value_template = config.get(CONF_VALUE_TEMPLATE)
@@ -70,7 +75,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 class Life360Sensor(Entity):
-    """Representation of a sensor."""
+    # Representation of a sensor.
 
     def __init__(self, hass, data, name, unit_of_measurement, value_template):
         """Initialize the sensor."""
@@ -137,7 +142,7 @@ class Life360SensorData(object):
             access_token = self.execShellCommand( self.COMMAND_ACCESS_TOKEN )
         
             if access_token == None:
-                self.value = "error"
+                self.value = CONST_STATE_ERROR
                 return None
         
             _LOGGER.info( "Preparing and executing get ID command." )
@@ -145,7 +150,7 @@ class Life360SensorData(object):
             id = self.execShellCommand( self.COMMAND_ID )
         
             if id == None:
-                self.value = "error"
+                self.value = CONST_STATE_ERROR
                 return None
         
             _LOGGER.info( "Preparing and executing get Member command." )
@@ -155,12 +160,12 @@ class Life360SensorData(object):
         
             if payload != None:
                 self.saveToMqtt ( payload )
-                self.value = "running"
+                self.value = CONST_STATE_RUNNING
             else:
-                self.value = "error"
+                self.value = CONST_STATE_ERROR
 				
         except:
-            self.value = "error"
+            self.value = CONST_STATE_ERROR
 
     def execShellCommand( self, command ):
 
@@ -173,16 +178,16 @@ class Life360SensorData(object):
 
         except subprocess.CalledProcessError:
             _LOGGER.error("Command failed: %s", command)
-            self.value = "error"
+            self.value = CONST_STATE_ERROR
             output = None
         except subprocess.TimeoutExpired:
             _LOGGER.error("Timeout for command: %s", command)
-            self.value = "error"
+            self.value = CONST_STATE_ERROR
             output = None
 
         if output == None:
             _LOGGER.error( "Empty data reveived from Life360 API" )
-            self.value = "error"
+            self.value = CONST_STATE_ERROR
             return None
         else:
             return output
