@@ -15,102 +15,22 @@ sensor:
   - platform: life360
     username: !secret life360_username
     password: !secret life360_password
-    mqtt_topic: 'life360/data'
+    mqtt_topic: "/life360/data"
+    scan_interval: 60
 
 automation:
 
 ###############################################################################
 # Alert me When the sensor fails
 ###############################################################################
-  - alias: Alert Life360 Sensor Error
+  - alias: Notify Life360 Sensor State Change
     initial_state: true
     hide_entity: true
-
     trigger:
       platform: state
       entity_id: sensor.life360_sensor
-      from: 'running'
-      to: 'error'
-
     action:
       - service: script.notify_me
         data_template:
-          value1: "FYI - There seem to be a problem with Life360 Sensor!"
+          value1: "Life360 Sensor state changed to: {{ trigger.to_state.state| upper }}."
           value2: ""
-
-###############################################################################
-# Extract the Life360 data and drop it into mqtt in "OwnTracks" json format.
-###############################################################################
-  - alias: Parse Life360 Data
-    initial_state: true
-    hide_entity: true
-
-    trigger:
-      platform: mqtt
-      topic: 'life360/data'
-
-    action:
-      - service: mqtt.publish
-        data_template:
-          topic: 'owntracks/{{trigger.payload_json.members.0.firstName | lower}}/{{trigger.payload_json.members.0.firstName | lower}}'
-          retain: true
-          payload: >
-            {
-              "t": "p",
-              "tst": "{{trigger.payload_json.members.0.location.timestamp}}",
-              "acc": {{trigger.payload_json.members.0.location.accuracy | int }},
-              "_type": "location",
-              "alt": "0",
-              "lon": {{trigger.payload_json.members.0.location.longitude | float }},
-              "lat": {{trigger.payload_json.members.0.location.latitude | float }},
-              "batt": {{trigger.payload_json.members.0.location.battery | int }},
-              "charging": {{trigger.payload_json.members.0.location.charge | int }}
-            }
-      - service: mqtt.publish
-        data_template:
-          topic: 'owntracks/{{trigger.payload_json.members.1.firstName | lower}}/{{trigger.payload_json.members.1.firstName | lower}}'
-          retain: true
-          payload: >
-            {
-              "t": "p",
-              "tst": "{{trigger.payload_json.members.1.location.timestamp}}",
-              "acc": {{trigger.payload_json.members.1.location.accuracy | int }},
-              "_type": "location",
-              "alt": "0",
-              "lon": {{trigger.payload_json.members.1.location.longitude | float }},
-              "lat": {{trigger.payload_json.members.1.location.latitude | float }},
-              "batt": {{trigger.payload_json.members.1.location.battery | int }},
-              "charging": {{trigger.payload_json.members.1.location.charge | int }}
-            }
-      - service: mqtt.publish
-        data_template:
-          topic: 'owntracks/{{trigger.payload_json.members.2.firstName | lower}}/{{trigger.payload_json.members.2.firstName | lower}}'
-          retain: true
-          payload: >
-            {
-              "t": "p",
-              "tst": "{{trigger.payload_json.members.2.location.timestamp}}",
-              "acc": {{trigger.payload_json.members.2.location.accuracy | int }},
-              "_type": "location",
-              "alt": "0",
-              "lon": {{trigger.payload_json.members.2.location.longitude | float }},
-              "lat": {{trigger.payload_json.members.2.location.latitude | float }},
-              "batt": {{trigger.payload_json.members.2.location.battery | int }},
-              "charging": {{trigger.payload_json.members.2.location.charge | int }}
-            }
-      - service: mqtt.publish
-        data_template:
-          topic: 'owntracks/{{trigger.payload_json.members.3.firstName | lower}}/{{trigger.payload_json.members.3.firstName | lower}}'
-          retain: true
-          payload: >
-            {
-              "t": "p",
-              "tst": "{{trigger.payload_json.members.3.location.timestamp}}",
-              "acc": {{trigger.payload_json.members.3.location.accuracy | int }},
-              "_type": "location",
-              "alt": "0",
-              "lon": {{trigger.payload_json.members.3.location.longitude | float }},
-              "lat": {{trigger.payload_json.members.3.location.latitude | float }},
-              "batt": {{trigger.payload_json.members.3.location.battery | int }},
-              "charging": {{trigger.payload_json.members.3.location.charge | int }}
-            }
