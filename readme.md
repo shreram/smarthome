@@ -27,7 +27,17 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 * Sharp Aquos Smart TV
 
-* Onkyo Receiver (TX-NR 807)
+* <a href="http://amzn.to/2tVYN4b">Onkyo Receiver (TX-NR 807)</a>
+
+* <a href="http://amzn.to/2tVYN4b">DENON 4K Ultra HD HDR Receiver(AVRX2400H)</a>
+
+* <a href="http://amzn.to/2suiPhT">HIKVISION 4MP IR Mini Bullet Network Cameras - 4</a>
+
+* <a href="http://amzn.to/2uOJxSX">8-Port Ubiquiti TOUGHSwitch PoE Pro (managed switch)</a>
+
+* <a href="http://amzn.to/2tVYHtv">Ecobee 3 Lite Thermostat</a>
+
+* <a href="http://amzn.to/2uuPAgl">Ecobee Room Sensors</a>
 
 * <a href="http://amzn.to/2pTIpyv">Home Security System (Simplisafe)</a>
 
