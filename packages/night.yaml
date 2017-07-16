@@ -4,15 +4,32 @@
 #   @package        :   Night
 #   @description    :   All bedtime automations
 ###############################################################################
+homeassistant:
+  customize:
+    group.bedtime_automations:
+      order: 56
+
+group:
+  Bedtime Automations:
+    entities:
+      - automation.night_dim_kitchen_lights
+      - automation.night_dim_tv_light_1
+      - automation.night_dim_tv_light_2
+      - automation.night_dim_tv_light_3
+      - automation.night_homesecurity_on
+      - automation.night_turn_lights_off_bed_time
+      - automation.night_bedtime_report
+
 automation:
 
 ###############################################################################
 # Set the mood for bed time - DIM Kitchen Lights IF they are ON
 ###############################################################################
-  - alias: goodnight_dim_kitchen_lights
+  - alias: Night Dim Kitchen Lights
+    initial_state: true
     trigger:
       platform: time
-      after: '21:45:00'
+      at: '22:45:00'
     condition:
       - condition: state
         entity_id: light.dinette      
@@ -28,10 +45,11 @@ automation:
 ###############################################################################
 # Set the mood for bed time - DIM TV Room lights IF they are ON
 ###############################################################################
-  - alias: goodnight_dim_tv_light_1
+  - alias: Night Dim TV Light 1
+    initial_state: true
     trigger:
       platform: time
-      after: '21:45:00'
+      at: '22:45:00'
     condition:
       - condition: state
         entity_id: light.hue_color_lamp_1
@@ -40,15 +58,16 @@ automation:
       - service: light.turn_on
         data:
           entity_id: light.hue_color_lamp_1
-          rgb_color: [25,25,25]
+          #rgb_color: [25,25,25]
           brightness: 10
           color_temp: 420
           transition: 15
   
-  - alias: goodnight_dim_tv_light_2
+  - alias: Night Dim TV Light 2
+    initial_state: true
     trigger:
       platform: time
-      after: '21:45:00'
+      at: '22:45:00'
     condition:
       - condition: state
         entity_id: light.hue_color_lamp_2
@@ -57,15 +76,16 @@ automation:
       - service: light.turn_on
         data:
           entity_id: light.hue_color_lamp_2
-          rgb_color: [25,25,25]
+          #rgb_color: [25,25,25]
           brightness: 10
           color_temp: 420
           transition: 15
   
-  - alias: goodnight_dim_tv_light_3
+  - alias: Night Dim TV Light 3
+    initial_state: true
     trigger:
       platform: time
-      after: '21:45:00'
+      at: '22:45:00'
     condition:
       - condition: state
         entity_id: light.hue_color_lamp_3
@@ -74,18 +94,19 @@ automation:
       - service: light.turn_on
         data:
           entity_id: light.hue_color_lamp_3
-          rgb_color: [25,25,25]
+          #rgb_color: [25,25,25]
           brightness: 10
           color_temp: 420
           transition: 15
-        
+
 ###############################################################################
 # TURN HOME SECURITY SYSTEM ON AFTER BED TIME
 ###############################################################################
-  - alias: goodnight_homesecurity_on
+  - alias: Night HomeSecurity On
+    initial_state: true
     trigger:
       platform: time
-      after: '22:00:00'
+      at: '23:00:00'
     condition:
       - condition: template
         value_template: "{{ states('alarm_control_panel.simplisafe') != 'away' }}"
@@ -104,10 +125,11 @@ automation:
 ###############################################################################
 # TURN INDOOR LIGHTS OFF AFTER BED TIME
 ###############################################################################
-  - alias: goodnight_turn_lights_off
+  - alias: Night Turn Lights Off (Bed Time)
+    initial_state: true
     trigger:
       platform: time
-      after: '22:00:00'
+      at: '23:00:00'
     action:
       - service: light.turn_off
         data:
@@ -139,10 +161,11 @@ automation:
 ###############################################################################
 # Provide Bed time Report via TTS
 ###############################################################################
-  - alias: Bedtime Report
+  - alias: Night Bedtime Report
+    initial_state: true
     trigger:
       platform: time
-      after: '22:15:00'
+      at: '22:15:00'
     condition:
       - condition: state
         entity_id: group.all_devices
