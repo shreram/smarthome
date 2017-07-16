@@ -25,6 +25,8 @@ homeassistant:
     media_player.snapcast_client_b827eba8e7ef:
       friendly_name: Guest Room 1 Music
     media_player.snapcast_client_b827eb505e2d:
+      friendly_name: Guest Bedroom 2 Music
+    media_player.snapcast_client_001e8c40c713:
       friendly_name: Basement Music
 
     media_player.mpd:
@@ -33,44 +35,27 @@ homeassistant:
       friendly_name: Gstreamer Media Player
     media_player.sharp_tv:
       friendly_name: Sharp TV
-    media_player.onkyo_receiver:
-      friendly_name: ONKYO Receiver
 
 group:
   Basement Media Players:
     entities:
-      - media_player.snapcast_client_b827eb505e2d
-      - media_player.onkyo_receiver
+      - media_player.pi_audio_five_snapcast_client
   
   Downstairs Media Players:
     entities:
-      - media_player.snapcast_client_b827eb8604f5
-      - media_player.snapcast_client_b827ebaa08f7
-      - media_player.snapcast_client_b827eb011e00
+      - media_player.pi_ha_snapcast_client
+      - media_player.pi_audio_one_snapcast_client
+      - media_player.pi_audio_two_snapcast_client
       - media_player.mpd
       - media_player.gstreamer
       - media_player.sharp_tv
   
   Upstairs Media Players:
     entities:
-      - media_player.snapcast_client_b827eb4445b1
-      - media_player.snapcast_client_b827eba8e7ef
+      - media_player.pi_audio_three_snapcast_client
+      - media_player.pi_audio_four_snapcast_client
     
 media_player:
-  - platform: onkyo
-    host: !secret onkyo_host_ip
-    name: Onkyo Receiver 
-    sources: 
-      bd: 'Bluray' 
-      dvr: 'VCR/DVR'
-      sat: 'CBL/SAT'
-      game: 'Game'
-      aux1: 'Aux'
-      tape: 'TV/Tape'
-      tuner: 'Tuner'
-      cd: 'CD'
-      phono: 'Phono'
-
   - platform: snapcast
     host: !secret snapcast_server_ip
 
