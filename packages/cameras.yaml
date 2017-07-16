@@ -1,0 +1,165 @@
+###############################################################################
+#   @author         :   Mahasri Kalavala
+#   @date           :   07/16/2017
+#   @package        :   Cameras
+#   @description    :   Cameras and the automations
+###############################################################################
+homeassistant:
+  customize:
+
+# Front Door Camera
+    binary_sensor.frontdoor_camera_motion:
+      friendly_name: Frontdoor Motion
+    binary_sensor.frontdoor_camera_field_detection:
+      friendly_name: Frontdoor Field Detection
+    binary_sensor.frontdoor_camera_line_crossing:
+      friendly_name: Frontdoor Line Crossing
+    binary_sensor.frontdoor_camera_tamper_detection:
+      friendly_name: Frontdoor Camera Tamper Detection
+
+# Driveway Camera
+    binary_sensor.driveway_camera_motion:
+      friendly_name: Driveway Motion
+    binary_sensor.driveway_camera_field_detection:
+      friendly_name: Driveway Field Detection
+    binary_sensor.driveway_camera_line_crossing:
+      friendly_name: Driveway Line Crossing
+    binary_sensor.driveway_camera_tamper_detection:
+      friendly_name: Driveway Camera Tamper Detection
+
+# Patio Camera
+    binary_sensor.patio_camera_motion:
+      friendly_name: Patio Motion
+    binary_sensor.patio_camera_field_detection:
+      friendly_name: Patio Field Detection
+    binary_sensor.patio_camera_line_crossing:
+      friendly_name: Patio Line Crossing
+    binary_sensor.patio_camera_tamper_detection:
+      friendly_name: Patio Camera Tamper Detection
+
+# Playarea Camera
+    binary_sensor.playarea_camera_motion:
+      friendly_name: Playarea Motion
+    binary_sensor.playarea_camera_field_detection:
+      friendly_name: Playarea Field Detection
+    binary_sensor.playarea_camera_line_crossing:
+      friendly_name: Playarea Line Crossing
+    binary_sensor.playarea_camera_tamper_detection:
+      friendly_name: Playarea Camera Tamper Detection
+
+group:
+  Frontyard Cameras:
+    entities:
+      - camera.frontdoor_camera
+      - camera.driveway_camera
+
+  Backyard Cameras:
+    entities:
+      - camera.patio_camera
+      - camera.playarea_camera
+
+  Camera Motion:
+    entities:
+      - binary_sensor.frontdoor_camera_motion
+      - binary_sensor.driveway_camera_motion
+      - binary_sensor.patio_camera_motion
+      - binary_sensor.playarea_camera_motion
+
+  Camera Field Detection:
+    entities:
+      - binary_sensor.frontdoor_camera_field_detection
+      - binary_sensor.driveway_camera_field_detection
+      - binary_sensor.patio_camera_field_detection
+      - binary_sensor.playarea_camera_field_detection
+      
+  Camera Line Crossing:
+    entities:
+      - binary_sensor.frontdoor_camera_line_crossing
+      - binary_sensor.driveway_camera_line_crossing
+      - binary_sensor.patio_camera_line_crossing
+      - binary_sensor.playarea_camera_line_crossing
+      
+  Camera Tamper Detection:
+    entities:
+      - binary_sensor.frontdoor_camera_tamper_detection
+      - binary_sensor.driveway_camera_tamper_detection
+      - binary_sensor.patio_camera_tamper_detection
+      - binary_sensor.playarea_camera_tamper_detection
+
+  Camera Sensors:
+    entities:
+      - binary_sensor.frontdoor_camera_motion
+      - binary_sensor.frontdoor_camera_field_detection
+      - binary_sensor.frontdoor_camera_line_crossing
+      - binary_sensor.frontdoor_camera_tamper_detection
+
+      - binary_sensor.driveway_camera_motion
+      - binary_sensor.driveway_camera_field_detection
+      - binary_sensor.driveway_camera_line_crossing
+      - binary_sensor.driveway_camera_tamper_detection
+
+      - binary_sensor.patio_camera_motion
+      - binary_sensor.patio_camera_field_detection
+      - binary_sensor.patio_camera_line_crossing
+      - binary_sensor.patio_camera_tamper_detection
+
+      - binary_sensor.playarea_camera_motion
+      - binary_sensor.playarea_camera_field_detection
+      - binary_sensor.playarea_camera_line_crossing
+      - binary_sensor.playarea_camera_tamper_detection
+
+  CCTV:
+    view: yes
+    name: CCTV
+    icon: mdi:cctv
+    entities:
+      - group.frontyard_cameras
+      - group.backyard_cameras
+      - group.camera_motion
+      - group.camera_tamper_detection
+      - group.camera_line_crossing
+      - group.camera_field_detection
+      - group.camera_sensors    
+    
+camera:
+  - platform: generic
+    name: Frontdoor Camera
+    still_image_url: !secret frontdoor_camera_url
+
+  - platform: generic
+    name: Driveway Camera
+    still_image_url: !secret driveway_camera_url
+
+  - platform: generic
+    name: Patio Camera
+    still_image_url: !secret patio_camera_url
+
+  - platform: generic
+    name: Playarea Camera
+    still_image_url: !secret playarea_camera_url
+
+binary_sensor:
+
+  - platform: hikvision
+    name: Frontdoor Camera
+    host: !secret frontdoor_camera_ip
+    username: !secret camera_username
+    password: !secret camera_password
+    
+  - platform: hikvision
+    name: Driveway Camera
+    host: !secret driveway_camera_ip
+    username: !secret camera_username
+    password: !secret camera_password
+
+  - platform: hikvision
+    name: Patio Camera
+    host: !secret patio_camera_ip
+    username: !secret camera_username
+    password: !secret camera_password
+
+  - platform: hikvision
+    name: Playarea Camera
+    host: !secret playarea_camera_ip
+    username: !secret camera_username
+    password: !secret camera_password
