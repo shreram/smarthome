@@ -7,82 +7,56 @@
 homeassistant:
   customize:
 
-    group.multisensors:
-      order: 17
-    group.tv_room:
-      order: 18
-    group.upstairs:
-      order: 19
-    group.front_room:
-      order: 20
+    # group.multisensors:
+      # order: 17
+    # group.tv_room:
+      # order: 18
+    # group.upstairs:
+      # order: 19
+    # group.front_room:
+      # order: 20
 
-    zwave.aeotec_zw074_multisensor_gen5_3:
-      friendly_name: Upstairs Multi Sensor
     zwave.aeotec_zw074_multisensor_gen5_2:
+      friendly_name: Upstairs Multi Sensor
+    zwave.aeotec_zw074_multisensor_gen5:
       friendly_name: TV Room Multi Sensor
-    zwave.aeotec_zw100_multisensor_6_11:
+    zwave.aeotec_zw100_multisensor_6:
       friendly_name: Front Room Multi Sensor
       
 # TV Room
-    binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0:
+    binary_sensor.aeotec_zw074_multisensor_gen5_sensor:
       friendly_name: TV Room Motion
       device_class: motion
-    sensor.aeotec_zw074_multisensor_gen5_temperature_2_1:
+    sensor.aeotec_zw074_multisensor_gen5_temperature:
       friendly_name: TV Room Temperature
-    sensor.aeotec_zw074_multisensor_gen5_luminance_2_3:
+    sensor.aeotec_zw074_multisensor_gen5_luminance:
       friendly_name: TV Room Light Level
-    sensor.aeotec_zw074_multisensor_gen5_relative_humidity_2_5:
+    sensor.aeotec_zw074_multisensor_gen5_relative_humidity:
       friendly_name: TV Room Humidity
 
 # Upstairs      
-    binary_sensor.aeotec_zw074_multisensor_gen5_sensor_3_0:
+    binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2:
       friendly_name: Upstairs Motion
       device_class: motion
-    sensor.aeotec_zw074_multisensor_gen5_temperature_3_1:
+    sensor.aeotec_zw074_multisensor_gen5_temperature_2:
       friendly_name: Upstairs Temperature
-    sensor.aeotec_zw074_multisensor_gen5_luminance_3_3:
+    sensor.aeotec_zw074_multisensor_gen5_luminance_2:
       friendly_name: Upstairs Light Level
-    sensor.aeotec_zw074_multisensor_gen5_relative_humidity_3_5:
+    sensor.aeotec_zw074_multisensor_gen5_relative_humidity_2:
       friendly_name: Upstairs Humidity
 
 # Front Room
-    binary_sensor.aeotec_zw100_multisensor_6_sensor_11_0:
+    binary_sensor.aeotec_zw100_multisensor_6_sensor:
       friendly_name: Front Room Motion
       device_class: motion
-    sensor.aeotec_zw100_multisensor_6_temperature_11_1:
+    sensor.aeotec_zw100_multisensor_6_temperature:
       friendly_name: Front Room Temperature
-    sensor.aeotec_zw100_multisensor_6_luminance_11_3:
+    sensor.aeotec_zw100_multisensor_6_luminance:
       friendly_name: Front Room Light Level
-    sensor.aeotec_zw100_multisensor_6_relative_humidity_11_5:
+    sensor.aeotec_zw100_multisensor_6_relative_humidity:
       friendly_name: Front Room Humidity
-    sensor.aeotec_zw100_multisensor_6_ultraviolet_11_27:
+    sensor.aeotec_zw100_multisensor_6_ultraviolet:
       friendly_name: Front Room UV Level
-
-# Multi Sensor Xtra Stuff
-    sensor.aeotec_zw100_multisensor_6_alarm_level_11_1:
-      hidden: true
-    sensor.aeotec_zw100_multisensor_6_alarm_type_11_0:
-      hidden: true
-    sensor.aeotec_zw100_multisensor_6_burglar_11_10:
-      hidden: true
-    sensor.aeotec_zw100_multisensor_6_sourcenodeid_11_2:
-      hidden: true      
-    sensor.aeotec_zw074_multisensor_gen5_burglar_3_10:
-      hidden: true
-    sensor.aeotec_zw074_multisensor_gen5_sourcenodeid_3_2:
-      hidden: true
-    sensor.aeotec_zw074_multisensor_gen5_alarm_type_3_0:
-      hidden: true
-    sensor.aeotec_zw074_multisensor_gen5_alarm_level_3_1:
-      hidden: true
-    sensor.aeotec_zw074_multisensor_gen5_alarm_type_2_0:
-      hidden: true
-    sensor.aeotec_zw074_multisensor_gen5_burglar_2_10:
-      hidden: true
-    sensor.aeotec_zw074_multisensor_gen5_sourcenodeid_2_2:
-      hidden: true
-    sensor.aeotec_zw074_multisensor_gen5_alarm_level_2_1:
-      hidden: true
 
 # Automation Stuff
     automation.motion001:
@@ -112,27 +86,35 @@ homeassistant:
       icon: mdi:run-fast  
 
 group:
-  TV Room:
-    entities:
-      - binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
-      - sensor.aeotec_zw074_multisensor_gen5_temperature_2_1
-      - sensor.aeotec_zw074_multisensor_gen5_luminance_2_3
-      - sensor.aeotec_zw074_multisensor_gen5_relative_humidity_2_5
+  # TV Room:
+    # entities:
+      # - binary_sensor.aeotec_zw074_multisensor_gen5_sensor
+      # - sensor.aeotec_zw074_multisensor_gen5_temperature_2_1
+      # - sensor.aeotec_zw074_multisensor_gen5_luminance_2_3
+      # - sensor.aeotec_zw074_multisensor_gen5_relative_humidity_2_5
+      # - light.hue_color_lamp_1
+      # - light.hue_color_lamp_2
+      # - light.hue_color_lamp_3
+      # - light.family_room
 
-  Upstairs:
-    entities:
-      - binary_sensor.aeotec_zw074_multisensor_gen5_sensor_3_0
-      - sensor.aeotec_zw074_multisensor_gen5_temperature_3_1
-      - sensor.aeotec_zw074_multisensor_gen5_luminance_3_3
-      - sensor.aeotec_zw074_multisensor_gen5_relative_humidity_3_5
+  # Upstairs:
+    # entities:
+      # - binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2
+      # - sensor.aeotec_zw074_multisensor_gen5_temperature_3_1
+      # - sensor.aeotec_zw074_multisensor_gen5_luminance_3_3
+      # - sensor.aeotec_zw074_multisensor_gen5_relative_humidity_3_5
+      # - light.master_bedroom_1
+      # - light.master_bedroom_2
+      # - light.master_bedroom
 
-  Front Room:
-    entities:
-      - binary_sensor.aeotec_zw100_multisensor_6_sensor_11_0
-      - sensor.aeotec_zw100_multisensor_6_ultraviolet_11_27
-      - sensor.aeotec_zw100_multisensor_6_temperature_11_1
-      - sensor.aeotec_zw100_multisensor_6_luminance_11_3
-      - sensor.aeotec_zw100_multisensor_6_relative_humidity_11_5
+  # Front Room:
+    # entities:
+      # - binary_sensor.aeotec_zw100_multisensor_6_sensor
+      # - sensor.aeotec_zw100_multisensor_6_ultraviolet_11_27
+      # - sensor.aeotec_zw100_multisensor_6_temperature_11_1
+      # - sensor.aeotec_zw100_multisensor_6_luminance_11_3
+      # - sensor.aeotec_zw100_multisensor_6_relative_humidity_11_5
+      # - switch.wemoswitch1
 
   Downstairs Motion Automations:
     entities:
@@ -157,7 +139,7 @@ sensor:
   - platform: template
     sensors:
       downstairs_multisensor_battery:
-        value_template: "{{ (states.zwave.aeotec_zw074_multisensor_gen5_2.attributes|default).battery_level|default|int('unknown') }}"
+        value_template: "{{ (states.zwave.aeotec_zw074_multisensor_gen5.attributes|default).battery_level|default|int('unknown') }}"
         friendly_name: Downstairs Multisensor Battery
         unit_of_measurement: "%"
         icon_template: >-
@@ -178,7 +160,7 @@ sensor:
   - platform: template
     sensors:
       upstairs_multisensor_battery:
-        value_template: "{{ (states.zwave.aeotec_zw074_multisensor_gen5_3.attributes|default).battery_level|default|int('unknown') }}"
+        value_template: "{{ (states.zwave.aeotec_zw074_multisensor_gen5_2.attributes|default).battery_level|default|int('unknown') }}"
         friendly_name: Upstairs Multisensor Battery
         unit_of_measurement: "%"
         icon_template: >-
@@ -199,7 +181,7 @@ sensor:
   - platform: template
     sensors:
       frontroom_multisensor_battery:
-        value_template: "{{ (states.zwave.aeotec_zw100_multisensor_6_11.attributes|default).battery_level|default|int('unknown') }}"
+        value_template: "{{ (states.zwave.aeotec_zw100_multisensor_6.attributes|default).battery_level|default|int('unknown') }}"
         friendly_name: Front Room Multisensor Battery
         unit_of_measurement: "%"
         icon_template: >-
@@ -244,7 +226,7 @@ automation:
     initial_state: true
     trigger:
       platform: state
-      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
+      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor
       from: 'off'
       to: 'on'
     condition:
@@ -256,7 +238,7 @@ automation:
         state: 'on'
       - condition: state
         entity_id: light.family_room
-        state: 'on'      
+        state: 'on'
     action:
       - service: light.turn_on
         data:
@@ -277,7 +259,7 @@ automation:
           entity_id: light.hue_color_lamp_3
           rgb_color: [255, 255, 255]
           brightness: 10
-          color_temp: 366
+          #color_temp: 366
           transition: 5
   
 #===============================================================================================#
@@ -288,7 +270,7 @@ automation:
     initial_state: true
     trigger:
       platform: state
-      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
+      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor
       from: 'off'
       to: 'on'
     condition:
@@ -307,21 +289,21 @@ automation:
           entity_id: light.hue_color_lamp_1
           rgb_color: [255, 255, 255]
           brightness: 10
-          color_temp: 366
+          #color_temp: 366
           transition: 5
       - service: light.turn_on
         data:
           entity_id: light.hue_color_lamp_2
           rgb_color: [255, 255, 255]
           brightness: 10
-          color_temp: 366
+          #color_temp: 366
           transition: 5
       - service: light.turn_on
         data:
           entity_id: light.hue_color_lamp_3
           rgb_color: [255, 255, 255]
           brightness: 10
-          color_temp: 366
+          #color_temp: 366
           transition: 5
   
 #===============================================================================================#
@@ -332,7 +314,7 @@ automation:
     initial_state: true
     trigger:
       platform: state
-      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
+      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor
       from: 'off'
       to: 'on'
     condition:
@@ -376,7 +358,7 @@ automation:
     initial_state: true
     trigger:
       platform: state
-      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
+      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor
       from: 'off'
       to: 'on'
     condition:
@@ -420,7 +402,7 @@ automation:
     initial_state: true
     trigger:
       platform: state
-      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
+      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor
       from: 'on'
       to: 'off'
     condition:
@@ -460,7 +442,7 @@ automation:
     initial_state: true
     trigger:
       platform: state
-      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2_0
+      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor
       from: 'on'
       to: 'off'
     condition:
@@ -499,7 +481,7 @@ automation:
     initial_state: true
     trigger:
       platform: state
-      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_3_0
+      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2
       from: 'off'
       to: 'on'
     condition:
@@ -524,7 +506,7 @@ automation:
     initial_state: true
     trigger:
       platform: state
-      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_3_0
+      entity_id: binary_sensor.aeotec_zw074_multisensor_gen5_sensor_2
       from: 'on'
       to: 'off'
     condition:
@@ -547,7 +529,7 @@ automation:
     initial_state: true
     trigger:
       platform: state
-      entity_id: binary_sensor.aeotec_zw100_multisensor_6_sensor_11_0
+      entity_id: binary_sensor.aeotec_zw100_multisensor_6_sensor
       from: 'off'
       to: 'on'
     condition:
@@ -566,7 +548,7 @@ automation:
     initial_state: true
     trigger:
       platform: state
-      entity_id: binary_sensor.aeotec_zw100_multisensor_6_sensor_11_0
+      entity_id: binary_sensor.aeotec_zw100_multisensor_6_sensor
       from: 'on'
       to: 'off'
     condition:
