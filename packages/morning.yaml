@@ -6,6 +6,10 @@
 ###############################################################################
 homeassistant:
   customize:
+  
+    group.travel_time:
+      order: 6
+      
     # Travel Time
     sensor.home2work:
       friendly_name: Home -> Work
@@ -19,6 +23,12 @@ homeassistant:
     sensor.suresh2work:
       friendly_name: Suresh -> Work
       icon: mdi:domain
+    sensor.srinika2home:
+      friendly_name: Srinika -> Home
+      icon: mdi:home
+    sensor.hasika2home:
+      friendly_name: Hasika -> Home
+      icon: mdi:home
 
 sensor:
   - platform: google_travel_time
@@ -40,29 +50,65 @@ sensor:
   - platform: google_travel_time
     name: Suresh2Home
     api_key: !secret google_travel_time_apikey 
-    origin: device_tracker.suresh_suresh
+    origin: device_tracker.suresh
     destination: zone.home
     options:
       mode: driving
-  
+
+  - platform: google_travel_time
+    name: Srinika2Home
+    api_key: !secret google_travel_time_apikey 
+    origin: device_tracker.srinika
+    destination: zone.station
+    options:
+      mode: driving
+
+  - platform: google_travel_time
+    name: Hasika2Home
+    api_key: !secret google_travel_time_apikey 
+    origin: device_tracker.hasika
+    destination: zone.ade
+    options:
+      mode: driving
+
   - platform: google_travel_time
     name: Suresh2Work
     api_key: !secret google_travel_time_apikey 
-    origin: device_tracker.suresh_suresh
+    origin: device_tracker.suresh
     destination: zone.work
     options:
       mode: driving
   
+group:
+  Morning Routines:
+    entities:
+      - automation.morning_commute
+      - automation.morning_indoor_lights_on
+      - automation.morning_kitchen_light_off
+      - automation.morning_outdoor_lights_off
+      - automation.morning_master_bedroom_lights_on_suresh
+      - automation.morning_master_bedroom_lights_on_mallika
+      - automation.morning_master_bedroom_lights_off_suresh
+      - automation.morning_master_bedroom_lights_off_mallika
+
+  Travel Time:
+    entities:
+      - sensor.home2work
+      - sensor.work2home
+      - sensor.suresh2work
+      - sensor.suresh2home
+      - sensor.srinika2home
+      - sensor.hasika2home
 
 automation:
 ###############################################################################
 # Turn Indoor lights ON only during weekdays
 ###############################################################################
-  - alias: Indoor Lights ON Early Morning
+  - alias: Morning Indoor Lights ON
     initial_state: true
     trigger:
       platform: time
-      after: '05:30:00'
+      at: '05:30:00'
     condition:
       condition: state
       entity_id: 'binary_sensor.workday_sensor'
@@ -75,11 +121,10 @@ automation:
           brightness: 255
           color_temp: 155
   
-  
 ###############################################################################
 # Turn off outdoor lights 15 minutes after sunrise
 ###############################################################################
-  - alias: Outdoor Lights OFF at Sunrise
+  - alias: Morning Outdoor Lights OFF
     initial_state: true
     trigger:
       platform: sun
@@ -99,11 +144,11 @@ automation:
 ###############################################################################
 # Turn ON Master Bedroom lights ON in the morning
 ###############################################################################
-  - alias: Master Bedroom Lights ON in the Morning Mallika
+  - alias: Morning Master Bedroom Lights ON (Mallika)
     initial_state: true
     trigger:
       platform: time
-      after: '05:20:00'
+      at: '05:20:00'
     condition:
       condition: state
       entity_id: 'binary_sensor.workday_sensor'
@@ -112,15 +157,15 @@ automation:
       - service: light.turn_on
         data:
           entity_id: light.master_bedroom_2
-          rgb_color: [224,175,102]
+          #rgb_color: [224,175,102]
           brightness: 10
           color_temp: 366
   
-  - alias: Master Bedroom Lights OFF in the Morning Mallika
+  - alias: Morning Master Bedroom Lights OFF (Mallika)
     initial_state: true
     trigger:
       platform: time
-      after: '05:45:00'
+      at: '05:45:00'
     condition:
       condition: state
       entity_id: 'binary_sensor.workday_sensor'
@@ -133,11 +178,11 @@ automation:
 ###############################################################################
 # Turn ON Master Bedroom lights ON in the morning
 ###############################################################################
-  - alias: Master Bedroom Lights ON in the Morning Suresh
+  - alias: Morning Master Bedroom Lights ON (Suresh)
     initial_state: true
     trigger:
       platform: time
-      after: '06:55:00'
+      at: '06:55:00'
     condition:
       condition: state
       entity_id: 'binary_sensor.workday_sensor'
@@ -146,15 +191,15 @@ automation:
       - service: light.turn_on
         data:
           entity_id: light.master_bedroom_1
-          rgb_color: [224,175,102]
+          #rgb_color: [224,175,102]
           brightness: 10
           color_temp: 366
   
-  - alias: Master Bedroom Lights OFF in the Morning Suresh
+  - alias: Morning Master Bedroom Lights OFF (Suresh)
     initial_state: true
     trigger:
       platform: time
-      after: '10:00:00'
+      at: '10:00:00'
     condition:
       condition: state
       entity_id: 'binary_sensor.workday_sensor'
@@ -167,11 +212,11 @@ automation:
 ###############################################################################
 # Turn OF Kitchen Lights at 8:15 AM Clock
 ###############################################################################
-  - alias: Kitchen Light OFF at Eight AM
+  - alias: Morning Kitchen Light OFF
     initial_state: true
     trigger:
       platform: time
-      after: '08:15:00'
+      at: '08:15:00'
     condition:
       condition: state
       entity_id: 'binary_sensor.workday_sensor'
