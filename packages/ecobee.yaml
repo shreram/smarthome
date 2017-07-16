@@ -1,0 +1,32 @@
+#homeassistant:
+
+ecobee:
+  api_key: !secret ecobee_api_key
+
+group:
+  Ecobee:
+    - binary_sensor.kids_room_occupancy
+    - binary_sensor.bedroom_occupancy
+    - sensor.kids_room_temperature
+    - sensor.bedroom_temperature
+    - sensor.home_humidity
+    - sensor.home_temperature
+    - automation.turn_off_ac_after_3_hours_of_cooling
+
+automation:
+  - alias: Turn Off AC After 3 Hours of Cooling
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: climate.home
+        to: 'cool'
+        for: '03:00:00'
+    action:
+      - service: climate.set_operation_mode
+        data:
+          entity_id: climate.home
+          operation_mode: 'off'
+      - service: script.notify_me
+        data_template:
+          value1: "Air Condition has been ON for 3 hours. Turning it Off to save power."
+          value2: ""
