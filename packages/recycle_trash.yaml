@@ -307,17 +307,17 @@ automation:
     initial_state: true
     trigger:
       - platform: time
-        after: '16:00:00'
+        at: '16:00:00'
       - platform: time
-        after: '17:00:00'
+        at: '17:00:00'
       - platform: time
-        after: '18:00:00'
+        at: '18:00:00'
       - platform: time
-        after: '19:00:00'
+        at: '19:00:00'
       - platform: time
-        after: '20:00:00'
+        at: '20:00:00'
       - platform: time
-        after: '21:00:00'
+        at: '21:00:00'
     condition:
       condition: and
       conditions:
@@ -406,7 +406,7 @@ automation:
     hide_entity: true
     trigger:
       - platform: time
-        after: '09:00:00'
+        at: '09:00:00'
     action:
       - service: input_boolean.turn_on
         entity_id: input_boolean.trash_reminders
@@ -423,17 +423,17 @@ automation:
           entity_id: input_select.recycle_pickup_week
           option: "{{states.sensor.recycle_pickup_week.state}}"
 
-  - alias: Update Current Date In MQTT
-    initial_state: true
-    hide_entity: true
-    trigger:
-      platform: time
-      hours: '/01'
-      minutes: 00
-      seconds: 00
-    action:
-      - service: mqtt.publish
-        data_template:
-          topic: '/home/today'
-          retain: true
-          payload: '{{ as_timestamp(now() ) | timestamp_custom("%m-%d-%Y", true) }}'
+  # - alias: Update Current Date In MQTT
+    # initial_state: true
+    # hide_entity: true
+    # trigger:
+      # platform: time
+      # hours: '/01'
+      # minutes: 00
+      # seconds: 00
+    # action:
+      # - service: mqtt.publish
+        # data_template:
+          # topic: '/home/today'
+          # retain: true
+          # payload: '{{ as_timestamp(now() ) | timestamp_custom("%m-%d-%Y", true) }}'
