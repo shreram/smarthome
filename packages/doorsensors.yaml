@@ -11,53 +11,28 @@ homeassistant:
       order: 20
 
     # Entry Door Sensors
-    zwave.ecolink_door_sensor_7:
+    zwave.ecolink_door_sensor_2:
       friendly_name: Front Door Sensor
-    binary_sensor.ecolink_door_sensor_sensor_7_0:
+    binary_sensor.ecolink_door_sensor_sensor_2:
       friendly_name: Front Door
 
-    zwave.ecolink_door_sensor_6:
+    zwave.ecolink_door_sensor:
       friendly_name: Back Door Sensor
-    binary_sensor.ecolink_door_sensor_sensor_6_0:
+    binary_sensor.ecolink_door_sensor_sensor:
       friendly_name: Back Door
-
-    sensor.ecolink_door_sensor_access_control_6_9:
-      hidden: true
-    sensor.ecolink_door_sensor_access_control_7_9:
-      hidden: true
-    sensor.ecolink_door_sensor_alarm_level_6_1:
-      hidden: true
-    sensor.ecolink_door_sensor_alarm_level_7_1:
-      hidden: true
-    sensor.ecolink_door_sensor_alarm_type_6_0:
-      hidden: true
-    sensor.ecolink_door_sensor_alarm_type_7_0:
-      hidden: true
-    sensor.ecolink_door_sensor_burglar_6_10:
-      hidden: true
-    sensor.ecolink_door_sensor_burglar_7_10:
-      hidden: true
-    sensor.ecolink_door_sensor_power_management_6_11:
-      hidden: true
-    sensor.ecolink_door_sensor_power_management_7_11:
-      hidden: true
-    sensor.ecolink_door_sensor_sourcenodeid_6_2:
-      hidden: true
-    sensor.ecolink_door_sensor_sourcenodeid_7_2:
-      hidden: true
 
 group:
   Doors:
     entities:
-      - binary_sensor.ecolink_door_sensor_sensor_6_0
-      - binary_sensor.ecolink_door_sensor_sensor_7_0
+      - binary_sensor.ecolink_door_sensor_sensor
+      - binary_sensor.ecolink_door_sensor_sensor_2
       - automation.notify_entry_door_status
 
 sensor:
   - platform: template
     sensors:
       front_door_sensor_battery:
-        value_template: "{{ (states.zwave.ecolink_door_sensor_7.attributes|default).battery_level|default|int('unknown') }}"
+        value_template: "{{ (states.zwave.ecolink_door_sensor_2.attributes|default).battery_level|default|int('unknown') }}"
         friendly_name: Front Door Sensor Battery
         unit_of_measurement: "%"
         icon_template: >-
@@ -78,7 +53,7 @@ sensor:
   - platform: template
     sensors:
       back_door_sensor_battery:
-        value_template: "{{ (states.zwave.ecolink_door_sensor_6.attributes|default).battery_level|default|int('unknown') }}"
+        value_template: "{{ (states.zwave.ecolink_door_sensor.attributes|default).battery_level|default|int('unknown') }}"
         friendly_name: Back Door Sensor Battery
         unit_of_measurement: "%"
         icon_template: >-
@@ -103,8 +78,8 @@ automation:
     trigger:
       platform: state
       entity_id: 
-      - binary_sensor.ecolink_door_sensor_sensor_7_0
-      - binary_sensor.ecolink_door_sensor_sensor_6_0
+        - binary_sensor.ecolink_door_sensor_sensor_2
+        - binary_sensor.ecolink_door_sensor_sensor
     condition:
       - condition: template
         value_template: "{% if trigger.from_state %} True {% else %} False {% endif %}"
