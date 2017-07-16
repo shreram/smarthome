@@ -7,114 +7,322 @@
 homeassistant:
   customize:
 
-    group.family:
-      order: 1
+    group.smart_devices:
+      order: 99
+
+    device_tracker.android9ec2e3ca7d6e33b9:
+      hidden: true
+    device_tracker.0018e7c4488f:
+      hidden: true
+    device_tracker.wifi:
+      hidden: true
+    device_tracker.firewall:
+      hidden: true
+    device_tracker.pihole:
+      hidden: true
+    device_tracker.piha:
+      hidden: true
+    device_tracker.ha:
+      hidden: true
+    device_tracker.lifxcolor1000:
+      hidden: true
+    device_tracker.kalavalanas:
+      hidden: true
+    device_tracker.iphone:
+      hidden: true
+    device_tracker.sureshsplewatch:
+      hidden: true
+    device_tracker.android10952c07cf077995:
+      hidden: true
+    device_tracker.mainframe:
+      hidden: true
+    device_tracker.6002b3c32c19:
+      hidden: true
+    device_tracker.debianarmhf:
+      hidden: true
+    device_tracker.garage:
+      hidden: true
+    device_tracker.philipshue:
+      hidden: true
+    device_tracker.guestbedroom:
+      hidden: true
+    device_tracker.kidsbedroom:
+      hidden: true
+    device_tracker.prayerroom:
+      hidden: true
+    device_tracker.pizerogreen:
+      hidden: true
+    device_tracker.piaudioone: 
+      hidden: true
+    device_tracker.piaudiotwo: 
+      hidden: true
+    device_tracker.piaudiothree:  
+      hidden: true
+    device_tracker.piaudiofour:
+      hidden: true
+    device_tracker.piaudiofive:
+      hidden: true
+    device_tracker.149112375941: 
+      hidden: true
+    device_tracker.wemofrontporchlights:
+      hidden: true
+    device_tracker.wemoswitch1:
+      hidden: true
+    device_tracker.esp_1c7eb2:
+      hidden: true
+    device_tracker.esp_1c7f41:
+      hidden: true
+    device_tracker.srinika_3:
+      hidden: true
+    device_tracker.srinika_2:
+      hidden: true
+    device_tracker.nw168999:
+      hidden: true
+    device_tracker.wn3000rpv3:
+      hidden: true
+    device_tracker.suresh_2:
+      hidden: true
+    device_tracker.sureshsplewatch_2:
+      hidden: true
+    device_tracker.436032abdcef:
+      hidden: true
+    device_tracker.thinkpad:
+      hidden: true
+
+# CCTV Cameras and Ubiquity Tough Switch
+    device_tracker.1868cbxxxxxx:
+      hidden: true
+    device_tracker.1868cbyyyyyy:
+      hidden: true
+    device_tracker.1868cbzzzzzz:
+      hidden: true
+    device_tracker.1868cbqqqqqq:
+      hidden: true
+    device_tracker.f09fc2wwwwww:
+      hidden: true
 
 device_tracker:
-  - platform: owntracks
-    max_gps_accuracy: 200
-    waypoints: True
+  - platform: ping
+    hosts:
+      pihole: 192.168.xxx.xx
+      firewall: xxx.xxx.xxx.xxx
+
+  - platform: nmap_tracker
+    hosts: 
+      - 192.168.xxx.xxx/xx
+      - 192.168.xxx.xx
+      - 192.168.xxx.xxx
 
 group:
-  Family:
+  Smart Devices:
     entities:
-      - device_tracker.suresh_suresh
-      - device_tracker.mallika_mallika
-      - device_tracker.srinika_srinika
-      - device_tracker.hasika_hasika
-      - device_tracker.suresh
-      - device_tracker.mallika
-      - device_tracker.srinika
-      - device_tracker.hasika
-      - device_tracker.ipad
-      - automation.alert_when_everyone_is_away
-      - automation.welcome_family
-    
-automation:
-###############################################################################
-# Welcome Family Members
-###############################################################################
-  - alias: Welcome Family
-    initial_state: true
-    trigger:
-      - platform: state
-        entity_id:
-          - device_tracker.mallika_mallika
-          - device_tracker.suresh_suresh
-          - device_tracker.srinika_srinika
-          - device_tracker.hasika_hasika
-        from: 'not_home'
-        to: 'home'
-        for: '00:02:00'
-    action:
-      - service: script.notify_me
-        data_template:
-          value1: >
-            Welcome home, {{ trigger.entity_id.split('.')[1].split('_')[1] | title }}!
-          value2: ""
-      - service: script.voice_notify
-        data_template:
-          value1: >
-            {%- macro inside_weather() -%}
-              Inside the house, it is {{ states.sensor.aeotec_zw100_multisensor_6_temperature_11_1.state }} degrees with around {{ states.sensor.aeotec_zw100_multisensor_6_sourcenodeid_11_2.state }} percent humidity.
-              Upstairs, the temperature is {{ states.sensor.aeotec_zw074_multisensor_gen5_temperature_3_1.state }} degrees with around {{ states.sensor.aeotec_zw074_multisensor_gen5_relative_humidity_3_5.state }} percent humidity.
-            {%- endmacro -%}
-            
-            {%- macro outside_weather() -%}
-              Outside, it is going to be {{states('sensor.dark_sky_minutely_summary')}} And the temperature is around {{ states.sensor.dark_sky_apparent_temperature.state | round(0)}} degrees. 
-            {%- endmacro -%}
-            
-            {%- macro uv_levels() -%}
-              {%- set uv = states.sensor.pws_uv.state | int -%}
-              {%- if  uv >= 0 and uv <= 2 -%}
-                Today's UV index is low. It is safe to go out and have fun.
-              {%- elif  uv >= 3 and uv <= 5 -%}
-                Today's UV index is moderate. It is okay to go out and have fun but do not stay too long.
-              {%- elif  uv >= 6 and uv <= 7 -%}
-                Today's UV index is high. It is not very safe to go out. Only go out if you really need to.
-              {%- elif  uv >= 8 and uv <= 10 -%}
-                Today's UV index is very high. It is not at all safe to go out. Please make sure you have sun screen lotion when going outdoors.
-              {%- elif  uv >= 11 -%}
-                Today's UV index is extremely high. It is advised not to go out at all. Stay indoors, and stay cool.
-              {%- endif -%}
-              Do not stay more than {{ states.sensor.uv_burn_time.state }} outdoors. Use Sunscreen lotion if you want to go out.
-            {%- endmacro -%}
-            
-            {%- macro garage_check() -%}
-              {%- if states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_5_0.state == "on" -%}
-                The single car garage door is still open.
-              {%- endif -%}
-              {%- if states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_4_0.state == "on" -%}
-                The 2-car garage door is still open.
-              {%- endif -%}
-            {%- endmacro -%}
-            
-            {%- macro pihole() -%}
-              {%- if states.sensor.ads_blocked_today.state|int > 100 -%}
-                Our internet blocking system has blocked {{states.sensor.ads_blocked_today.state}} ads today! Happy Internet surfing!
-              {%- endif -%}
-            {%- endmacro -%}
-            
-            {%- macro pollenLevels() -%}
-              Current Pollen level is {{ states.sensor.pollen_level.state }}
-            {%- endmacro -%}
-            Welcome home, my dear {{ trigger.entity_id.split('.')[1].split('_')[1] | title }}. I want to give you a quick update in and around the house.
-            {{- inside_weather() }} {{ outside_weather() }} {{ uv_levels() }} {{ pollenLevels() }} {{ pihole() }} {{ garage_check() }}
+      - sensor.device_tracker_wifi
+      - sensor.device_tracker_firewall
+      - sensor.device_tracker_pihole_server
+      - sensor.device_tracker_6002b3c32c19
+      - sensor.device_tracker_tv_backlight
+      - sensor.device_tracker_debianarmhf
+      - sensor.device_tracker_garage
+      - sensor.device_tracker_lifxcolor1000
+      - sensor.device_tracker_kalavalanas
+      - sensor.device_tracker_piha
+      - sensor.device_tracker_ha
+      - sensor.device_tracker_philipshue
+      - sensor.device_tracker_guestbedroom
+      - sensor.device_tracker_kidsbedroom
+      - sensor.device_tracker_prayerroom
+      - sensor.device_tracker_piaudioone
+      - sensor.device_tracker_piaudiotwo
+      - sensor.device_tracker_piaudiothree
+      - sensor.device_tracker_piaudiofour
+      - sensor.device_tracker_piaudiofive
+      - sensor.device_tracker_149112375941
+      - sensor.device_tracker_wemofrontporchlights
+      - sensor.device_tracker_436032abdcef
+      - sensor.device_tracker_wemoswitch1
+      - sensor.device_tracker_wn3000rpv3
+      - sensor.device_tracker_esp_1c7eb2
+      - sensor.device_tracker_esp_1c7f41
+      - sensor.device_tracker_1868cbxxxxxx
+      - sensor.device_tracker_1868cbyyyyyy
+      - sensor.device_tracker_1868cbzzzzzz
+      - sensor.device_tracker_1868cbqqqqqq
+      - sensor.device_tracker_f09fc2wwwwww
 
-###############################################################################
-# Alert when every one is away
-###############################################################################
-  - alias: Alert when everyone is AWAY
-    initial_state: true
+sensor:
+  - platform: template
+    sensors:
+
+      device_tracker_wifi:
+        friendly_name: 'WiFi Router'
+        value_template: "{{ 'Online' if is_state('device_tracker.wifi', 'home') else 'Offline' }}"
+
+      device_tracker_firewall:
+        friendly_name: 'Palo Alto Firewall'
+        value_template: "{{ 'Online' if is_state('device_tracker.firewall', 'home') else 'Offline' }}"
+
+      device_tracker_pihole_server:
+        friendly_name: 'Pi-Hole & MQTT Server'
+        value_template: "{{ 'Online' if is_state('device_tracker.pihole', 'home') else 'Offline' }}"
+
+      device_tracker_piha:
+        friendly_name: 'Pi-HA'
+        value_template: "{{ 'Online' if is_state('device_tracker.piha', 'home') else 'Offline' }}"
+
+      device_tracker_ha:
+        friendly_name: 'HA (HA Ubuntu Server)'
+        value_template: "{{ 'Online' if is_state('device_tracker.ha', 'home') else 'Offline' }}"
+
+      device_tracker_lifxcolor1000:
+        friendly_name: 'Kitchen Lifx Bulb'
+        value_template: "{{ 'Online' if is_state('device_tracker.lifxcolor1000', 'home') else 'Offline' }}"
+
+      device_tracker_kalavalanas:
+        friendly_name: 'Kalavala NAS'
+        value_template: "{{ 'Online' if is_state('device_tracker.kalavalanas', 'home') else 'Offline' }}"
+        
+      device_tracker_6002b3c32c19:
+        friendly_name: 'Sharp Aquos TV'
+        value_template: "{{ 'Online' if is_state('device_tracker.6002b3c32c19', 'home') else 'Offline' }}"
+        
+      device_tracker_tv_backlight:
+        friendly_name: 'Pi Zero TV Backlight'
+        value_template: "{{ 'Online' if is_state('device_tracker.pizerogreen', 'home') else 'Offline' }}"
+
+      device_tracker_debianarmhf:
+        friendly_name: 'Leeo Smoke & CO Alerter'
+        value_template: "{{ 'Online' if is_state('device_tracker.debianarmhf', 'home') else 'Offline' }}"
+
+      device_tracker_garage:
+        friendly_name: 'Garage Lights Switch'
+        value_template: "{{ 'Online' if is_state('device_tracker.garage', 'home') else 'Offline' }}"
+
+      device_tracker_philipshue:
+        friendly_name: 'Philips Hue'
+        value_template: "{{ 'Online' if is_state('device_tracker.philipshue', 'home') else 'Offline' }}"
+
+      device_tracker_guestbedroom:
+        friendly_name: 'Guest Bedroom 1'
+        value_template: "{{ 'Online' if is_state('device_tracker.guestbedroom', 'home') else 'Offline' }}"
+
+      device_tracker_kidsbedroom:
+        friendly_name: 'Kids Bedroom'
+        value_template: "{{ 'Online' if is_state('device_tracker.kidsbedroom', 'home') else 'Offline' }}"
+
+      device_tracker_prayerroom:
+        friendly_name: 'Guest Bedroom 2'
+        value_template: "{{ 'Online' if is_state('device_tracker.prayerroom', 'home') else 'Offline' }}"
+
+      device_tracker_piaudioone:
+        friendly_name: 'Kitchen Music'
+        value_template: "{{ 'Online' if is_state('device_tracker.piaudioone', 'home') else 'Offline' }}"
+
+      device_tracker_piaudiotwo:
+        friendly_name: 'TV Room Music'
+        value_template: "{{ 'Online' if is_state('device_tracker.piaudiotwo', 'home') else 'Offline' }}"
+
+      device_tracker_piaudiothree:
+        friendly_name: 'Master Bedroom Music'
+        value_template: "{{ 'Online' if is_state('device_tracker.piaudiothree', 'home') else 'Offline' }}"
+
+      device_tracker_piaudiofour:
+        friendly_name: 'Guest Bedroom Music'
+        value_template: "{{ 'Online' if is_state('device_tracker.piaudiofour', 'home') else 'Offline' }}"
+
+      device_tracker_piaudiofive:
+        friendly_name: 'Basement Music'
+        value_template: "{{ 'Online' if is_state('device_tracker.piaudiofive', 'home') else 'Offline' }}"
+
+      device_tracker_149112375941:
+        friendly_name: 'Backyard Light Switch'
+        value_template: "{{ 'Online' if is_state('device_tracker.149112375941', 'home') else 'Offline' }}"
+
+      device_tracker_wemofrontporchlights:
+        friendly_name: 'Front Yard Light Switch'
+        value_template: "{{ 'Online' if is_state('device_tracker.wemofrontporchlights', 'home') else 'Offline' }}"
+
+      device_tracker_436032abdcef:
+        friendly_name: 'Ecobee Thermostat'
+        value_template: "{{ 'Online' if is_state('device_tracker.436032abdcef', 'home') else 'Offline' }}"
+
+      device_tracker_1868cbxxxxxx:
+        friendly_name: 'Camera - 1'
+        value_template: "{{ 'Online' if is_state('device_tracker.1868cbxxxxxx', 'home') else 'Offline' }}"
+      
+      device_tracker_1868cbyyyyyy:
+        friendly_name: 'Camera - 2'
+        value_template: "{{ 'Online' if is_state('device_tracker.1868cbyyyyyy', 'home') else 'Offline' }}"
+        
+      device_tracker_1868cbzzzzzz:
+        friendly_name: 'Camera - 3'
+        value_template: "{{ 'Online' if is_state('device_tracker.1868cbzzzzzz', 'home') else 'Offline' }}"
+        
+      device_tracker_1868cbqqqqqq:
+        friendly_name: 'Camera - 4'
+        value_template: "{{ 'Online' if is_state('device_tracker.1868cbqqqqqq', 'home') else 'Offline' }}"
+        
+      device_tracker_f09fc2wwwwww:
+        friendly_name: 'Ubiquity Tough Switch'
+        value_template: "{{ 'Online' if is_state('device_tracker.f09fc2wwwwww', 'home') else 'Offline' }}"
+      
+      device_tracker_wn3000rpv3:
+        friendly_name: 'NetGear Wifi Extender'
+        value_template: "{{ 'Online' if is_state('device_tracker.wn3000rpv3', 'home') else 'Offline' }}"
+
+      device_tracker_wemoswitch1:
+        friendly_name: 'Front Room Light Switch'
+        value_template: "{{ 'Online' if is_state('device_tracker.wemoswitch1', 'home') else 'Offline' }}"
+
+      device_tracker_esp_1c7eb2:
+        friendly_name: 'Two Car Garage ESP8266'
+        value_template: "{{ 'Online' if is_state('device_tracker.esp_1c7eb2', 'home') else 'Offline' }}"
+
+      device_tracker_esp_1c7f41:
+        friendly_name: 'Single Car Garage ESP8266'
+        value_template: "{{ 'Online' if is_state('device_tracker.esp_1c7f41', 'home') else 'Offline' }}"
+
+automation:
+  - alias: Notify Device Status
     trigger:
       platform: state
       entity_id:
-        - device_tracker.mallika_mallika
-        - device_tracker.suresh_suresh
-        - device_tracker.srinika_srinika
-        - device_tracker.hasika_hasika      
-      from: 'home'
-      to: 'not_home'
+        - sensor.device_tracker_wifi
+        - sensor.device_tracker_firewall
+        - sensor.device_tracker_pihole_server
+        - sensor.device_tracker_piha
+        - sensor.device_tracker_debianarmhf
+        - sensor.device_tracker_garage
+        - sensor.device_tracker_philipshue
+        - sensor.device_tracker_guestbedroom
+        - sensor.device_tracker_kidsbedroom
+        - sensor.device_tracker_prayerroom
+        - sensor.device_tracker_piaudioone
+        - sensor.device_tracker_piaudiotwo
+        - sensor.device_tracker_piaudiothree
+        - sensor.device_tracker_piaudiofour
+        - sensor.device_tracker_piaudiofive
+        - sensor.device_tracker_149112375941
+        - sensor.device_tracker_wemofrontporchlights
+        - sensor.device_tracker_kalavalanas
+        - sensor.device_tracker_wn3000rpv3
+        - sensor.device_tracker_wemoswitch1
+        - sensor.device_tracker_esp_1c7eb2
+        - sensor.device_tracker_esp_1c7f41
+        - sensor.device_tracker_1868cbxxxxxx
+        - sensor.device_tracker_1868cbyyyyyy
+        - sensor.device_tracker_1868cbzzzzzz
+        - sensor.device_tracker_1868cbqqqqqq
+        - sensor.device_tracker_f09fc2wwwwww
+    condition:
+      - condition: template
+        value_template: "{% if trigger.from_state and trigger.to_state %} True {% else %} False {% endif %}"
     action:
       - service: script.notify_me
-        data: {"value1":"Warning - No one's at home at the moment.", "value2":""}
+        data_template:
+          value1: >
+            {% if trigger.to_state.state | lower == "offline" %}
+              {{ trigger.to_state.attributes.friendly_name }} has gone offline!
+            {% else %}
+              {{ trigger.to_state.attributes.friendly_name }} has come online!
+            {% endif %}
+          value2: ""
