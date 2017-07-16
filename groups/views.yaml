@@ -1,10 +1,8 @@
-######################################################
-#                       VIEWS                        #
-######################################################
-
 # default_view:
-  # view: yes
- 
+   # view: yes
+   # icon: mdi:home-assistant
+   # entities:
+
 family_view:
   view: yes
   name: Family
@@ -12,24 +10,32 @@ family_view:
   entities:
     - group.date_time
     - group.family
-    - group.home_security_system
-    - group.batteries
-    - group.trash_schedule
-    - group.recycle_schedule
     - group.weather
     - group.dark_sky
+    - group.birthdays
+    - group.batteries
+    - group.home_security_system
     - group.travel_time
+
+Rooms:
+  view: yes
+  name: All Rooms
+  icon: mdi:home
+  entities:
+    - group.front_room
+    - group.tv_room
+    - group.upstairs
     - group.doors
-    - group.ios
+    - group.garage
+    - group.ring_door_bell
+    - group.guest_bedroom
 
 lights_switches:
   view: yes
   name: Lights and Swithches
   icon: mdi:lightbulb-on
   entities:
-    - group.custom_switches
     - group.lights
-    - group.lights_switches
     - group.etekcity_rf_switches
 
 mediacenter_view:
@@ -37,20 +43,28 @@ mediacenter_view:
   name: Media Center
   icon: mdi:television
   entities:
-    - group.basement_media_players
-    - group.downstairs_media_players
-    - group.upstairs_media_players
+     - group.downstairs_media_players
+     - group.basement_media_players
+     - group.upstairs_media_players
+
+trash_recycle_view:
+  view: yes
+  name: Trash & Recycle
+  icon: mdi:recycle
+  entities:
+     - group.recycle_schedule
+     - group.trash_schedule
 
 system_view:
   view: yes
   name: System Info
   icon: mdi:settings
   entities:
-    - group.ads_blocked
-    - group.system_monitor
-    - group.internet_speed
-    - group.manuals
-    - group.common_urls
+     - group.ads_blocked
+     - group.system_monitor
+     - group.internet_speed
+     - group.manuals
+     - group.common_urls
 
 zwave_view:
   view: yes
@@ -59,32 +73,31 @@ zwave_view:
   entities:
     - group.zwave_automations
     - group.zwave_devices
-    - group.upstairs_multisensor
-    - group.downstairs_multisensor
     - group.garage_door_sensors
+    - group.zwave_devices
 
 automation_view:
   view: yes
   name: Automation
   icon: mdi:arrow-right-drop-circle
   entities:
-    - group.battery_automations
+    - group.home_assistant_automations
     - group.bedtime_automations
     - group.downstairs_motion_automations
     - group.evening_automations
-    - group.home_assistant_automations
+    - group.front_room_motion_automations
     - group.light_automations
-    - group.rf_outlet_automations
     - group.trash_and_recycle_automations
     - group.tv_automations
     - group.upstairs_motion_automations
     - group.watchdog_automations
     - group.weather_automations
+    - group.morning_routines
+    - group.zone_alerts
 
 scripts_view:
   view: yes
   name: Scripts
   icon: mdi:script
   entities:
-    - group.tts_announcements
-    - script.test_lifx
+    - group.scripts
