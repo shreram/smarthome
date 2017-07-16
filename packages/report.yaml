@@ -1,0 +1,62 @@
+automation:
+
+###############################################################################
+# Automation: Provide port on an hourly basis from 8 am to 9 pm
+###############################################################################
+  - alias: Hourly Report During Day Time
+    initial_state: true
+    hide_entity: false
+    trigger:
+      platform: time
+      hours: '/01'
+      minutes: 05
+      seconds: 00
+    condition:
+      - condition: state
+        entity_id: group.all_devices
+        state: 'home'
+      - condition: template
+        value_template: >
+          {% set hour = as_timestamp(now()) | timestamp_custom('%-H', true) | int %}
+          {% if  hour > 7 and hour < 22 %}
+            true
+          {% else %}
+            false
+          {% endif %}
+    action:
+      - service: script.voice_notify
+        data_template:
+          value1: >
+            {% macro calendarReminder() %}
+              {% if (strptime(states.calendar.suresh_kalavala.attributes.start_time, '%Y-%m-%d %H:%M:%S').strftime('%j') | int) - (now().strftime('%j') | int) < 7 %}
+                Your next event <break time='0.5s'/> {{ states.calendar.suresh_kalavala.attributes.message }} <break time='0.5s'/> starts 
+                {% if strptime(states.calendar.suresh_kalavala.attributes.start_time, '%Y-%m-%d %H:%M:%S').strftime('%d') | int == now().strftime('%d') | int %}
+                   today at {{ strptime(states.calendar.suresh_kalavala.attributes.start_time, '%Y-%m-%d %H:%M:%S').strftime('%I:%M %p') }}.
+                {% elif strptime(states.calendar.suresh_kalavala.attributes.start_time, '%Y-%m-%d %H:%M:%S').strftime('%d') | int == now().strftime('%d') | int + 1 %}
+                   tomorrow at {{ strptime(states.calendar.suresh_kalavala.attributes.start_time, '%Y-%m-%d %H:%M:%S').strftime('%I:%M %p') }}.
+                {% elif strptime(states.calendar.suresh_kalavala.attributes.start_time, '%Y-%m-%d %H:%M:%S').strftime('%d') | int == now().strftime('%d') | int + 2 %}
+                   day after tomorrow {{ strptime(states.calendar.suresh_kalavala.attributes.start_time, '%Y-%m-%d %H:%M:%S').strftime('%A') }} at {{ strptime(states.calendar.suresh_kalavala.attributes.start_time, '%Y-%m-%d %H:%M:%S').strftime('%I:%M %p') }}.
+                {% else %}
+                  in {{ (strptime(states.calendar.suresh_kalavala.attributes.start_time, '%Y-%m-%d %H:%M:%S').strftime('%j') | int) - (now().strftime('%j') | int) }} days
+                {% endif %}
+              {% endif %}
+            {% endmacro %}
+            {%- macro uv_levels() -%}
+              {%- set uv = states.sensor.pws_uv.state | int -%}
+              {%- if  uv >= 0 and uv <= 2 -%}
+                Current UV index is low. It is safe to go out and have fun.
+              {%- elif  uv >= 3 and uv <= 5 -%}
+                Current UV index is Medium. It is safe to go out and have fun.
+              {%- elif  uv >= 6 and uv <= 7 -%}
+                Current UV index is high. Please be careful outdoors.
+              {%- elif  uv >= 8 and uv <= 10 -%}
+                Current UV index is very high. It is not advised to go out. If you have to, use sun screen lotion.
+              {%- elif  uv >= 11 -%}
+                Current UV index is extremely high. By all means, Stay indoors, and stay cool.
+              {%- endif -%}
+            {%- endmacro -%}
+            It is going to be {{states('sensor.dark_sky_minutely_summary')}}<break time='0.5s'/> 
+            Outside temperature is {{ states.sensor.dark_sky_apparent_temperature.state | round(0)}} degrees.<break time='0.5s'/> 
+            The current pollen level is {{ states.sensor.pollen_level.state }}.<break time='0.5s'/> 
+            {{ uv_levels() }}<break time='0.5s'/> 
+            {{ calendarReminder() }}
