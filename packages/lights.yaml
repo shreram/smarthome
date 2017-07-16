@@ -50,13 +50,15 @@ homeassistant:
     script.stop_colorloop:
       friendly_name: Stop Colorloop
       icon: mdi:palette
+    script.lifx_breathe:
+      friendly_name: Lifx Breath
+      icon: mdi:lightbulb      
 
 group:
   Lights:
     entities:
       - light.dinette
       - switch.kids_bedroom
-      - switch.garage_lights
       - switch.guest_bedroom_1
       - switch.guest_bedroom_2
       - light.hue_color_lamp_1
@@ -69,7 +71,8 @@ group:
       - switch.wemofrontporchlightswitch
       - switch.wemobackyardlightswitch
       - switch.wemoswitch1
-  
+      - switch.garage_lights
+
   Light Automations:
     control: hidden
     entities:
@@ -87,9 +90,6 @@ light:
     host: !secret philips_hue_ipaddress
 
 switch:
-  - platform: tplink
-    host: !secret tplink_garage
-    name: Garage Lights
   - platform: tplink
     host: !secret tplink_kids_bedroom
     name: Kids Bedroom
@@ -142,8 +142,9 @@ script:
 
   lifx_breathe:
     sequence:
-      - service: light.lifx_effect_breathe
+      - service: light.lifx_effect_pulse
         data:
+          mode: breathe
           entity_id: light.dinette
           color_name: red
           cycles: 3
@@ -246,7 +247,7 @@ automation:
     trigger:
       - platform: state
         entity_id: input_boolean.animate_kitchen_lights
-        state: 'off'
+        to: 'off'
     action:
       - service: light.turn_on
         entity_id: light.dinette
@@ -261,7 +262,7 @@ automation:
     trigger:
       - platform: state
         entity_id: input_boolean.long_flash
-        state: 'on'
+        to: 'on'
         from: 'off'
     action:
       - service: light.turn_on
@@ -278,7 +279,7 @@ automation:
     trigger:
       - platform: state
         entity_id: input_boolean.short_flash
-        state: 'on'
+        to: 'on'
         from: 'off'
     action:
       - service: light.turn_on
@@ -288,3 +289,84 @@ automation:
           flash: short
       - service: input_boolean.turn_off
         entity_id: input_boolean.short_flash
+
+  # - alias: Random Light Effects
+    # initial_state: true
+    # trigger:
+      # - platform: time
+        # minutes: '00'
+        # seconds: '/15'
+    # action:
+      # - service: script.turn_on
+        # data_template:
+          # entity_id: >-
+            # {{ [ 'script.start_colorloop',
+                 # 'script.stop_colorloop',
+                 # 'script.lifx_breathe' ] |random 
+            # }}
+
+  # - alias: Test Kitchen Light
+    # trigger:
+      # platform: state
+      # entity_id: light.dinette
+    # action:
+      # - service: logbook.log
+        # data_template:
+          # name: "Dump of {{ trigger.platform }}"
+          # message: >-
+            # {%- macro dumpState(statePrefix, stateObj) -%}
+              # {{statePrefix ~ ": "}} {{- stateObj.state }}{{- "\n" -}}
+              # {{statePrefix ~ ".entity_id: "}} {{- stateObj.entity_id }}{{- "\n" -}}
+              # {{statePrefix ~ ".domain: "}} {{- stateObj.domain }}{{- "\n" -}}
+              # {{statePrefix ~ ".object_id: "}} {{- stateObj.object_id }}{{- "\n" -}}
+              # {{statePrefix ~ ".name: "}} {{- stateObj.name }}{{- "\n" -}}
+              # {{statePrefix ~ ".last_updated: "}} {{- stateObj.last_updated }}{{- "\n" -}}
+              # {{statePrefix ~ ".last_changed: "}} {{- stateObj.last_changed }}{{- "\n" -}}
+              # {%- for attrib in stateObj.attributes | sort() %}
+                # {%- if attrib is defined -%} 
+                # {{- statePrefix ~ ".attributes." ~ attrib ~ ": " -}} {{- stateObj.attributes[attrib] -}}
+                # {{- "\n" -}}
+                # {%- endif -%}
+              # {%- endfor -%}
+            # {%- endmacro -%}
+            
+            # {% set p = trigger.platform %}
+            # {{"trigger.platform: "}} {{ p }}{{- "\n" -}}
+            
+            # {%- if p == "mqtt" -%}
+            # {{"trigger.topic: "}} {{ trigger.topic }}{{- "\n" -}}
+            # {{"trigger.payload: "}} {{ trigger.payload }}{{- "\n" -}}
+            # {{"trigger.payload_json: "}} {{ trigger.payload_json }}{{- "\n" -}}
+            # {{"trigger.qos: "}} {{ trigger.qos }}{{- "\n" -}}
+            # {%- endif -%}
+            
+            # {%- if p == "event" or p == "sun" or p == "zone" -%}
+            # {{"trigger.event: "}} {{ trigger.event }}{{- "\n" -}}
+            # {%- endif -%}
+            
+            # {%- if p == "numeric_state" -%}
+            # {{"trigger.above: "}} {{ trigger.above }}{{- "\n" -}}
+            # {{"trigger.below: "}} {{trigger.below }}{{- "\n" -}}
+            # {%- endif -%}
+            
+            # {%- if p == "state" -%}
+            # {{"trigger.for: "}} {{ trigger.for }}{{- "\n" -}}
+            # {%- endif -%}
+            
+            # {%- if p == "time" -%}
+            # {{"trigger.now: "}} {{ trigger.now }}{{- "\n" -}}
+            # {%- endif -%}
+            
+            # {%- if p == "zone" -%}
+            # {{"trigger.zone: "}} {{ trigger.zone }}{{- "\n" -}}
+            # {%- endif -%}
+            
+            # {%- if p == "state" or p == "numeric_state" or p == "template" or p == "zone" -%}
+            # {{"trigger.entity_id: "}} {{ trigger.entity_id }}{{- "\n" -}}{{- "\n" -}}
+            # {{"trigger.from_state: "}} {{- "\n" -}}
+            # -------------------{{- "\n" -}}
+            # {{ dumpState("trigger.from_state", trigger.from_state) }} {{- "\n" -}}
+            # trigger.to_state:{{- "\n" -}}
+            # -----------------{{- "\n" -}}
+            # {{ dumpState("trigger.to_state", trigger.to_state) }}            
+            # {%- endif -%}
