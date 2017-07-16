@@ -12,15 +12,15 @@ homeassistant:
 group:
   Evening Automations:
     entities:
-      - automation.home_security_system_on_at_sunset
-      - automation.outdoor_lights_on_at_sunset
-      - automation.indoor_lights_on_before_sunset
+      - automation.evening_home_security_system_on_at_sunset
+      - automation.evening_outdoor_lights_on_at_sunset
+      - automation.evening_indoor_lights_on_before_sunset
 
 automation:
 ###############################################################################
 # Turn Home Security System ON at sunset time
 ###############################################################################
-  - alias: Home Security System ON at Sunset
+  - alias: Evening Home Security System ON (At Sunset)
     initial_state: true
     trigger:
       platform: sun
@@ -34,19 +34,36 @@ automation:
         entity_id: alarm_control_panel.simplisafe
         state: 'disarmed'
     action:
-      - service: alarm_control_panel.alarm_arm_home
+      - service: script.voice_notify
+        data_template:
+          value1: >
+            {% if states.binary_sensor.ecolink_door_sensor_sensor_6_0.state == "off" and states.binary_sensor.ecolink_door_sensor_sensor_7_0.state == "off" %}
+              It's getting dark outside, and your home security system is now set to HOME mode.
+            {% else %}
+              It's getting dark outside, and your doors are open. Home Security System could not be turned on.
+            {% endif %}
+      - service_template: >-
+          {% if states.binary_sensor.ecolink_door_sensor_sensor_6_0.state == "off" and states.binary_sensor.ecolink_door_sensor_sensor_7_0.state == "off" %}
+            alarm_control_panel.alarm_arm_home
+          {% else %}
+            alarm_control_panel.disarm
+          {% endif %}
         data:
           entity_id: alarm_control_panel.simplisafe
       - service: script.notify_me
-        data: {"value1":"It's getting dark outside, Turned ON Home Security System.", "value2":""}
-      - service: script.voice_notify
         data_template:
-          value1: "It's getting dark outside, and your home security system is now set to HOME mode."
+          value1: >
+            {% if states.binary_sensor.ecolink_door_sensor_sensor_6_0.state == "off" and states.binary_sensor.ecolink_door_sensor_sensor_7_0.state == "off" %}
+              It's getting dark outside, and your home security system is now set to HOME mode.
+            {% else %}
+              It's getting dark outside, and your doors are open. Home Security System could not be turned on.
+            {% endif %}
+          value2: ""
 
 ###############################################################################
 # Turn outdoor lights on 15 minutes before sunset
 ###############################################################################
-  - alias: Outdoor Lights ON at Sunset
+  - alias: Evening Outdoor Lights ON (At Sunset)
     initial_state: true
     trigger:
       platform: sun
@@ -69,7 +86,7 @@ automation:
 ###############################################################################
 # Turn indoor lights on 60 minutes before sunset
 ###############################################################################
-  - alias: Indoor Lights ON before Sunset
+  - alias: Evening Indoor Lights ON Before Sunset
     initial_state: true
     trigger:
       platform: sun
@@ -80,40 +97,40 @@ automation:
         data:
           entity_id: light.dinette
           transition: 15
-          rgb_color: [255,255,255]
+          #rgb_color: [255,255,255]
           brightness: 255
           color_temp: 155
       - service: light.turn_on
         data:
           entity_id: light.hue_color_lamp_1
           transition: 5
-          rgb_color: [255, 255, 255]
+          #rgb_color: [255, 255, 255]
           brightness: 255
           color_temp: 366
       - service: light.turn_on
         data:
           entity_id: light.hue_color_lamp_2
           transition: 5
-          rgb_color: [255, 255, 255]
+          #rgb_color: [255, 255, 255]
           brightness: 255
           color_temp: 366
       - service: light.turn_on
         data:
           entity_id: light.hue_color_lamp_3
           transition: 5
-          rgb_color: [255, 255, 255]
+          #rgb_color: [255, 255, 255]
           brightness: 255
           color_temp: 366
       - service: light.turn_on
         data:
           entity_id: light.master_bedroom_1
-          rgb_color: [224,175,102]
+          #rgb_color: [224,175,102]
           brightness: 10
           color_temp: 366
       - service: light.turn_on
         data:
           entity_id: light.master_bedroom_2
-          rgb_color: [224,175,102]
+          #rgb_color: [224,175,102]
           brightness: 10
           color_temp: 366
   
