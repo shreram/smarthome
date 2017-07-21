@@ -37,11 +37,11 @@
 
  {#- Provides Garage Doors Status -#}
  {%- macro garagedoor_status() -%} 
-   {%- if states.sensor.single_car_garage_door_sensor_status.state | lower == "on" -%}
-     {{ states.sensor.single_car_garage_door_sensor_status.attributes.friendly_name }} is  {{ states.sensor.single_car_garage_door_sensor_status.state | upper}}.<break time='0.5s'/>
+   {%- if states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor.state | lower == "on" -%}
+     {{ states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor.attributes.friendly_name }} is OPEN .<break time='0.5s'/>
    {%- endif -%}
-   {%- if states.sensor.two_car_garage_door_sensor_status.state | lower == "on" -%}
-     {{ states.sensor.two_car_garage_door_sensor_status.attributes.friendly_name }} is  {{ states.sensor.two_car_garage_door_sensor_status.state | upper}}.<break time='0.5s'/>
+   {%- if states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_2.state | lower == "on" -%}
+     {{ states.binary_sensor.ecolink_garage_door_tilt_sensor_sensor_2.attributes.friendly_name }} is OPEN.<break time='0.5s'/>
    {%- endif -%}
   {%- endmacro -%}
  
