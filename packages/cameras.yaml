@@ -112,6 +112,13 @@ group:
     entities:
       - camera.ohio_doppler_weather
 
+  Location Maps:
+    entities:
+      - camera.suresh_map
+      - camera.mallika_map
+      - camera.srinika_map
+      - camera.hasika_map
+      
   CCTV:
     view: yes
     name: CCTV
@@ -124,6 +131,7 @@ group:
       - group.camera_line_crossing
       - group.camera_field_detection
       - group.camera_sensors
+      - group.location_maps
       - group.doppler_weather
 
 camera:
@@ -146,6 +154,26 @@ camera:
   - platform: generic
     name: Ohio Doppler Weather
     still_image_url: 'https://icons.wxug.com/data/weather-maps/radar/united-states/dayton-ohio-region-current-radar-animation.gif'
+
+  - platform: generic
+    name: Suresh Map
+    still_image_url: https://maps.googleapis.com/maps/api/staticmap?center={{ states.device_tracker.suresh_suresh.attributes.latitude }},{{ states.device_tracker.suresh_suresh.attributes.longitude }}&zoom=13&size=500x500&maptype=roadmap&markers=color:blue%7Clabel:Suresh%7C{{ states.device_tracker.suresh_suresh.attributes.latitude }},{{ states.device_tracker.suresh_suresh.attributes.longitude }}
+    limit_refetch_to_url_change: true 
+
+  - platform: generic
+    name: Mallika Map
+    still_image_url: https://maps.googleapis.com/maps/api/staticmap?center={{ states.device_tracker.mallika_mallika.attributes.latitude }},{{ states.device_tracker.mallika_mallika.attributes.longitude }}&zoom=13&size=500x500&maptype=roadmap&markers=color:blue%7Clabel:Mallika%7C{{ states.device_tracker.mallika_mallika.attributes.latitude }},{{ states.device_tracker.mallika_mallika.attributes.longitude }}
+    limit_refetch_to_url_change: true 
+
+  - platform: generic
+    name: Srinika Map
+    still_image_url: https://maps.googleapis.com/maps/api/staticmap?center={{ states.device_tracker.srinika_srinika.attributes.latitude }},{{ states.device_tracker.srinika_srinika.attributes.longitude }}&zoom=13&size=500x500&maptype=roadmap&markers=color:blue%7Clabel:Srinika%7C{{ states.device_tracker.srinika_srinika.attributes.latitude }},{{ states.device_tracker.srinika_srinika.attributes.longitude }}
+    limit_refetch_to_url_change: true 
+
+  - platform: generic
+    name: Hasika Map
+    still_image_url: https://maps.googleapis.com/maps/api/staticmap?center={{ states.device_tracker.hasika_hasika.attributes.latitude }},{{ states.device_tracker.hasika_hasika.attributes.longitude }}&zoom=13&size=500x500&maptype=roadmap&markers=color:blue%7Clabel:Hasika%7C{{ states.device_tracker.hasika_hasika.attributes.latitude }},{{ states.device_tracker.hasika_hasika.attributes.longitude }}
+    limit_refetch_to_url_change: true 
 
 binary_sensor:
 
@@ -188,7 +216,7 @@ automation:
          - binary_sensor.driveway_camera_line_crossing
          - binary_sensor.patio_camera_line_crossing
          - binary_sensor.playarea_camera_line_crossing
-       to: 'on'    
+       to: 'on'
     condition:
       # - condition: template
         # value_template: >
@@ -210,19 +238,20 @@ automation:
           # {%- endif -%}
       - condition: template
         value_template: >
-          {%- if trigger.entity_id == "binary_sensor.playarea_camera_field_detection" or trigger.entity_id == "binary_sensor.playarea_camera_line_crossing" -%}
+          {% set e = trigger.entity_id %}
+          {%- if e == "binary_sensor.playarea_camera_field_detection" or e == "binary_sensor.playarea_camera_line_crossing" -%}
             {{((as_timestamp(now()) - as_timestamp(states.binary_sensor.playarea_camera_motion.attributes.last_tripped_time)))|round|abs < 30}}
-          {%- elif trigger.entity_id == "binary_sensor.patio_camera_field_detection" or trigger.entity_id == "binary_sensor.patio_camera_line_crossing" -%}
+          {%- elif e == "binary_sensor.patio_camera_field_detection" or e == "binary_sensor.patio_camera_line_crossing" -%}
             {{((as_timestamp(now()) - as_timestamp(states.binary_sensor.patio_camera_motion.attributes.last_tripped_time)))|round|abs < 30}}
-          {%- elif trigger.entity_id == "binary_sensor.frontdoor_camera_field_detection" or trigger.entity_id == "binary_sensor.frontdoor_camera_line_crossing" -%}
+          {%- elif e == "binary_sensor.frontdoor_camera_field_detection" or e == "binary_sensor.frontdoor_camera_line_crossing" -%}
             {{((as_timestamp(now()) - as_timestamp(states.binary_sensor.frontdoor_camera_motion.attributes.last_tripped_time)))|round|abs < 30}}
-          {%- elif trigger.entity_id == "binary_sensor.driveway_camera_field_detection" or trigger.entity_id == "binary_sensor.driveway_camera_line_crossing" -%}
+          {%- elif e == "binary_sensor.driveway_camera_field_detection" or e == "binary_sensor.driveway_camera_line_crossing" -%}
             {{((as_timestamp(now()) - as_timestamp(states.binary_sensor.driveway_camera_motion.attributes.last_tripped_time)))|round|abs < 30}}
           {%- else -%}
             true
           {%- endif -%}
     action:
-      - service: notify.ios_suresh
+      - service: notify.ios_devices
         data_template:
           message: "Check {{ trigger.entity_id.split('.')[1].split('_')[0] | title }} camera."
           data:
@@ -232,3 +261,57 @@ automation:
             attachment:
               url: "{{ states.camera[trigger.entity_id.split('.')[1].split('_')[0] ~ '' ~ '_camera'].attributes.entity_picture }}"
               content-type: jpg
+
+  - alias: Blink Kitchen Lights When Motion Detected
+    initial_state: 'on'
+    trigger:
+     - platform: state
+       entity_id:
+         - binary_sensor.frontdoor_camera_field_detection
+         - binary_sensor.driveway_camera_field_detection
+         - binary_sensor.patio_camera_field_detection
+         - binary_sensor.playarea_camera_field_detection
+         - binary_sensor.frontdoor_camera_line_crossing
+         - binary_sensor.driveway_camera_line_crossing
+         - binary_sensor.patio_camera_line_crossing
+         - binary_sensor.playarea_camera_line_crossing
+       to: 'on'
+    condition:
+      condition: and
+      conditions:
+        - condition: time
+          after: '07:00:00'
+          before: '22:00:00'
+        - condition: template
+          value_template: >
+            {% set suresh = states.device_tracker.mallika_mallika.state %}
+            {% set mallika = states.device_tracker.suresh_suresh.state %}
+            {% set srinika = states.device_tracker.srinika_srinika.state %}
+            {% set hasika = states.device_tracker.hasika_hasika.state %}
+            {% if suresh == "home" or mallika == "home" or srinika == "home" or hasika == "home" %}
+              True
+            {% else %}
+              False
+            {% endif %}
+        - condition: template
+          value_template: >
+            {%- if states.automation.blink_kitchen_lights_when_motion_detected.attributes.last_triggered -%}
+              {{ (as_timestamp(now()) - as_timestamp(states.automation.blink_kitchen_lights_when_motion_detected.attributes.last_triggered)) > 120 }}
+            {%- else -%}
+              true
+            {%- endif -%}
+        - condition: template
+          value_template: >
+            {%- if trigger.entity_id == "binary_sensor.frontdoor_camera_field_detection" or trigger.entity_id == "binary_sensor.frontdoor_camera_line_crossing" -%}
+              {{((as_timestamp(now()) - as_timestamp(states.binary_sensor.frontdoor_camera_motion.attributes.last_tripped_time)))|round|abs < 30}}
+            {%- elif trigger.entity_id == "binary_sensor.driveway_camera_field_detection" or trigger.entity_id == "binary_sensor.driveway_camera_line_crossing" -%}
+              {{((as_timestamp(now()) - as_timestamp(states.binary_sensor.driveway_camera_motion.attributes.last_tripped_time)))|round|abs < 30}}
+            {%- elif trigger.entity_id == "binary_sensor.patio_camera_field_detection" or trigger.entity_id == "binary_sensor.patio_camera_line_crossing" -%}
+              {{((as_timestamp(now()) - as_timestamp(states.binary_sensor.patio_camera_motion.attributes.last_tripped_time)))|round|abs < 30}}
+            {%- elif trigger.entity_id == "binary_sensor.playarea_camera_field_detection" or trigger.entity_id == "binary_sensor.playarea_camera_line_crossing" -%}
+              {{((as_timestamp(now()) - as_timestamp(states.binary_sensor.playarea_camera_motion.attributes.last_tripped_time)))|round|abs < 30}}
+            {%- else -%}
+              true
+            {%- endif -%}
+    action:
+      - service: script.lifx_breathe
