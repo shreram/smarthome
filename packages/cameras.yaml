@@ -108,6 +108,10 @@ group:
       - binary_sensor.playarea_camera_line_crossing
       - binary_sensor.playarea_camera_tamper_detection
 
+  Doppler Weather:
+    entities:
+      - camera.ohio_doppler_weather
+
   CCTV:
     view: yes
     name: CCTV
@@ -119,8 +123,9 @@ group:
       - group.camera_tamper_detection
       - group.camera_line_crossing
       - group.camera_field_detection
-      - group.camera_sensors    
-    
+      - group.camera_sensors
+      - group.doppler_weather
+
 camera:
   - platform: generic
     name: Frontdoor Camera
@@ -137,6 +142,10 @@ camera:
   - platform: generic
     name: Playarea Camera
     still_image_url: !secret playarea_camera_url
+
+  - platform: generic
+    name: Ohio Doppler Weather
+    still_image_url: 'https://icons.wxug.com/data/weather-maps/radar/united-states/dayton-ohio-region-current-radar-animation.gif'
 
 binary_sensor:
 
@@ -163,3 +172,63 @@ binary_sensor:
     host: !secret playarea_camera_ip
     username: !secret camera_username
     password: !secret camera_password
+
+automation:
+
+  - alias: Notify camera pictures
+    initial_state: 'on'
+    trigger:
+     - platform: state
+       entity_id:
+         - binary_sensor.frontdoor_camera_field_detection
+         - binary_sensor.driveway_camera_field_detection
+         - binary_sensor.patio_camera_field_detection
+         - binary_sensor.playarea_camera_field_detection
+         - binary_sensor.frontdoor_camera_line_crossing
+         - binary_sensor.driveway_camera_line_crossing
+         - binary_sensor.patio_camera_line_crossing
+         - binary_sensor.playarea_camera_line_crossing
+       to: 'on'    
+    condition:
+      # - condition: template
+        # value_template: >
+          # {% set suresh = states.device_tracker.mallika_mallika.state %}
+          # {% set mallika = states.device_tracker.suresh_suresh.state %}
+          # {% set srinika = states.device_tracker.srinika_srinika.state %}
+          # {% set hasika = states.device_tracker.hasika_hasika.state %}
+          # {% if suresh != "home" and mallika != "home" and srinika != "home" and hasika != "home" %}
+            # True
+          # {% else %}
+            # False
+          # {% endif %}
+      # - condition: template
+        # value_template: >
+          # {%- if states.automation.notify_camera_pictures.attributes.last_triggered -%}
+            # {{ (as_timestamp(now()) - as_timestamp(states.automation.notify_camera_pictures.attributes.last_triggered)) > 120 }}
+          # {%- else -%}
+            # true
+          # {%- endif -%}
+      - condition: template
+        value_template: >
+          {%- if trigger.entity_id == "binary_sensor.playarea_camera_field_detection" or trigger.entity_id == "binary_sensor.playarea_camera_line_crossing" -%}
+            {{((as_timestamp(now()) - as_timestamp(states.binary_sensor.playarea_camera_motion.attributes.last_tripped_time)))|round|abs < 30}}
+          {%- elif trigger.entity_id == "binary_sensor.patio_camera_field_detection" or trigger.entity_id == "binary_sensor.patio_camera_line_crossing" -%}
+            {{((as_timestamp(now()) - as_timestamp(states.binary_sensor.patio_camera_motion.attributes.last_tripped_time)))|round|abs < 30}}
+          {%- elif trigger.entity_id == "binary_sensor.frontdoor_camera_field_detection" or trigger.entity_id == "binary_sensor.frontdoor_camera_line_crossing" -%}
+            {{((as_timestamp(now()) - as_timestamp(states.binary_sensor.frontdoor_camera_motion.attributes.last_tripped_time)))|round|abs < 30}}
+          {%- elif trigger.entity_id == "binary_sensor.driveway_camera_field_detection" or trigger.entity_id == "binary_sensor.driveway_camera_line_crossing" -%}
+            {{((as_timestamp(now()) - as_timestamp(states.binary_sensor.driveway_camera_motion.attributes.last_tripped_time)))|round|abs < 30}}
+          {%- else -%}
+            true
+          {%- endif -%}
+    action:
+      - service: notify.ios_suresh
+        data_template:
+          message: "Check {{ trigger.entity_id.split('.')[1].split('_')[0] | title }} camera."
+          data:
+            push:
+              category: camera
+            entity_id: "camera.{{ trigger.entity_id.split('.')[1].split('_')[0] ~ '' ~ '_camera' }}"
+            attachment:
+              url: "{{ states.camera[trigger.entity_id.split('.')[1].split('_')[0] ~ '' ~ '_camera'].attributes.entity_picture }}"
+              content-type: jpg
