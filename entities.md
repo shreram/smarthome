@@ -10,11 +10,10 @@ The following are the entities that are recognized by the Home Assistant:
 Just add components in the components list below for additional entities.
 
 {{ "_".ljust(90, "_") }}
-{%- set domains = [states.light, states.camera, states.switch, states.automation, states.device_tracker, states.group, states.media_player, states.proximity, states.script, states.zone, states.zwave, states.binary_sensor, states.sensor, states.calendar ] %}
 {{ "Entity ID".ljust(50) }}{{ "Entity Name" }}
   {{ "Attribute Name".ljust(50) }}{{ "Attribute Value" }}
-{%- for domain in domains -%}
-{% for item in domain %}
+
+{% for item in states %}
 {{ "_".ljust(90, "_") }}
 {{ item.entity_id.ljust(50) }}
   {{ "State".ljust(50) }}: {{ item.state}}
@@ -28,19 +27,14 @@ Just add components in the components list below for additional entities.
 {%- endif %}
 {%- endfor %}
 {%- endfor %}
-{%- endfor %}
-
 ```
 ### If you just want to see the entities, and not the attributes, run the following script:
 
 ```
-{%- set domains = [states.light, states.camera, states.switch, states.automation, states.device_tracker, states.group, states.media_player, states.proximity, states.script, states.zone, states.zwave, states.binary_sensor, states.sensor, states.calendar ] %}
-
-{{ "Entity ID".ljust(50) }}  {{ "Entity Name" }}
-
-{%- for domain in domains %}
-{% for item in domain %}
+{{ "Entity ID".ljust(49) }}  {{ "Entity Name" }}
+{{ "---------------------------------------------------------------"}}
+{%- for item in states %}
 {{ item.entity_id.ljust(50) }} {{ item.name }}
 {%- endfor %}
-{%- endfor %}
+
 ```
