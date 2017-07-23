@@ -10,7 +10,7 @@ The following are the entities that are recognized by the Home Assistant:
 Just add components in the components list below for additional entities.
 
 {{ "_".ljust(90, "_") }}
-{%- set domains = [states.light, states.switch, states.automation, states.device_tracker, states.group, states.media_player, states.proximity, states.script, states.zone, states.zwave, states.binary_sensor, states.sensor, states.calendar ] %}
+{%- set domains = [states.light, states.camera, states.switch, states.automation, states.device_tracker, states.group, states.media_player, states.proximity, states.script, states.zone, states.zwave, states.binary_sensor, states.sensor, states.calendar ] %}
 {{ "Entity ID".ljust(50) }}{{ "Entity Name" }}
   {{ "Attribute Name".ljust(50) }}{{ "Attribute Value" }}
 {%- for domain in domains -%}
@@ -34,7 +34,7 @@ Just add components in the components list below for additional entities.
 ### If you just want to see the entities, and not the attributes, run the following script:
 
 ```
-{%- set domains = [states.light, states.switch, states.automation, states.device_tracker, states.group, states.media_player, states.proximity, states.script, states.zone, states.zwave, states.binary_sensor, states.sensor, states.calendar ] %}
+{%- set domains = [states.light, states.camera, states.switch, states.automation, states.device_tracker, states.group, states.media_player, states.proximity, states.script, states.zone, states.zwave, states.binary_sensor, states.sensor, states.calendar ] %}
 
 {{ "Entity ID".ljust(50) }}  {{ "Entity Name" }}
 
