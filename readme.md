@@ -84,4 +84,4 @@ Please feel free to let me know if you find any issues with my code, and/or have
 
 ## Here is a sample view of my dashboard
 
-<img src="https://github.com/skalavala/smarthome/blob/master/images/homeassistant.jpg" alt="Home Assistat" />
+<img src="https://github.com/skalavala/smarthome/blob/master/images/skalavala.jpg" alt="Home Assistat" />
