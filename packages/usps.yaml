@@ -1,0 +1,20 @@
+homeassistant:
+  customize:
+    sensor.usps_packages:
+      friendly_name: USPS Packages
+      icon: mdi:package-variant
+    sensor.usps_mail:
+      friendly_name: USPS Mail
+      icon: mdi:email-outline
+
+group:
+  Postal Service:
+    entities:
+      - sensor.usps_packages
+      - sensor.usps_mail
+
+sensor:
+
+  - platform: usps
+    username: !secret usps_username
+    password: !secret usps_password
