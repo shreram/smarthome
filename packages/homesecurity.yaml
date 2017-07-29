@@ -30,6 +30,37 @@ group:
       - automation.notify_home_security_status_change
   
 automation:
+
+#
+# Change Leeo Alert color based on Home Security Status
+#
+  - alias: Home Security Status Leeo Color
+    initial_state: true
+    hide_entity: true
+    trigger:
+      platform: state
+      entity_id: alarm_control_panel.simplisafe
+    condition:
+      - condition: template
+        value_template: "{% if trigger.from_state %} True {% else %} False {% endif %}"
+      - condition: template
+        value_template: '{% if states.alarm_control_panel.simplisafe.state == "unknown" %} False {% else %} True {% endif %}'
+      - condition: template
+        value_template: '{% if states.alarm_control_panel.simplisafe.state | trim == "" %} False {% else %} True {% endif %}'
+    action:
+      - service: script.ifttt_leeo_color_change
+        data_template:
+          value1: >
+            {% if states.alarm_control_panel.simplisafe.state == "armed_home" %}
+              "#0000FF"
+            {% elif states.alarm_control_panel.simplisafe.state == "armed_away" %}
+              "#00FF00"
+            {% elif states.alarm_control_panel.simplisafe.state == "triggered" %}
+              "#FF0000"
+            {% elif states.alarm_control_panel.simplisafe.state == "disarmed" %}
+              "#FF0000"
+            {% endif %}
+
   - alias: Notify Home Security Status Change
     initial_state: true
     trigger:
