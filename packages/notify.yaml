@@ -38,11 +38,25 @@ group:
 
 ifttt:
   key: !secret ifttt_key
-  
+
 notify:
-  - name: notify
+  - name: pushbullet
     platform: pushbullet
     api_key: !secret pushbulley_apikey
+    
+  - name: ios_devices
+    platform: group
+    services:
+      - service: ios_ipad
+      - service: ios_suresh
+      - service: ios_mallika
+      - service: ios_srinika
+      - service: ios_hasika
+
+  - name: tts_alerts
+    platform: file
+    filename: tts_alerts.log
+    timestamp: true
 
 tts:
   - platform: amazon_polly
@@ -50,22 +64,35 @@ tts:
     aws_secret_access_key: !secret aws_secret_access_key
     region_name: 'us-east-1'
     text_type: ssml
-    
+
 script:
   ifttt_notify:
     sequence:
+      - condition: template
+        value_template: '{{ value1 | trim != "" }}'
       - service: ifttt.trigger
-        data_template: { "event": "Smart_Home", "value1": "{{ value1 }}", "value2": " {{ value2 }}"}   
-  
+        data_template: { "event": "Smart_Home", "value1": "{{ value1 }}", "value2": " {{ value2 }}"}
+
+  ifttt_leeo_color_change:
+    sequence:
+      - condition: template
+        value_template: '{{ value1 | trim != "" }}'
+      - service: ifttt.trigger
+        data_template: { "event": "LEEO_COLOR_CHANGE", "value1": "{{ value1 }}" }
+        
   pushbullet_notify:
     sequence:
-      - service: notify.notify
+      - condition: template
+        value_template: '{{ value1 | trim != "" }}   ' 
+      - service: notify.pushbullet
         data_template:
           message: "{{ value1 }} {{ value2 }}"
           title: "{{ value1 }} {{ value2 }}"
 
   notify_me:
     sequence:
+      - condition: template
+        value_template: '{{ value1 | trim != "" }}'    
       - service: script.ifttt_notify
         data_template:
           event: "Smart_Home"
