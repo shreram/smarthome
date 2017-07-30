@@ -13,8 +13,6 @@ homeassistant:
       order: 4
     group.date_time:
       order: 5
-    group.travel_time:
-      order: 6
 
     group.home_assistant_automations:
       order: 50
@@ -50,8 +48,8 @@ homeassistant:
     sensor.ram_free:
       friendly_name: Available Memory
 
-    sensor.ipv4_address_wlan0:
-      friendly_name: IP Address
+    sensor.ipv4_address_wlp1s10:
+      friendly_name: Local IP Address
 
     sensor.last_boot:
       friendly_name: Last Boot
@@ -64,6 +62,12 @@ homeassistant:
 
     sensor.date:
       friendly_name: Date
+      
+    sensor.signal_strength:
+      icon: mdi:signal
+      
+    sensor.link_quality:
+      icon: mdi:link-variant
 
     automation.login_failure:
       friendly_name: Alert Login Failures
@@ -82,10 +86,12 @@ group:
       - sensor.cpu_use  
       - sensor.ram_free
       - sensor.disk_free_
-      - sensor.ipv4_address_wlan0
+      - sensor.ipv4_address_wlp1s10
       - sensor.last_boot
       - sensor.since_last_boot
       - sensor.cpu_temperature
+      - sensor.link_quality
+      - sensor.signal_strength
 
   Internet Speed:
     entities:
@@ -102,19 +108,14 @@ group:
       - sensor.ha_installed_version
       - sensor.ha_current_version
       - sensor.ha_last_restart
-  
-  Travel Time:
-    entities:
-      - sensor.home2work
-      - sensor.work2home
-      - sensor.suresh2home
-      - sensor.suresh2work
 
   Home Assistant Automations:
+    control: hidden
     entities:
       - automation.notify_of_new_external_ip
       - automation.startup_notification
       - automation.update_available_notification
+      - automation.clear_tts_cache
 
   Manuals:
     entities:
@@ -172,7 +173,7 @@ sensor:
       - type: memory_free
       - type: processor_use
       - type: ipv4_address
-        arg: wlan0
+        arg: wlp1s10
       - type: last_boot
       - type: since_last_boot
 
@@ -183,7 +184,7 @@ sensor:
 
   - platform: command_line
     name: HA Installed Version
-    command: /srv/homeassistant/homeassistant_venv/bin/hass --version
+    command: /srv/homeassistant/bin/hass --version
     scan_interval: 86400
 
   - platform: template
@@ -191,6 +192,19 @@ sensor:
       ha_last_restart:
         value_template: '{{ as_timestamp(states.automation.startup_notification.attributes.last_triggered) | timestamp_custom("%b %d %X") }}'
         friendly_name: HA Last Restart
+
+  - platform: command_line
+    name: Signal Strength
+    command: "iwconfig wlp1s10 | grep -i signal"
+    value_template: >
+      {{ value.split(' ')[4].split('=')[1][1:] }}
+    unit_of_measurement: 'dBm'
+
+  - platform: command_line
+    name: Link Quality
+    command: "iwconfig wlp1s10 | grep -i signal"
+    value_template: >
+      {{ value.split(' ')[1].split('=')[1]  }}
 
 automation:
 
@@ -225,7 +239,7 @@ automation:
     initial_state: true
     trigger:
       platform: time
-      after: '4:45:00'
+      at: '4:45:00'
     action:
       service: tts.clear_cache
 
@@ -237,3 +251,6 @@ automation:
     action:
       - service: script.pushbullet_notify
         data: { "value1":"Home Assistant restarted successfully!", "value2":""}      
+      - service: frontend.set_theme
+        data:
+          name: greens
