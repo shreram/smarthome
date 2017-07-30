@@ -1,27 +1,28 @@
 ###############################################################################
 # THE HOME ASSISTANT CONFIGURATION FILE - MOTHER OF ALL CONFIG FILES
 # @Author   :   Mahasri Kalavala
-# @Date     :   04/15/2017
 ###############################################################################
 homeassistant:
   name: Home 
+  temperature_unit: F
   latitude: !secret home_latitude
   longitude: !secret home_longitude
   elevation: !secret home_elevation
+  
   unit_system: imperial
   time_zone: !secret time_zone
   customize_glob: !include customize_glob.yaml  
   packages: !include_dir_named packages
 
-ios:
 updater:
 discovery:
-frontend:
 sun:
 config:
 logbook:
-conversation:
 history:
+python_script:
+recorder:
+  db_url: !secret my_sql_url
 
 http:
   api_password: !secret api_password
@@ -38,9 +39,16 @@ binary_sensor:
   - platform: workday
     country: US
 
+emulated_hue:
+  expose_by_default: false
+  host_ip: !secret ha_ip_address
+  listen_port: 8300
+  exposed_domains:
+    - light
+
+alexa: !include alexa.yaml    
 logger: !include logging.yaml
 group: !include_dir_merge_named groups
-
 
 ios:
   push:
@@ -81,4 +89,42 @@ ios:
 google:
   client_id: !secret google_client_id
   client_secret: !secret google_client_secret
-  
+
+frontend:
+  themes:
+    princess_pink:
+      dark-primary-color: "#ff084a"
+      primary-color: "#fc3468"
+      light-primary-color: "#ffc2cd"
+      paper-toggle-button-checked-ink-color: "#ff6289"
+      paper-toggle-button-checked-button-color: "#ff084a"
+      paper-toggle-button-checked-bar-color: "#ffc2cd"
+      paper-slider-knob-color: "#ff084a"
+      paper-slider-knob-start-color: "#ff084a"
+      paper-slider-pin-color: "#ff084a"
+      paper-slider-active-color: "#ff084a"
+      paper-slider-secondary-color: "#ff93ac"
+    beach:
+      dark-primary-color: "#88d8b0"
+      primary-color: "#ff6f69"
+      light-primary-color: "#ffcc5c"
+      paper-toggle-button-checked-ink-color: "#ff6f69"
+      paper-toggle-button-checked-button-color: "#88d8b0"
+      paper-toggle-button-checked-bar-color: "#ffcc5c"
+      paper-slider-knob-color: "#88d8b0"
+      paper-slider-knob-start-color: "#88d8b0"
+      paper-slider-pin-color: "#88d8b0"
+      paper-slider-active-color: "#88d8b0"
+      paper-slider-secondary-color: "#ffeead"      
+    greens:
+      dark-primary-color: "#009688"
+      primary-color: "#009688"
+      light-primary-color: "#009688"
+      paper-toggle-button-checked-ink-color: "#009688"
+      paper-toggle-button-checked-button-color: "#009688"
+      paper-toggle-button-checked-bar-color: "#99d5cf"
+      paper-slider-knob-color: "#66c0b7"
+      paper-slider-knob-start-color: "#32ab9f"
+      paper-slider-pin-color: "#66c0b7"
+      paper-slider-active-color: "#009688"
+      paper-slider-secondary-color: "#009688"            
