@@ -35,6 +35,7 @@ mqtt:
   keepalive: 60
   client_id: pi_ha
 
+# this is a comment
 binary_sensor:
   - platform: workday
     country: US
